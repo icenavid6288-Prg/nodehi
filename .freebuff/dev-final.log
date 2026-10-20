@@ -1,0 +1,38 @@
+
+> nodehi-store@0.1.0 dev
+> node scripts/dev.mjs
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 5.9s
+ ○ Compiling / ...
+ ✓ Compiled / in 12.3s (642 modules)
+ GET / 200 in 13949ms
+ ○ Compiling /install ...
+ ✓ Compiled /install in 9.6s (654 modules)
+ GET /install 200 in 10034ms
+ ○ Compiling /shop ...
+ ✓ Compiled /shop in 733ms (654 modules)
+ GET /shop 200 in 1151ms
+ GET / 200 in 618ms
+ GET / 200 in 213ms
+ GET / 200 in 573ms
+ ○ Compiling /api/auth/session ...
+ ✓ Compiled /api/auth/session in 609ms (383 modules)
+ ✓ Compiled (395 modules)
+ GET /api/auth/session 200 in 3462ms
+ GET /api/auth/session 200 in 3440ms
+ GET /api/settings/public 200 in 3480ms
+ GET /api/settings/public 200 in 50ms
+ ✓ Compiled /api/health in 300ms (397 modules)
+ GET /api/health 200 in 455ms
+ GET / 200 in 768ms
+ GET /install 200 in 115ms
+ GET /shop 200 in 358ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 2s (711 modules)
+ GET /login 200 in 3370ms
+ GET /api/health 200 in 68ms

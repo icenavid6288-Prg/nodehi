@@ -1,0 +1,23 @@
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 7.3s
+ ○ Compiling /api/install ...
+ ✓ Compiled /api/install in 1544ms (68 modules)
+prisma:error 
+Invalid `prisma.setting.findFirst()` invocation:
+
+
+The table `main.Setting` does not exist in the current database.
+ GET /api/install 200 in 3513ms
+prisma:error 
+Invalid `prisma.setting.findFirst()` invocation:
+
+
+The table `main.Setting` does not exist in the current database.
+ POST /api/install 200 in 5548ms
+ ✓ Compiled /api/health in 508ms (75 modules)
+ GET /api/health 200 in 732ms
+[?25h

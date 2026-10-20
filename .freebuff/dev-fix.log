@@ -1,0 +1,22 @@
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 15s
+ ○ Compiling / ...
+ ✓ Compiled / in 30.6s (642 modules)
+ GET / 200 in 31956ms
+ ○ Compiling /api/health ...
+ ✓ Compiled /api/health in 7.5s (363 modules)
+ GET /api/health 200 in 9007ms
+ GET / 200 in 587ms
+ GET / 200 in 208ms
+ GET / 200 in 247ms
+ ✓ Compiled /api/auth/session in 204ms (365 modules)
+ ✓ Compiled (377 modules)
+ GET /api/settings/public 200 in 1950ms
+ GET /api/settings/public 200 in 49ms
+ GET /api/auth/session 200 in 2269ms
+ GET /api/auth/session 200 in 2267ms
+[?25h

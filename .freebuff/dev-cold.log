@@ -1,0 +1,70 @@
+
+> nodehi-store@0.1.0 dev
+> node scripts/dev.mjs
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 9.6s
+ ○ Compiling /api/health ...
+ ✓ Compiled /api/health in 1894ms (66 modules)
+ GET /api/health 200 in 3618ms
+ ○ Compiling / ...
+ ✓ Compiled / in 14s (673 modules)
+ GET / 200 in 14957ms
+ ○ Compiling /shop ...
+ ✓ Compiled /shop in 4.7s (687 modules)
+ GET /shop 200 in 5242ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 875ms (694 modules)
+ GET /login 200 in 2430ms
+ ○ Compiling /install ...
+ ✓ Compiled /install in 4.7s (706 modules)
+ GET /install 200 in 5136ms
+ ○ Compiling /cart ...
+ ✓ Compiled /cart in 1335ms (732 modules)
+ GET /cart 200 in 1598ms
+ ○ Compiling /ready-to-ship ...
+ ✓ Compiled /ready-to-ship in 616ms (722 modules)
+ GET /ready-to-ship 200 in 1107ms
+ ○ Compiling /brands ...
+ ✓ Compiled /brands in 604ms (726 modules)
+ GET /brands 200 in 944ms
+ ○ Compiling /compare ...
+ ✓ Compiled /compare in 948ms (703 modules)
+ GET /compare 200 in 1362ms
+ ○ Compiling /track ...
+ ✓ Compiled /track in 724ms (710 modules)
+ GET /track 200 in 1135ms
+ ○ Compiling /api/health ...
+ ✓ Compiled /api/health in 569ms (424 modules)
+ GET /api/health 200 in 2307ms
+ ○ Compiling /sitemap.xml ...
+ ✓ Compiled /sitemap.xml in 1239ms (466 modules)
+ GET /sitemap.xml 200 in 3720ms
+ GET /install 200 in 349ms
+ GET / 200 in 460ms
+ GET / 200 in 6247ms
+ GET /shop 200 in 6613ms
+ ○ Compiling /api/auth/session ...
+ ✓ Compiled /api/auth/session in 828ms (373 modules)
+ ✓ Compiled (385 modules)
+ GET /api/auth/session 200 in 4284ms
+ GET /api/auth/session 200 in 4271ms
+ GET /api/auth/session 200 in 4138ms
+ GET /api/auth/session 200 in 4121ms
+ GET /api/settings/public 200 in 4323ms
+ GET /api/settings/public 200 in 70ms
+ GET /api/settings/public 200 in 47ms
+ GET /api/settings/public 200 in 45ms
+ ○ Compiling /install ...
+ ✓ Compiled /install in 2.3s (352 modules)
+ GET /install 200 in 3735ms
+ ✓ Compiled /api/auth/session in 370ms (383 modules)
+ ✓ Compiled (395 modules)
+ GET /api/auth/session 200 in 3612ms
+ GET /api/auth/session 200 in 3633ms
+ GET /api/settings/public 200 in 3655ms
+ GET /api/settings/public 200 in 51ms

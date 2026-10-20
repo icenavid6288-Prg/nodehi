@@ -1,0 +1,98 @@
+
+> nodehi-store@0.1.0 dev
+> next dev -p 3000
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 4.4s
+ ○ Compiling /admin ...
+ ✓ Compiled /admin in 10.7s (627 modules)
+ GET /admin 307 in 11607ms
+ ○ Compiling /admin/audit ...
+ ✓ Compiled /admin/audit in 1944ms (629 modules)
+ GET /admin/audit 200 in 2714ms
+ ○ Compiling /api/auth/session ...
+ ✓ Compiled /api/auth/session in 931ms (360 modules)
+ GET /api/auth/session 200 in 2620ms
+ GET /api/auth/session 200 in 2648ms
+ ✓ Compiled in 1175ms (299 modules)
+ ✓ Compiled in 1435ms (627 modules)
+ ✓ Compiled in 1166ms (299 modules)
+ ✓ Compiled in 1148ms (299 modules)
+ GET /admin/audit?entity=Coupon 200 in 778ms
+ ○ Compiling /api/auth/session ...
+ ✓ Compiled /api/auth/session in 782ms (358 modules)
+ GET /api/auth/session 200 in 2632ms
+ GET /api/auth/session 200 in 2663ms
+ ○ Compiling /admin ...
+ ✓ Compiled /admin in 929ms (331 modules)
+ GET /admin 200 in 1577ms
+ ✓ Compiled /api/auth/session in 456ms (361 modules)
+ GET /api/auth/session 200 in 2162ms
+ GET /api/auth/session 200 in 2180ms
+ ○ Compiling /api/health ...
+ ✓ Compiled /api/health in 534ms (364 modules)
+ GET /api/health 200 in 643ms
+ ○ Compiling / ...
+ ✓ Compiled / in 3.8s (706 modules)
+ GET /admin 404 in 402ms
+ ○ Compiling /manifest.webmanifest ...
+ ✓ Compiled /api/auth/session in 1767ms (431 modules)
+ ✓ Compiled (434 modules)
+ GET /manifest.webmanifest 200 in 3916ms
+ GET /api/auth/session 200 in 3499ms
+ GET /api/auth/session 200 in 3498ms
+ GET / 200 in 787ms
+ GET /admin 404 in 316ms
+ GET /manifest.webmanifest 200 in 98ms
+ GET /api/auth/session 200 in 105ms
+ GET /api/auth/session 200 in 104ms
+ GET /manifest.webmanifest 200 in 87ms
+ ○ Compiling /account ...
+ ✓ Compiled /account in 935ms (735 modules)
+ GET /manifest.webmanifest 200 in 47ms
+ GET / 200 in 865ms
+ GET / 200 in 1488ms
+ GET /api/auth/session 200 in 177ms
+ GET /api/auth/session 200 in 148ms
+ GET /admin 200 in 574ms
+ GET /api/auth/session 200 in 125ms
+ GET /api/auth/session 200 in 97ms
+ ✓ Compiled in 1067ms (310 modules)
+ GET /manifest.webmanifest 200 in 551ms
+ GET /account 200 in 1233ms
+ GET /api/auth/session 200 in 151ms
+ GET /api/auth/session 200 in 148ms
+ ✓ Compiled in 1916ms (750 modules)
+ ✓ Compiled in 799ms (310 modules)
+ GET /manifest.webmanifest 200 in 248ms
+ ✓ Compiled in 1542ms (750 modules)
+ ✓ Compiled in 820ms (310 modules)
+ ✓ Compiled in 1139ms (310 modules)
+ ✓ Compiled in 1963ms (687 modules)
+ ✓ Compiled in 875ms (310 modules)
+ ✓ Compiled in 958ms (310 modules)
+ ✓ Compiled in 839ms (310 modules)
+ ✓ Compiled in 1022ms (310 modules)
+ ✓ Compiled in 745ms (310 modules)
+ ○ Compiling /admin/customers/[id] ...
+ ✓ Compiled /admin/customers/[id] in 3.6s (698 modules)
+ GET /admin/customers/cmuk05ust0001mkibwveqikgp 200 in 6793ms
+ ○ Compiling /api/auth/session ...
+ ✓ Compiled /api/auth/session in 665ms (414 modules)
+ GET /api/auth/session 200 in 2127ms
+ GET /api/auth/session 200 in 2153ms
+ ○ Compiling /api/admin/users/[id] ...
+ ✓ Compiled /api/admin/users/[id] in 1340ms (414 modules)
+ PATCH /api/admin/users/cmuk05ust0001mkibwveqikgp 200 in 2675ms
+ PATCH /api/admin/users/cmuk0xpx90003r0ayz8udv20z 400 in 83ms
+ PATCH /api/admin/users/cmuk0xpx90003r0ayz8udv20z 400 in 46ms
+ PATCH /api/admin/users/cmuk0xpx90003r0ayz8udv20z 400 in 48ms
+ PATCH /api/admin/users/cmuk0xpx90003r0ayz8udv20z 400 in 50ms
+ PATCH /api/admin/users/cmuk05ust0001mkibwveqikgp 200 in 87ms
+ PATCH /api/admin/users/cmuk05ust0001mkibwveqikgp 200 in 139ms
+ PATCH /api/admin/users/cmuk05ust0001mkibwveqikgp 200 in 75ms
+[?25h
