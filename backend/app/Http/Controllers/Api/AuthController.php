@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AuthSession;
 use App\Models\OtpCode;
 use App\Models\User;
+use App\Support\Phone;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -17,34 +18,43 @@ use Illuminate\Http\Request;
  */
 class AuthController extends Controller
 {
-    private const TTL_SECONDS = 120;
     private const MAX_ATTEMPTS = 5;
 
     public function requestOtp(Request $request): JsonResponse
     {
         $data = $request->validate(['phone' => ['required', 'string', 'max:20']]);
-        $phone = $this->normalizePhone($data['phone']);
+        $phone = Phone::normalize($data['phone']);
 
-        if (! preg_match('/^09\d{9}$/', $phone)) {
+        if (! Phone::isValid($phone)) {
             return response()->json(['ok' => false, 'error' => 'شماره همراه معتبر نیست.'], 422);
         }
 
+        $ttl = (int) config('auth_otp.ttl', 120);
         $code = (string) random_int(10000, 99999);
+
+        // کدهای فعال قبلی همان شماره باطل می‌شوند؛ فقط آخرین پیامک معتبر است.
+        OtpCode::query()
+            ->where('phone', $phone)
+            ->where('purpose', 'login')
+            ->whereNull('consumed_at')
+            ->update(['consumed_at' => now()]);
 
         OtpCode::create([
             'phone' => $phone,
-            'code_hash' => hash('sha256', $code),
+            'code_hash' => $this->hashCode($phone, $code),
             'purpose' => 'login',
             'attempts' => 0,
-            'expires_at' => now()->addSeconds(self::TTL_SECONDS),
+            'expires_at' => now()->addSeconds($ttl),
         ]);
 
-        $devMode = (bool) config('app.debug') && env('AUTH_OTP_DEV_MODE', '1') === '1';
+        $devMode = config('app.debug')
+            && ! app()->isProduction()
+            && (bool) config('auth_otp.dev_mode');
 
         $payload = [
             'ok' => true,
             'message' => 'کد ورود ارسال شد.',
-            'expiresIn' => self::TTL_SECONDS,
+            'expiresIn' => $ttl,
         ];
 
         if ($devMode) {
@@ -63,7 +73,7 @@ class AuthController extends Controller
             'lastName' => ['nullable', 'string', 'max:60'],
         ]);
 
-        $phone = $this->normalizePhone($data['phone']);
+        $phone = Phone::normalize($data['phone']);
         $otp = OtpCode::query()
             ->where('phone', $phone)
             ->where('purpose', 'login')
@@ -74,7 +84,7 @@ class AuthController extends Controller
             return response()->json(['ok' => false, 'error' => 'کد منقضی شده است؛ دوباره درخواست کنید.'], 422);
         }
 
-        if (! hash_equals($otp->code_hash, hash('sha256', $this->normalizeDigits($data['code'])))) {
+        if (! hash_equals($otp->code_hash, $this->hashCode($phone, Phone::latinDigits($data['code'])))) {
             $otp->increment('attempts');
 
             $left = max(self::MAX_ATTEMPTS - $otp->attempts, 0);
@@ -103,7 +113,7 @@ class AuthController extends Controller
         ]);
 
         $token = bin2hex(random_bytes(32));
-        $days = (int) env('AUTH_SESSION_DAYS', 30);
+        $days = (int) config('auth_otp.session_days', 30);
 
         AuthSession::create([
             'token_hash' => hash('sha256', $token),
@@ -151,29 +161,14 @@ class AuthController extends Controller
         ];
     }
 
-    private function normalizePhone(string $phone): string
+    /**
+     * هش کد با کلید برنامه و شماره به‌عنوان نمک.
+     *
+     * SHA-256 خالی برای کد پنج‌رقمی (فقط ۱۰۰٬۰۰۰ حالت) با brute force آفلاین
+     * شکسته می‌شود؛ نمکِ شماره + کلید برنامه این کار را غیرعملی می‌کند.
+     */
+    private function hashCode(string $phone, string $code): string
     {
-        $digits = $this->normalizeDigits($phone);
-        $digits = preg_replace('/\D+/', '', $digits);
-
-        if (str_starts_with($digits, '0098')) {
-            $digits = '0' . substr($digits, 4);
-        } elseif (str_starts_with($digits, '98') && strlen($digits) === 12) {
-            $digits = '0' . substr($digits, 2);
-        } elseif (str_starts_with($digits, '9') && strlen($digits) === 10) {
-            $digits = '0' . $digits;
-        }
-
-        return $digits;
-    }
-
-    private function normalizeDigits(string $value): string
-    {
-        return strtr($value, [
-            '۰' => '0', '۱' => '1', '۲' => '2', '۳' => '3', '۴' => '4',
-            '۵' => '5', '۶' => '6', '۷' => '7', '۸' => '8', '۹' => '9',
-            '٠' => '0', '١' => '1', '٢' => '2', '٣' => '3', '٤' => '4',
-            '٥' => '5', '٦' => '6', '٧' => '7', '٨' => '8', '٩' => '9',
-        ]);
+        return hash_hmac('sha256', $code, (string) config('app.key') . '|' . $phone);
     }
 }

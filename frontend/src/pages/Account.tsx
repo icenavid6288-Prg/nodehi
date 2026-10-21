@@ -17,16 +17,33 @@ export default function Account() {
   const { user, ready, signOut } = useAuth()
   const [orders, setOrders] = useState<OrderResponse[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!user) return
+
+    setLoading(true)
+    setError(null)
     get<{ items: OrderResponse[] }>('/account/orders')
       .then((data) => setOrders(data.items))
-      .catch(() => setOrders([]))
+      .catch((err) => {
+        setOrders([])
+        setError(err instanceof Error ? err.message : 'دریافت سفارش‌ها ناموفق بود.')
+      })
       .finally(() => setLoading(false))
   }, [user])
 
-  if (ready && !user) return <Navigate to="/login" replace />
+  // تا مشخص شدن وضعیت نشست، صفحهٔ حساب رندر نمی‌شود؛ وگرنه برای لحظه‌ای
+  // «سفارشی ندارید» نمایش داده می‌شد و بعد کاربر به ورود هدایت می‌شد.
+  if (!ready) {
+    return (
+      <div className="container-page py-16 text-center text-sm text-ink-muted">
+        در حال بارگذاری حساب...
+      </div>
+    )
+  }
+
+  if (!user) return <Navigate to="/login" replace />
 
   return (
     <div className="container-page py-10">
@@ -69,7 +86,11 @@ export default function Account() {
 
           {loading && <p className="text-sm text-ink-muted">در حال بارگذاری...</p>}
 
-          {!loading && orders.length === 0 && (
+          {!loading && error && (
+            <p className="mb-3 rounded-xl bg-danger/10 p-3 text-xs text-danger">{error}</p>
+          )}
+
+          {!loading && !error && orders.length === 0 && (
             <div className="rounded-xl bg-surface-muted p-6 text-center">
               <p className="text-sm text-ink-muted">هنوز سفارشی ثبت نکرده‌اید.</p>
               <Link to="/shop" className="mt-3 inline-block rounded-xl bg-primary px-4 py-2 text-xs font-bold text-white">

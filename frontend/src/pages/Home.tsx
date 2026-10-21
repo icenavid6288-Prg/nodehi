@@ -43,6 +43,7 @@ function Section({
 
 export default function Home() {
   const { categories } = useCatalog()
+  const catalogSize = categories.reduce((sum, category) => sum + category.count, 0)
   const [popular, setPopular] = useState<ProductSummary[]>([])
   const [fresh, setFresh] = useState<ProductSummary[]>([])
   const [ready, setReady] = useState<ProductSummary[]>([])
@@ -70,7 +71,7 @@ export default function Home() {
           <div className="text-white">
             <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs backdrop-blur">
               <StarIcon className="h-3.5 w-3.5" />
-              {toFa('۲۳')} کالای منتخب با گارانتی رسمی
+              {toFa(catalogSize)} کالای منتخب با گارانتی رسمی
             </span>
             <h1 className="text-3xl font-extrabold leading-tight sm:text-4xl">
               لوازم خانگی مطمئن،

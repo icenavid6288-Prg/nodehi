@@ -21,7 +21,16 @@ class ContentSeeder extends Seeder
     public function run(): void
     {
         $path = database_path('seeders/data/content.json');
-        $data = json_decode(file_get_contents($path), true) ?: [];
+
+        if (! is_file($path)) {
+            throw new \RuntimeException("فایل محتوای seed پیدا نشد: {$path}");
+        }
+
+        $data = json_decode((string) file_get_contents($path), true);
+
+        if (! is_array($data)) {
+            throw new \RuntimeException("فایل محتوای seed معتبر نیست: {$path}");
+        }
 
         foreach (($data['articleCategories'] ?? []) as $slug => $label) {
             ArticleCategory::updateOrCreate(['slug' => $slug], ['label' => $label, 'sort_order' => 0]);

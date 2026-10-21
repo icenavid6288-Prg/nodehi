@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\AdminAuditController;
+use App\Http\Controllers\Api\Admin\AdminOrderController;
+use App\Http\Controllers\Api\Admin\AdminProductController;
+use App\Http\Controllers\Api\Admin\AdminReviewController;
+use App\Http\Controllers\Api\Admin\DashboardController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CatalogController;
 use App\Http\Controllers\Api\CheckoutController;
@@ -25,7 +30,8 @@ Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/by-slugs', [ProductController::class, 'bySlugs']);
 Route::get('/products/{slug}', [ProductController::class, 'show']);
 Route::get('/products/{slug}/reviews', [ProductController::class, 'reviews']);
-Route::post('/products/{slug}/reviews', [ProductController::class, 'storeReview']);
+Route::post('/products/{slug}/reviews', [ProductController::class, 'storeReview'])
+    ->middleware(['throttle:reviews', 'auth.token:optional']);
 Route::get('/categories', [CatalogController::class, 'categories']);
 Route::get('/categories/{slug}', [CatalogController::class, 'category']);
 Route::get('/brands', [CatalogController::class, 'brands']);
@@ -45,19 +51,50 @@ Route::get('/legal/{slug}', [ContentController::class, 'legalPage']);
 Route::get('/loyalty', [ContentController::class, 'loyalty']);
 
 // تعامل با مشتری
-Route::post('/contact', [EngagementController::class, 'contact']);
-Route::post('/stock-alerts', [EngagementController::class, 'stockAlert']);
+Route::post('/contact', [EngagementController::class, 'contact'])->middleware('throttle:contact');
+Route::post('/stock-alerts', [EngagementController::class, 'stockAlert'])
+    ->middleware(['throttle:stock-alerts', 'auth.token:optional']);
 
-// سفارش
-Route::post('/checkout', CheckoutController::class);
-Route::post('/orders/track', [OrderController::class, 'track']);
+// سفارش — توکن اختیاری است تا سفارش مهمان ثبت شود و سفارش کاربر واردشده
+// به حسابش وصل شود.
+Route::post('/checkout', CheckoutController::class)
+    ->middleware(['throttle:checkout', 'auth.token:optional']);
+Route::post('/orders/track', [OrderController::class, 'track'])->middleware('throttle:contact');
 
 // احراز هویت
-Route::post('/auth/otp/request', [AuthController::class, 'requestOtp']);
-Route::post('/auth/otp/verify', [AuthController::class, 'verifyOtp']);
+Route::post('/auth/otp/request', [AuthController::class, 'requestOtp'])
+    ->middleware(['throttle:otp-phone', 'throttle:otp-ip']);
+Route::post('/auth/otp/verify', [AuthController::class, 'verifyOtp'])
+    ->middleware('throttle:otp-ip');
 
 Route::middleware('auth.token')->group(function () {
     Route::get('/auth/session', [AuthController::class, 'session']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::get('/account/orders', [OrderController::class, 'myOrders']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| پنل مدیریت
+|--------------------------------------------------------------------------
+| همهٔ مسیرها به توکن معتبر و نقش admin/operator نیاز دارند. هر تغییر
+| مدیریتی در audit_logs ثبت می‌شود (App\Support\Audit).
+*/
+Route::middleware(['auth.token', 'admin'])->prefix('admin')->group(function () {
+    Route::get('/stats', DashboardController::class);
+
+    Route::get('/products', [AdminProductController::class, 'index']);
+    Route::get('/products/{slug}', [AdminProductController::class, 'show']);
+    Route::post('/products', [AdminProductController::class, 'store']);
+    Route::patch('/products/{slug}', [AdminProductController::class, 'update']);
+    Route::delete('/products/{slug}', [AdminProductController::class, 'destroy']);
+
+    Route::get('/orders', [AdminOrderController::class, 'index']);
+    Route::get('/orders/{orderNumber}', [AdminOrderController::class, 'show']);
+    Route::patch('/orders/{orderNumber}', [AdminOrderController::class, 'update']);
+
+    Route::get('/reviews', [AdminReviewController::class, 'index']);
+    Route::patch('/reviews/{review}', [AdminReviewController::class, 'update']);
+
+    Route::get('/audit', [AdminAuditController::class, 'index']);
 });

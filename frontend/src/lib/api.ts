@@ -4,7 +4,9 @@
  * آدرس پیش‌فرض `/api` است و Vite آن را به `http://127.0.0.1:8000` پروکسی
  * می‌کند؛ در تولید با `VITE_API_URL` می‌توان آدرس مطلق داد.
  */
-const BASE = import.meta.env.VITE_API_URL ?? '/api'
+// `??` کافی نیست: اگر VITE_API_URL در .env خالی تعریف شده باشد مقدارش ""
+// است و آدرس درخواست‌ها به `/products` (بدون /api) تبدیل می‌شد.
+const BASE = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/, '')
 
 export class ApiError extends Error {
   status: number
@@ -28,13 +30,38 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
 
   const response = await fetch(`${BASE}${path}`, { ...init, headers })
   const text = await response.text()
-  const data = text ? JSON.parse(text) : {}
+
+  // پاسخ می‌تواند HTML باشد (خطای پروکسی، ۵۰۰ بدون JSON، صفحهٔ CORS)؛
+  // JSON.parse بدون محافظ، خطای «Unexpected token <» نشان می‌داد.
+  let data: any = {}
+  if (text) {
+    try {
+      data = JSON.parse(text)
+    } catch {
+      throw new ApiError(
+        response.ok ? 'پاسخ سرور قابل خواندن نبود.' : 'سرور پاسخ معتبری برنگرداند؛ دوباره تلاش کنید.',
+        response.status
+      )
+    }
+  }
 
   if (!response.ok) {
+    // خطاهای اعتبارسنجی لاراول در errors هستند و message آن‌ها انگلیسی و
+    // عمومی است؛ اولویت باید با پیام فارسی فیلدها باشد.
+    const fieldErrors = data?.errors
+      ? Object.values(data.errors as Record<string, unknown>)
+          .flat()
+          .filter(Boolean)
+          .join(' ')
+      : ''
     const message =
-      (data && (data.error || data.message)) ||
-      (data?.errors ? Object.values(data.errors).flat().join(' ') : null) ||
-      'خطایی رخ داد؛ دوباره تلاش کنید.'
+      fieldErrors || data?.error || data?.message || 'خطایی رخ داد؛ دوباره تلاش کنید.'
+
+    if (response.status === 401) {
+      localStorage.removeItem('nodehi.token')
+      window.dispatchEvent(new Event('nodehi:unauthorized'))
+    }
+
     throw new ApiError(String(message), response.status)
   }
 
@@ -44,6 +71,11 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
 export const get = <T>(path: string) => api<T>(path)
 export const post = <T>(path: string, body: unknown) =>
   api<T>(path, { method: 'POST', body: JSON.stringify(body) })
+
+export const patch = <T>(path: string, body: unknown) =>
+  api<T>(path, { method: 'PATCH', body: JSON.stringify(body) })
+
+export const del = <T>(path: string) => api<T>(path, { method: 'DELETE' })
 
 export type ProductSummary = {
   id: string

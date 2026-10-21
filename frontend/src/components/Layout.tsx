@@ -94,6 +94,14 @@ export default function Layout() {
           </form>
 
           <div className="mr-auto flex items-center gap-1 md:mr-0">
+            {user && ['admin', 'operator'].includes(user.role) && (
+              <Link
+                to="/admin"
+                className="hidden rounded-xl border border-surface-border px-3 py-2 text-xs font-bold text-primary hover:bg-surface-muted sm:block"
+              >
+                پنل مدیریت
+              </Link>
+            )}
             <Link
               to={user ? '/account' : '/login'}
               className="hidden items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-surface-muted sm:flex"
@@ -138,6 +146,11 @@ export default function Layout() {
               <Link to={user ? '/account' : '/login'} className="rounded-lg px-3 py-2 hover:bg-surface-muted">
                 {user ? 'حساب کاربری' : 'ورود / ثبت‌نام'}
               </Link>
+              {user && ['admin', 'operator'].includes(user.role) && (
+                <Link to="/admin" className="rounded-lg px-3 py-2 font-bold text-primary hover:bg-surface-muted">
+                  پنل مدیریت
+                </Link>
+              )}
             </nav>
           </div>
         )}

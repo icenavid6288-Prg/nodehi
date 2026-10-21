@@ -15,7 +15,7 @@ dist/
 
 # دیتابیس محلی SQLite (migrationها باید کامیت شوند، خود فایل دیتابیس نه)
 prisma/dev.db
-data/
+/data/
 prisma/dev.db-journal
 prisma/dev.db-wal
 prisma/dev.db-shm

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ContactMessage;
 use App\Models\Product;
 use App\Models\StockAlert;
+use App\Support\Phone;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -21,6 +22,12 @@ class EngagementController extends Controller
             'message' => ['required', 'string', 'max:2000'],
         ]);
 
+        $phone = Phone::normalize($data['phone']);
+        if (! Phone::isValid($phone)) {
+            return response()->json(['ok' => false, 'error' => 'شماره همراه معتبر نیست.'], 422);
+        }
+
+        $data['phone'] = $phone;
         $message = ContactMessage::create($data + ['status' => 'new']);
 
         return response()->json([
@@ -38,8 +45,13 @@ class EngagementController extends Controller
             'email' => ['nullable', 'email', 'max:120'],
         ]);
 
+        $phone = Phone::normalize($data['phone']);
+        if (! Phone::isValid($phone)) {
+            return response()->json(['ok' => false, 'error' => 'شماره همراه معتبر نیست.'], 422);
+        }
+
         $alert = StockAlert::updateOrCreate(
-            ['product_slug' => $data['productSlug'], 'phone' => $data['phone']],
+            ['product_slug' => $data['productSlug'], 'phone' => $phone],
             ['email' => $data['email'] ?? null, 'user_id' => $request->user()?->id]
         );
 

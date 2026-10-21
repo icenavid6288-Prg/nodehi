@@ -14,6 +14,7 @@
     "reinstall": "node scripts/reset.mjs",
     "pack:host": "node scripts/pack.mjs",
     "doctor": "node scripts/doctor.mjs",
+    "seed:check": "node scripts/export-content.mjs",
     "probe": "node scripts/probe.js",
     "prebuild": "node scripts/prepare-data.mjs",
     "build": "next build",
