@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, useParams, useNavigate } from 'react-router-dom'
 import { get, type ProductSummary } from '../lib/api'
 import { useCatalog } from '../context/CatalogContext'
 import ProductCard from '../components/ProductCard'
 import { toFa } from '../lib/format'
+import { brandMeta, categoryMeta, shopMeta, usePageMeta } from '../lib/seo'
 
 type ProductList = {
   items: ProductSummary[]
@@ -23,6 +24,10 @@ const sortOptions = [
 ]
 
 export default function Shop() {
+  // مسیرهای /category/:slug و /brand/:slug هم پشتیبانی می‌شوند تا صفحه‌های
+  // دسته و برند canonical مستقل و قابل ایندکس داشته باشند.
+  const { categorySlug, brandSlug } = useParams()
+  const navigate = useNavigate()
   const [params, setParams] = useSearchParams()
   const { categories, brands } = useCatalog()
   const [data, setData] = useState<ProductList | null>(null)
@@ -30,8 +35,8 @@ export default function Shop() {
   const [error, setError] = useState<string | null>(null)
 
   const q = params.get('q') ?? ''
-  const category = params.get('category') ?? ''
-  const brand = params.get('brand') ?? ''
+  const category = categorySlug ?? params.get('category') ?? ''
+  const brand = brandSlug ?? params.get('brand') ?? ''
   const sort = params.get('sort') ?? 'relevance'
   const inStock = params.get('inStock') === '1'
   const onSale = params.get('onSale') === '1'
@@ -60,6 +65,19 @@ export default function Shop() {
   }, [queryString])
 
   function update(key: string, value: string) {
+    // دسته و برند به مسیرهای canonical می‌روند تا با /category/:slug و
+    // /brand/:slug تداخل نکنند؛ بقیه فیلترها پارامتر باقی می‌مانند.
+    if (key === 'category') {
+      setParams(value ? new URLSearchParams() : params)
+      if (value) navigate(`/category/${value}`)
+      else navigate('/shop')
+      return
+    }
+    if (key === 'brand') {
+      if (value) navigate(`/brand/${value}`)
+      else navigate('/shop')
+      return
+    }
     const next = new URLSearchParams(params)
     if (value) next.set(key, value)
     else next.delete(key)
@@ -68,6 +86,30 @@ export default function Shop() {
   }
 
   const activeCategory = categories.find((item) => item.slug === category)
+  const activeBrand = brands.find((item) => item.slug === brand)
+
+  // فقط فهرست دسته/برندِ بدون فیلتر ارزش ایندکس دارد؛ جستجو و فیلترهای
+  // ترکیبی محتوای تکراری می‌سازند و noindex می‌شوند.
+  const filterCount = [q, inStock, onSale, sort !== 'relevance', page > 1].filter(Boolean).length
+  const hasIndexableFilter = filterCount === 0 && !q
+
+  usePageMeta(
+    activeCategory && hasIndexableFilter
+      ? categoryMeta({
+          slug: activeCategory.slug,
+          name: activeCategory.name,
+          seoIntro: activeCategory.description,
+        })
+      : activeBrand && hasIndexableFilter
+        ? brandMeta({ slug: activeBrand.slug, name: activeBrand.name, description: activeBrand.description })
+        : {
+            ...shopMeta(),
+            title: q ? `جستجو «${q}» | فروشگاه نودهی` : shopMeta().title,
+            canonical: undefined,
+            path: '/shop',
+            robots: hasIndexableFilter ? 'index' : 'noindex',
+          },
+  )
 
   return (
     <div className="container-page py-8">
@@ -132,9 +174,9 @@ export default function Shop() {
               </li>
               {categories.map((item) => (
                 <li key={item.slug}>
-                  <button
-                    type="button"
-                    onClick={() => update('category', item.slug)}
+                <button
+                  type="button"
+                  onClick={() => update('category', item.slug)}
                     className={`flex w-full items-center justify-between rounded-lg px-2 py-1.5 hover:bg-surface-muted ${category === item.slug ? 'font-bold text-primary' : 'text-ink-muted'}`}
                   >
                     <span>{item.name}</span>

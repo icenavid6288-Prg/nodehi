@@ -4,9 +4,7 @@
  * آدرس پیش‌فرض `/api` است و Vite آن را به `http://127.0.0.1:8000` پروکسی
  * می‌کند؛ در تولید با `VITE_API_URL` می‌توان آدرس مطلق داد.
  */
-// `??` کافی نیست: اگر VITE_API_URL در .env خالی تعریف شده باشد مقدارش ""
-// است و آدرس درخواست‌ها به `/products` (بدون /api) تبدیل می‌شد.
-const BASE = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/, '')
+const BASE = import.meta.env.VITE_API_URL ?? '/api'
 
 export class ApiError extends Error {
   status: number
@@ -30,38 +28,13 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
 
   const response = await fetch(`${BASE}${path}`, { ...init, headers })
   const text = await response.text()
-
-  // پاسخ می‌تواند HTML باشد (خطای پروکسی، ۵۰۰ بدون JSON، صفحهٔ CORS)؛
-  // JSON.parse بدون محافظ، خطای «Unexpected token <» نشان می‌داد.
-  let data: any = {}
-  if (text) {
-    try {
-      data = JSON.parse(text)
-    } catch {
-      throw new ApiError(
-        response.ok ? 'پاسخ سرور قابل خواندن نبود.' : 'سرور پاسخ معتبری برنگرداند؛ دوباره تلاش کنید.',
-        response.status
-      )
-    }
-  }
+  const data = text ? JSON.parse(text) : {}
 
   if (!response.ok) {
-    // خطاهای اعتبارسنجی لاراول در errors هستند و message آن‌ها انگلیسی و
-    // عمومی است؛ اولویت باید با پیام فارسی فیلدها باشد.
-    const fieldErrors = data?.errors
-      ? Object.values(data.errors as Record<string, unknown>)
-          .flat()
-          .filter(Boolean)
-          .join(' ')
-      : ''
     const message =
-      fieldErrors || data?.error || data?.message || 'خطایی رخ داد؛ دوباره تلاش کنید.'
-
-    if (response.status === 401) {
-      localStorage.removeItem('nodehi.token')
-      window.dispatchEvent(new Event('nodehi:unauthorized'))
-    }
-
+      (data && (data.error || data.message)) ||
+      (data?.errors ? Object.values(data.errors).flat().join(' ') : null) ||
+      'خطایی رخ داد؛ دوباره تلاش کنید.'
     throw new ApiError(String(message), response.status)
   }
 
@@ -71,10 +44,8 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
 export const get = <T>(path: string) => api<T>(path)
 export const post = <T>(path: string, body: unknown) =>
   api<T>(path, { method: 'POST', body: JSON.stringify(body) })
-
 export const patch = <T>(path: string, body: unknown) =>
   api<T>(path, { method: 'PATCH', body: JSON.stringify(body) })
-
 export const del = <T>(path: string) => api<T>(path, { method: 'DELETE' })
 
 export type ProductSummary = {
@@ -191,6 +162,99 @@ export type LoyaltyResponse = {
   tiers: { name: string; requirement: string; discount: string; points: string; perks: string[] }[]
   installments: { months: number; label: string; interest: string; note: string; featured: boolean }[]
   steps: { step: number; title: string; description: string }[]
+}
+
+export type Paginated<T> = {
+  total: number
+  page: number
+  perPage: number
+  pageCount: number
+  items: T[]
+}
+
+export type AdminProduct = {
+  id: number
+  slug: string
+  name: string
+  category: string
+  categoryName: string
+  brand: string
+  brandName: string
+  price: number
+  compareAtPrice: number | null
+  stock: number
+  rating: number
+  reviewCount: number
+  shortDescription: string
+  description: string
+  highlights: string[]
+  specs: { label: string; value: string; group?: string | null }[]
+  attributes: Record<string, unknown>
+  images: string[]
+  tags: string[]
+  relatedSlugs: string[]
+  videoUrl: string | null
+  isActive: boolean
+  publishedAt: string | null
+  updatedAt: string | null
+}
+
+export type AdminOrderSummary = {
+  id: number
+  orderNumber: string
+  status: string
+  paymentMethod: string
+  shippingMethod: string
+  subtotal: number
+  discount: number
+  shipping: number
+  total: number
+  couponCode: string | null
+  customerName: string
+  customerPhone: string
+  itemCount: number | null
+  trackingCode: string | null
+  createdAt: string
+  paidAt: string | null
+  shippedAt: string | null
+  deliveredAt: string | null
+  cancelledAt: string | null
+}
+
+export type AdminOrderDetail = AdminOrderSummary & {
+  customerEmail: string | null
+  shippingAddress: { province: string; city: string; line: string; postalCode: string | null }
+  note: string | null
+  user: { id: number; phone: string; fullName: string } | null
+  payment: { refId: string | null; cardPan: string | null }
+  items: { slug: string; name: string; unitPrice: number; quantity: number; lineTotal: number }[]
+}
+
+export type AdminCoupon = {
+  id: number
+  code: string
+  label: string
+  percent: number
+  minSubtotal: number | null
+  maxUses: number | null
+  usedCount: number
+  startsAt: string | null
+  expiresAt: string | null
+  isActive: boolean
+  createdAt: string
+}
+
+export type AdminReview = {
+  id: number
+  productSlug: string
+  productName: string
+  author: string
+  userPhone: string | null
+  rating: number
+  title: string
+  body: string
+  status: 'pending' | 'approved' | 'rejected'
+  createdAt: string
 }
 
 export type OrderResponse = {

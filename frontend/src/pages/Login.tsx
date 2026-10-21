@@ -2,17 +2,19 @@ import { useState, type FormEvent } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { post, type AuthUser } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
+import { useNoindex } from '../lib/seo'
 
 type OtpRequest = { ok: boolean; devCode?: string; expiresIn: number; message: string }
 type OtpVerify = { ok: boolean; token: string; user: AuthUser }
 
 export default function Login() {
+  useNoindex('ورود / ثبت‌نام', '/login')
   const { signIn } = useAuth()
   const navigate = useNavigate()
-  const [params] = useSearchParams()
-  // مسیر بازگشت فقط داخلی است؛ آدرس کامل یا // می‌تواند کاربر را به دامنهٔ دیگر ببرد.
-  const rawNext = params.get('next') ?? ''
-  const next = rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : '/account'
+  const [searchParams] = useSearchParams()
+  const rawNext = searchParams.get('next') ?? ''
+  // فقط مسیر داخلی مجاز است تا پارامتر next به بازکردن مقصد بیرونی تبدیل نشود.
+  const nextPath = rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : '/account'
   const [step, setStep] = useState<'phone' | 'code'>('phone')
   const [phone, setPhone] = useState('')
   const [code, setCode] = useState('')
@@ -42,7 +44,7 @@ export default function Login() {
     try {
       const result = await post<OtpVerify>('/auth/otp/verify', { phone, code })
       signIn(result.token, result.user)
-      navigate(next)
+      navigate(nextPath)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'کد وارد شده معتبر نیست.')
     } finally {

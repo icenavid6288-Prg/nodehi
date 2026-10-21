@@ -12,16 +12,17 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 
 /**
- * داده اولیه فروشگاه — از همان فایل‌های JSON نسخه Next.js خوانده می‌شود تا
- * مهاجرت، داده را دوباره اختراع نکند.
+ * داده اولیه فروشگاه — از فایل‌های JSON پوشهٔ seeders/data خوانده می‌شود تا
+ * کاتالوگ فقط در یک جا نگه‌داری شود.
  */
 class StoreSeeder extends Seeder
 {
     public function run(): void
     {
-        $categories = $this->loadJson('categories.json');
-        $brands = $this->loadJson('brands.json');
-        $products = $this->loadJson('products.json');
+        $dataDir = database_path('seeders/data');
+        $categories = json_decode(file_get_contents($dataDir . '/categories.json'), true) ?: [];
+        $brands = json_decode(file_get_contents($dataDir . '/brands.json'), true) ?: [];
+        $products = json_decode(file_get_contents($dataDir . '/products.json'), true) ?: [];
 
         foreach ($categories as $i => $row) {
             Category::updateOrCreate(['slug' => $row['slug']], [
@@ -109,31 +110,5 @@ class StoreSeeder extends Seeder
             'is_active' => true,
             'phone_verified_at' => now(),
         ]);
-    }
-
-    /**
-     * خواندن فایل دادهٔ seed با خطای روشن.
-     *
-     * نسخهٔ قبلی با file_get_contents مستقیم کار می‌کرد و اگر فایل نبود،
-     * seed با یک warning مبهم یا دادهٔ خالی متوقف می‌شد. حالا پیام دقیق
-     * می‌گوید کدام فایل کم است تا نصب تازه بدون جست‌وجو قابل رفع باشد.
-     */
-    private function loadJson(string $file): array
-    {
-        $path = database_path('seeders/data/' . $file);
-
-        if (! is_file($path)) {
-            throw new \RuntimeException(
-                "فایل دادهٔ seed پیدا نشد: {$path}. فایل‌های categories.json، brands.json و products.json باید در backend/database/seeders/data باشند."
-            );
-        }
-
-        $data = json_decode((string) file_get_contents($path), true);
-
-        if (! is_array($data)) {
-            throw new \RuntimeException("فایل دادهٔ seed معتبر نیست: {$path}");
-        }
-
-        return $data;
     }
 }

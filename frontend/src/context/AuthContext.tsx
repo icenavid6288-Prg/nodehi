@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { get, post, type AuthUser } from '../lib/api'
+import { get, type AuthUser } from '../lib/api'
 
 type AuthContextValue = {
   user: AuthUser | null
@@ -35,25 +35,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .finally(() => setReady(true))
   }, [])
 
-  // هر پاسخ ۴۰۱ (نشست منقضی) کاربر را در کل برنامه خارج می‌کند؛ وگرنه
-  // صفحه‌هایی مثل سفارش‌ها به‌جای هدایت به ورود، «خالی» نشان می‌دادند.
-  useEffect(() => {
-    const onUnauthorized = () => setUser(null)
-    window.addEventListener('nodehi:unauthorized', onUnauthorized)
-    return () => window.removeEventListener('nodehi:unauthorized', onUnauthorized)
-  }, [])
-
   const signIn = useCallback((token: string, nextUser: AuthUser) => {
     localStorage.setItem('nodehi.token', token)
     setUser(nextUser)
   }, [])
 
   const signOut = useCallback(() => {
-    // ابتدا نشست سرور باطل می‌شود؛ پاک‌کردن فقط localStorage باعث می‌شد
-    // توکن تا ۳۰ روز روی سرور معتبر بماند.
-    const token = localStorage.getItem('nodehi.token')
-    if (token) post('/auth/logout', {}).catch(() => undefined)
-
     localStorage.removeItem('nodehi.token')
     setUser(null)
   }, [])

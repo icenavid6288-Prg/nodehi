@@ -5,6 +5,7 @@ import { useCatalog } from '../context/CatalogContext'
 import ProductCard from '../components/ProductCard'
 import { CheckIcon, ShieldIcon, StarIcon, TruckIcon } from '../components/icons'
 import { toFa } from '../lib/format'
+import { homeMeta, usePageMeta } from '../lib/seo'
 
 type ProductList = { items: ProductSummary[]; total: number }
 
@@ -43,11 +44,13 @@ function Section({
 
 export default function Home() {
   const { categories } = useCatalog()
-  const catalogSize = categories.reduce((sum, category) => sum + category.count, 0)
   const [popular, setPopular] = useState<ProductSummary[]>([])
   const [fresh, setFresh] = useState<ProductSummary[]>([])
   const [ready, setReady] = useState<ProductSummary[]>([])
   const [loading, setLoading] = useState(true)
+
+  // متادیتای خانه از هستهٔ مشترک سئو می‌آید تا با نسخهٔ پررندرشدهٔ ایستا یکی باشد.
+  usePageMeta(homeMeta())
 
   useEffect(() => {
     Promise.all([
@@ -71,7 +74,7 @@ export default function Home() {
           <div className="text-white">
             <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs backdrop-blur">
               <StarIcon className="h-3.5 w-3.5" />
-              {toFa(catalogSize)} کالای منتخب با گارانتی رسمی
+              {toFa('۲۳')} کالای منتخب با گارانتی رسمی
             </span>
             <h1 className="text-3xl font-extrabold leading-tight sm:text-4xl">
               لوازم خانگی مطمئن،
@@ -121,7 +124,7 @@ export default function Home() {
           {categories.slice(0, 8).map((category) => (
             <Link
               key={category.slug}
-              to={`/shop?category=${category.slug}`}
+              to={`/category/${category.slug}`}
               className="flex items-center justify-between gap-2 rounded-2xl border border-surface-border bg-white px-4 py-3 shadow-card transition hover:-translate-y-0.5 hover:border-secondary/40"
             >
               <span className="text-sm font-bold">{category.name}</span>

@@ -1,0 +1,2003 @@
+{
+  "_comment": "منبع دادهٔ پررندر ایستا. محتوای عمومی (سئو، مقاله، سوال، حقوقی، وفاداری) ثابت و کنترل‌شدهٔ همین ریپو است و از seederها می‌آید؛ خروجی build باید با آن‌ها «هم‌ارز» باشد. فهرست اسلاگ‌های محصول/دسته/برند بعداً با `node scripts/prerender-targets.mjs > frontend/src/data/prerender-targets.json` از API زنده پر می‌شود.",
+  "site": {
+    "name": "Nodehi",
+    "nameFa": "ندهی",
+    "phone": "۰۲۱-۹۱۰۰۰۰۰۰",
+    "phoneRaw": "+982191000000",
+    "email": "info@nodehi.ir"
+  },
+  "products": [
+    {
+      "slug": "samsung-qled-55-q70",
+      "name": "تلویزیون سامسونگ QLED ۵۵ اینچ مدل Q70",
+      "shortDescription": "تلویزیون QLED ۴K با نرخ نوسازی ۱۲۰ هرتز و سیستم هوشمند تایزن.",
+      "description": "فناوری کوانتوم دات در Q70 رنگ‌های خالص‌تر و روشنایی بالاتری نسبت به LED معمولی ارائه می‌دهد. نرخ نوسازی ۱۲۰ هرتز تجربه بازی و تماشای ورزش را روان‌تر می‌کند.",
+      "price": 68000000,
+      "compareAtPrice": 74500000,
+      "stock": 10,
+      "rating": 4.7,
+      "reviewCount": 96,
+      "images": [],
+      "brand": {
+        "name": "سامسونگ",
+        "slug": "samsung"
+      },
+      "category": {
+        "name": "تلویزیون",
+        "slug": "tv"
+      },
+      "highlights": [
+        "فناوری کوانتوم دات با رنگ‌های خالص",
+        "نرخ نوسازی ۱۲۰ هرتز",
+        "سیستم هوشمند تایزن با فارسی",
+        "ریموت خورشیدی بدون باتری"
+      ],
+      "specs": [
+        {
+          "label": "نوع",
+          "value": "QLED",
+          "group": "general"
+        },
+        {
+          "label": "سیستم‌عامل",
+          "value": "Tizen",
+          "group": "general"
+        },
+        {
+          "label": "سایز",
+          "value": "۵۵ اینچ",
+          "group": "technical"
+        },
+        {
+          "label": "رزولوشن",
+          "value": "۳۸۴۰ × ۲۱۶۰ (4K)",
+          "group": "technical"
+        },
+        {
+          "label": "نرخ نوسازی",
+          "value": "۱۲۰ هرتز",
+          "group": "technical"
+        },
+        {
+          "label": "تعداد پورت HDMI",
+          "value": "۴",
+          "group": "technical"
+        },
+        {
+          "label": "ابعاد با پایه (عرض×ارتفاع×عمق)",
+          "value": "۱۲۳ × ۷۸ × ۲۴ سانتی‌متر",
+          "group": "dimensions"
+        },
+        {
+          "label": "رده انرژی",
+          "value": "A+",
+          "group": "energy"
+        }
+      ]
+    },
+    {
+      "slug": "samsung-eco-bubble-9kg",
+      "name": "ماشین لباسشویی سامسونگ ۹ کیلویی اکوبابل",
+      "shortDescription": "لباسشویی ۹ کیلویی با فناوری EcoBubble و شست‌وشوی سریع ۱۵ دقیقه‌ای.",
+      "description": "فناوری EcoBubble سامسونگ پودر را قبل از رسیدن به لباس در آب حل می‌کند و در دمای پایین هم نتیجه شست‌وشوی بهتری می‌دهد. برنامه Quick Wash در ۱۵ دقیقه لباس‌های کم‌آلود را شست‌وشو می‌دهد.",
+      "price": 45900000,
+      "compareAtPrice": 49800000,
+      "stock": 7,
+      "rating": 4.7,
+      "reviewCount": 156,
+      "images": [],
+      "brand": {
+        "name": "سامسونگ",
+        "slug": "samsung"
+      },
+      "category": {
+        "name": "ماشین لباسشویی",
+        "slug": "washer"
+      },
+      "highlights": [
+        "فناوری EcoBubble برای شست‌وشو در دمای پایین",
+        "برنامه سریع ۱۵ دقیقه‌ای",
+        "موتور دیجیتال اینورتر",
+        "درام الماسی محافظ پارچه"
+      ],
+      "specs": [
+        {
+          "label": "نوع",
+          "value": "درب از جلو",
+          "group": "general"
+        },
+        {
+          "label": "رنگ",
+          "value": "سفید",
+          "group": "general"
+        },
+        {
+          "label": "ظرفیت",
+          "value": "۹ کیلوگرم",
+          "group": "technical"
+        },
+        {
+          "label": "دور موتور",
+          "value": "۱۴۰۰ دور در دقیقه",
+          "group": "technical"
+        },
+        {
+          "label": "ابعاد (عرض×ارتفاع×عمق)",
+          "value": "۶۰ × ۸۵ × ۶۰ سانتی‌متر",
+          "group": "dimensions"
+        },
+        {
+          "label": "رده انرژی",
+          "value": "A+++",
+          "group": "energy"
+        }
+      ]
+    },
+    {
+      "slug": "lg-front-load-8kg-f4v5",
+      "name": "ماشین لباسشویی ال‌جی ۸ کیلویی مدل F4V5",
+      "shortDescription": "لباسشویی درب از جلو ۸ کیلو با موتور اینورتر و گارانتی ۱۰ ساله موتور.",
+      "description": "ال‌جی F4V5 با موتور اینورتر مستقیم (Direct Drive) لرزش و صدا را به حداقل می‌رساند و دوام موتور را افزایش می‌دهد. بخارشوی آلرژی‌زا، گرده و مایت را از لباس حذف می‌کند.",
+      "price": 38500000,
+      "compareAtPrice": 42000000,
+      "stock": 9,
+      "rating": 4.6,
+      "reviewCount": 187,
+      "images": [],
+      "brand": {
+        "name": "ال‌جی",
+        "slug": "lg"
+      },
+      "category": {
+        "name": "ماشین لباسشویی",
+        "slug": "washer"
+      },
+      "highlights": [
+        "موتور Direct Drive با گارانتی ۱۰ ساله",
+        "بخارشوی ضدحساسیت",
+        "۱۵ برنامه شست‌وشو",
+        "نمایشگر LED و قفل کودک"
+      ],
+      "specs": [
+        {
+          "label": "نوع",
+          "value": "درب از جلو",
+          "group": "general"
+        },
+        {
+          "label": "رنگ",
+          "value": "سفید",
+          "group": "general"
+        },
+        {
+          "label": "تعداد برنامه",
+          "value": "۱۵",
+          "group": "general"
+        },
+        {
+          "label": "ظرفیت",
+          "value": "۸ کیلوگرم",
+          "group": "technical"
+        },
+        {
+          "label": "دور موتور",
+          "value": "۱۴۰۰ دور در دقیقه",
+          "group": "technical"
+        },
+        {
+          "label": "موتور",
+          "value": "اینورتر Direct Drive",
+          "group": "technical"
+        },
+        {
+          "label": "ابعاد (عرض×ارتفاع×عمق)",
+          "value": "۶۰ × ۸۵ × ۵۶ سانتی‌متر",
+          "group": "dimensions"
+        },
+        {
+          "label": "رده انرژی",
+          "value": "A+++",
+          "group": "energy"
+        },
+        {
+          "label": "مصرف آب هر دوره",
+          "value": "۴۸ لیتر",
+          "group": "energy"
+        }
+      ]
+    },
+    {
+      "slug": "lg-oled-55-c4",
+      "name": "تلویزیون ال‌جی OLED ۵۵ اینچ مدل C4",
+      "shortDescription": "OLED با مشکی مطلق و نرخ نوسازی ۱۲۰ هرتز؛ بهترین انتخاب برای سینمای خانگی.",
+      "description": "پنل OLED ال‌جی هر پیکسل را مستقل روشن و خاموش می‌کند و مشکی کاملاً مطلق به دست می‌آید. پردازنده آلفا ۹ محتوای کم‌کیفیت را هم ارتقا می‌دهد.",
+      "price": 92000000,
+      "compareAtPrice": 99000000,
+      "stock": 4,
+      "rating": 4.9,
+      "reviewCount": 68,
+      "images": [],
+      "brand": {
+        "name": "ال‌جی",
+        "slug": "lg"
+      },
+      "category": {
+        "name": "تلویزیون",
+        "slug": "tv"
+      },
+      "highlights": [
+        "مشکی مطلق با پنل OLED",
+        "پردازنده هوش مصنوعی آلفا ۹",
+        "پشتیبانی Dolby Vision و Dolby Atmos",
+        "مناسب کنسول‌های نسل جدید"
+      ],
+      "specs": [
+        {
+          "label": "نوع",
+          "value": "OLED",
+          "group": "general"
+        },
+        {
+          "label": "سیستم‌عامل",
+          "value": "webOS",
+          "group": "general"
+        },
+        {
+          "label": "سایز",
+          "value": "۵۵ اینچ",
+          "group": "technical"
+        },
+        {
+          "label": "رزولوشن",
+          "value": "۳۸۴۰ × ۲۱۶۰ (4K)",
+          "group": "technical"
+        },
+        {
+          "label": "نرخ نوسازی",
+          "value": "۱۲۰ هرتز",
+          "group": "technical"
+        },
+        {
+          "label": "ابعاد با پایه (عرض×ارتفاع×عمق)",
+          "value": "۱۲۲ × ۷۵ × ۲۳ سانتی‌متر",
+          "group": "dimensions"
+        },
+        {
+          "label": "رده انرژی",
+          "value": "A",
+          "group": "energy"
+        }
+      ]
+    },
+    {
+      "slug": "samsung-side-by-side-rs68-28ft",
+      "name": "یخچال ساید بای ساید سامسونگ مدل RS68 ۲۸ فوت",
+      "shortDescription": "ساید بای ساید ۲۸ فوت با یخ‌ساز خودکار، اینورتر دیجیتال و نمایشگر دیجیتال.",
+      "description": "یخچال ساید بای ساید سامسونگ RS68 با فناوری خنک‌کنندگی ۳۶۰ درجه، سرمای یکنواخت را در تمام طبقات حفظ می‌کند. کمپرسور اینورتر دیجیتال مصرف برق را تا ۴۰٪ کاهش می‌دهد و صدای کارکرد آن محسوس نیست. یخ‌ساز و آب‌سردکن خودکار، بدون نیاز به اتصال به شیر آب هم کار می‌کند.",
+      "price": 89000000,
+      "compareAtPrice": 96500000,
+      "stock": 6,
+      "rating": 4.7,
+      "reviewCount": 128,
+      "images": [],
+      "brand": {
+        "name": "سامسونگ",
+        "slug": "samsung"
+      },
+      "category": {
+        "name": "یخچال و فریزر",
+        "slug": "refrigerator"
+      },
+      "highlights": [
+        "یخ‌ساز خودکار با مخزن آب داخلی",
+        "کمپرسور اینورتر دیجیتال با گارانتی ۱۰ ساله",
+        "خنک‌کنندگی یکنواخت در تمام طبقات",
+        "نمایشگر دیجیتال و حالت تعطیلات"
+      ],
+      "specs": [
+        {
+          "label": "نوع",
+          "value": "ساید بای ساید",
+          "group": "general"
+        },
+        {
+          "label": "تعداد درب",
+          "value": "۲ درب",
+          "group": "general"
+        },
+        {
+          "label": "یخ‌ساز",
+          "value": "خودکار",
+          "group": "general"
+        },
+        {
+          "label": "رنگ",
+          "value": "استیل نقره‌ای",
+          "group": "general"
+        },
+        {
+          "label": "ظرفیت کل",
+          "value": "۶۹۰ لیتر",
+          "group": "technical"
+        },
+        {
+          "label": "فناوری خنک‌کنندگی",
+          "value": "No Frost",
+          "group": "technical"
+        },
+        {
+          "label": "کمپرسور",
+          "value": "اینورتر دیجیتال",
+          "group": "technical"
+        },
+        {
+          "label": "تعداد طبقات یخچال",
+          "value": "۴ طبقه",
+          "group": "technical"
+        },
+        {
+          "label": "ابعاد (عرض×ارتفاع×عمق)",
+          "value": "۹۱ × ۱۷۸ × ۷۳ سانتی‌متر",
+          "group": "dimensions"
+        },
+        {
+          "label": "رده انرژی",
+          "value": "A+",
+          "group": "energy"
+        },
+        {
+          "label": "مصرف سالانه",
+          "value": "۴۲۰ کیلووات‌ساعت",
+          "group": "energy"
+        }
+      ]
+    },
+    {
+      "slug": "bosch-vacuum-pro-animal",
+      "name": "جاروبرقی بوش مدل ProAnimal مخزنی",
+      "shortDescription": "جاروبرقی مخزنی با توان مکش بالا و سری مخصوص مو و پرز حیوانات.",
+      "description": "بوش ProAnimal با برس مخصوص، مو و پرز حیوانات خانگی را از فرش و مبل جمع می‌کند. فیلتر HEPA ذرات ریز و آلرژن‌ها را در مخزن نگه می‌دارد.",
+      "price": 14500000,
+      "compareAtPrice": 16200000,
+      "stock": 20,
+      "rating": 4.6,
+      "reviewCount": 134,
+      "images": [],
+      "brand": {
+        "name": "بوش",
+        "slug": "bosch"
+      },
+      "category": {
+        "name": "جاروبرقی",
+        "slug": "vacuum"
+      },
+      "highlights": [
+        "سری مخصوص پرز و موی حیوانات",
+        "فیلتر HEPA قابل شست‌وشو",
+        "مخزن ۴ لیتری بدون کیسه",
+        "سطح صدای پایین"
+      ],
+      "specs": [
+        {
+          "label": "نوع",
+          "value": "مخزنی",
+          "group": "general"
+        },
+        {
+          "label": "رنگ",
+          "value": "مشکی و آبی",
+          "group": "general"
+        },
+        {
+          "label": "توان",
+          "value": "۲۲۰۰ وات",
+          "group": "technical"
+        },
+        {
+          "label": "ظرفیت مخزن",
+          "value": "۴ لیتر",
+          "group": "technical"
+        },
+        {
+          "label": "فیلتر",
+          "value": "HEPA",
+          "group": "technical"
+        },
+        {
+          "label": "طول سیم",
+          "value": "۷ متر",
+          "group": "technical"
+        },
+        {
+          "label": "سطح صدا",
+          "value": "۷۸ دسی‌بل",
+          "group": "energy"
+        }
+      ]
+    },
+    {
+      "slug": "samsung-dishwasher-dw60-14",
+      "name": "ماشین ظرفشویی سامسونگ مدل DW60 ۱۴ نفره",
+      "shortDescription": "ظرفشویی ۱۴ نفره با نازل آبگردان و برنامه شست‌وشوی سریع ۳۵ دقیقه.",
+      "description": "سامسونگ DW60 با فناوری WaterWall به‌جای پره چرخان، آب را با فشار بالا روی ظرف‌ها می‌پاشد و پوشش بهتری روی سبدهای گوشه‌ای دارد.",
+      "price": 47500000,
+      "compareAtPrice": 52300000,
+      "stock": 8,
+      "rating": 4.5,
+      "reviewCount": 118,
+      "images": [],
+      "brand": {
+        "name": "سامسونگ",
+        "slug": "samsung"
+      },
+      "category": {
+        "name": "ماشین ظرفشویی",
+        "slug": "dishwasher"
+      },
+      "highlights": [
+        "فناوری WaterWall برای پوشش کامل",
+        "برنامه سریع ۳۵ دقیقه‌ای",
+        "خشک‌کن با جریان هوای گرم",
+        "سبد سوم برای قاشق و چنگال"
+      ],
+      "specs": [
+        {
+          "label": "نوع",
+          "value": "رومیزی مستقل",
+          "group": "general"
+        },
+        {
+          "label": "ظرفیت",
+          "value": "۱۴ نفره",
+          "group": "general"
+        },
+        {
+          "label": "رنگ",
+          "value": "استیل",
+          "group": "general"
+        },
+        {
+          "label": "تعداد برنامه",
+          "value": "۷",
+          "group": "technical"
+        },
+        {
+          "label": "سطح صوتی",
+          "value": "۴۶ دسی‌بل",
+          "group": "technical"
+        },
+        {
+          "label": "ابعاد (عرض×ارتفاع×عمق)",
+          "value": "۶۰ × ۸۵ × ۶۰ سانتی‌متر",
+          "group": "dimensions"
+        },
+        {
+          "label": "رده انرژی",
+          "value": "A++",
+          "group": "energy"
+        }
+      ]
+    },
+    {
+      "slug": "midea-split-18000-inverter",
+      "name": "کولر گازی مایدیا ۱۸۰۰۰ اینورتر",
+      "shortDescription": "اسپلیت ۱۸۰۰۰ اینورتر با مصرف برق پایین و گاز مبرد R410a.",
+      "description": "کولر گازی اینورتر مایدیا سرعت کمپرسور را بر اساس دمای اتاق تنظیم می‌کند و تا ۶۰٪ در مصرف برق صرفه‌جویی می‌کند. حالت خواب و تایمر ۲۴ ساعته از امکانات آن است.",
+      "price": 41000000,
+      "compareAtPrice": 45200000,
+      "stock": 12,
+      "rating": 4.5,
+      "reviewCount": 176,
+      "images": [],
+      "brand": {
+        "name": "مایدیا",
+        "slug": "midea"
+      },
+      "category": {
+        "name": "کولر گازی و اسپلیت",
+        "slug": "air-conditioner"
+      },
+      "highlights": [
+        "کمپرسور اینورتر با گارانتی ۵ ساله",
+        "صرفه‌جویی تا ۶۰٪ در مصرف برق",
+        "حالت خواب و تایمر ۲۴ ساعته",
+        "فیلتر تصفیه هوا"
+      ],
+      "specs": [
+        {
+          "label": "نوع",
+          "value": "اسپلیت دیواری",
+          "group": "general"
+        },
+        {
+          "label": "رنگ",
+          "value": "سفید",
+          "group": "general"
+        },
+        {
+          "label": "ظرفیت",
+          "value": "۱۸۰۰۰ BTU",
+          "group": "technical"
+        },
+        {
+          "label": "نوع کمپرسور",
+          "value": "اینورتر",
+          "group": "technical"
+        },
+        {
+          "label": "گاز مبرد",
+          "value": "R410a",
+          "group": "technical"
+        },
+        {
+          "label": "مناسب متراژ",
+          "value": "۳۵ تا ۵۰ متر مربع",
+          "group": "technical"
+        },
+        {
+          "label": "ابعاد واحد داخلی",
+          "value": "۱۰۵ × ۳۲ × ۲۳ سانتی‌متر",
+          "group": "dimensions"
+        },
+        {
+          "label": "رده انرژی",
+          "value": "A++",
+          "group": "energy"
+        }
+      ]
+    },
+    {
+      "slug": "lg-french-door-gr-x267",
+      "name": "یخچال درب فرانسوی ال‌جی مدل GR-X267",
+      "shortDescription": "درب فرانسوی ۲۶ فوت با موتور اینورتر لینیِر و گارانتی ۱۰ ساله کمپرسور.",
+      "description": "یخچال درب فرانسوی ال‌جی با موتور اینورتر لینیِر، دوام و بازدهی بالاتری نسبت به کمپرسورهای معمولی دارد. سیستم خنک‌کنندگی چندگانه هوای سرد را مستقل به یخچال و فریزر می‌فرستد تا بوی غذاها با هم مخلوط نشود.",
+      "price": 112000000,
+      "compareAtPrice": null,
+      "stock": 3,
+      "rating": 4.8,
+      "reviewCount": 74,
+      "images": [],
+      "brand": {
+        "name": "ال‌جی",
+        "slug": "lg"
+      },
+      "category": {
+        "name": "یخچال و فریزر",
+        "slug": "refrigerator"
+      },
+      "highlights": [
+        "موتور اینورتر لینیِر با گارانتی ۱۰ ساله",
+        "خنک‌کنندگی مستقل یخچال و فریزر",
+        "کشوهای محافظ رطوبت برای سبزیجات",
+        "طراحی بدون دستگیره (Push Open)"
+      ],
+      "specs": [
+        {
+          "label": "نوع",
+          "value": "درب فرانسوی",
+          "group": "general"
+        },
+        {
+          "label": "تعداد درب",
+          "value": "۴ درب",
+          "group": "general"
+        },
+        {
+          "label": "رنگ",
+          "value": "مشکی مات",
+          "group": "general"
+        },
+        {
+          "label": "ظرفیت کل",
+          "value": "۶۵۰ لیتر",
+          "group": "technical"
+        },
+        {
+          "label": "فناوری خنک‌کنندگی",
+          "value": "Smart Cooling",
+          "group": "technical"
+        },
+        {
+          "label": "موتور",
+          "value": "اینورتر لینیِر",
+          "group": "technical"
+        },
+        {
+          "label": "ابعاد (عرض×ارتفاع×عمق)",
+          "value": "۸۳ × ۱۷۸ × ۷۳ سانتی‌متر",
+          "group": "dimensions"
+        },
+        {
+          "label": "رده انرژی",
+          "value": "A++",
+          "group": "energy"
+        }
+      ]
+    },
+    {
+      "slug": "bosch-dishwasher-sms4-13",
+      "name": "ماشین ظرفشویی بوش مدل SMS4 ۱۳ نفره",
+      "shortDescription": "ظرفشویی ۱۳ نفره بوش با سبد انعطاف‌پذیر RackMatic و موتور کم‌صدا.",
+      "description": "بوش SMS4 با ارتفاع قابل تنظیم سبد RackMatic اجازه می‌دهد ظرف‌های بلند مانند قابلمه را هم بچینید. کارکرد کم‌صدا در شب و رده انرژی A++ آن را برای استفاده روزانه اقتصادی می‌کند.",
+      "price": 58000000,
+      "compareAtPrice": 64000000,
+      "stock": 6,
+      "rating": 4.8,
+      "reviewCount": 143,
+      "images": [],
+      "brand": {
+        "name": "بوش",
+        "slug": "bosch"
+      },
+      "category": {
+        "name": "ماشین ظرفشویی",
+        "slug": "dishwasher"
+      },
+      "highlights": [
+        "سبد انعطاف‌پذیر RackMatic",
+        "صدای کارکرد ۴۴ دسی‌بل",
+        "۶ برنامه شست‌وشو",
+        "ضدآب‌ریزی کامل"
+      ],
+      "specs": [
+        {
+          "label": "نوع",
+          "value": "رومیزی مستقل",
+          "group": "general"
+        },
+        {
+          "label": "ظرفیت",
+          "value": "۱۳ نفره",
+          "group": "general"
+        },
+        {
+          "label": "رنگ",
+          "value": "استیل",
+          "group": "general"
+        },
+        {
+          "label": "تعداد برنامه",
+          "value": "۶",
+          "group": "technical"
+        },
+        {
+          "label": "سطح صوتی",
+          "value": "۴۴ دسی‌بل",
+          "group": "technical"
+        },
+        {
+          "label": "ابعاد (عرض×ارتفاع×عمق)",
+          "value": "۶۰ × ۸۵ × ۶۰ سانتی‌متر",
+          "group": "dimensions"
+        },
+        {
+          "label": "رده انرژی",
+          "value": "A++",
+          "group": "energy"
+        },
+        {
+          "label": "مصرف آب هر دوره",
+          "value": "۹.۵ لیتر",
+          "group": "energy"
+        }
+      ]
+    },
+    {
+      "slug": "snowa-tv-50-4k",
+      "name": "تلویزیون اسنوا ۵۰ اینچ ۴K هوشمند",
+      "shortDescription": "تلویزیون هوشمند ۵۰ اینچ ۴K با اندروید و قیمت اقتصادی.",
+      "description": "اسنوا ۵۰ اینچ با سیستم اندروید دسترسی به اپلیکیشن‌های ایرانی و خارجی را فراهم می‌کند. گزینه‌ای مناسب برای اتاق خواب و استفاده روزمره.",
+      "price": 26500000,
+      "compareAtPrice": 29900000,
+      "stock": 16,
+      "rating": 4.1,
+      "reviewCount": 224,
+      "images": [],
+      "brand": {
+        "name": "اسنوا",
+        "slug": "snowa"
+      },
+      "category": {
+        "name": "تلویزیون",
+        "slug": "tv"
+      },
+      "highlights": [
+        "سیستم اندروید با فروشگاه اپلیکیشن",
+        "رزولوشن ۴K",
+        "سه پورت HDMI",
+        "گارانتی ۱۸ ماهه داخلی"
+      ],
+      "specs": [
+        {
+          "label": "نوع",
+          "value": "LED",
+          "group": "general"
+        },
+        {
+          "label": "سیستم‌عامل",
+          "value": "Android TV",
+          "group": "general"
+        },
+        {
+          "label": "سایز",
+          "value": "۵۰ اینچ",
+          "group": "technical"
+        },
+        {
+          "label": "رزولوشن",
+          "value": "۳۸۴۰ × ۲۱۶۰ (4K)",
+          "group": "technical"
+        },
+        {
+          "label": "ابعاد با پایه (عرض×ارتفاع×عمق)",
+          "value": "۱۱۲ × ۷۱ × ۲۱ سانتی‌متر",
+          "group": "dimensions"
+        },
+        {
+          "label": "رده انرژی",
+          "value": "A+",
+          "group": "energy"
+        }
+      ]
+    },
+    {
+      "slug": "snowa-top-freezer-16ft",
+      "name": "یخچال فریزر بالا اسنوا مدل S16 ۱۶ فوت",
+      "shortDescription": "یخچال فریزر بالا پایین ۱۶ فوت با تکنولوژی No Frost و بدنه ضدخش.",
+      "description": "یخچال فریزر اسنوا S16 گزینه‌ای اقتصادی و پرفروش برای خانواده‌های ایرانی است. سیستم No Frost از تشکیل یخ در فریزر جلوگیری می‌کند و نیازی به دیفراست دستی نیست.",
+      "price": 42500000,
+      "compareAtPrice": 46900000,
+      "stock": 14,
+      "rating": 4.4,
+      "reviewCount": 213,
+      "images": [],
+      "brand": {
+        "name": "اسنوا",
+        "slug": "snowa"
+      },
+      "category": {
+        "name": "یخچال و فریزر",
+        "slug": "refrigerator"
+      },
+      "highlights": [
+        "بدون نیاز به یخ‌زدایی دستی",
+        "قفسه‌های شیشه‌ای نشکن و قابل تنظیم",
+        "جایخیار و قوطی‌نوشابه در درب",
+        "خدمات پس از فروش سراسری اسنوا"
+      ],
+      "specs": [
+        {
+          "label": "نوع",
+          "value": "بالا پایین",
+          "group": "general"
+        },
+        {
+          "label": "رنگ",
+          "value": "سفید",
+          "group": "general"
+        },
+        {
+          "label": "ظرفیت کل",
+          "value": "۴۶۰ لیتر",
+          "group": "technical"
+        },
+        {
+          "label": "فناوری",
+          "value": "No Frost",
+          "group": "technical"
+        },
+        {
+          "label": "ابعاد (عرض×ارتفاع×عمق)",
+          "value": "۶۷ × ۱۷۲ × ۶۶ سانتی‌متر",
+          "group": "dimensions"
+        },
+        {
+          "label": "رده انرژی",
+          "value": "A+",
+          "group": "energy"
+        }
+      ]
+    },
+    {
+      "slug": "bosch-serie6-washer-9kg",
+      "name": "ماشین لباسشویی بوش سری ۶ ظرفیت ۹ کیلو",
+      "shortDescription": "سری ۶ بوش با موتور EcoSilence Drive و کم‌مصرف‌ترین رده انرژی بازار.",
+      "description": "بوش سری ۶ با موتور بدون جاروبک EcoSilence Drive، بی‌صدا و بادوام است. سیستم توزین خودکار مقدار آب و انرژی را بر اساس بار لباس تنظیم می‌کند.",
+      "price": 62000000,
+      "compareAtPrice": null,
+      "stock": 5,
+      "rating": 4.8,
+      "reviewCount": 92,
+      "images": [],
+      "brand": {
+        "name": "بوش",
+        "slug": "bosch"
+      },
+      "category": {
+        "name": "ماشین لباسشویی",
+        "slug": "washer"
+      },
+      "highlights": [
+        "موتور EcoSilence Drive با گارانتی ۱۰ ساله",
+        "وزن‌سنجی خودکار بار لباس",
+        "ضدآب‌ریزی ۱۰۰٪ (AquaStop)",
+        "برنامه ضدحساسیت برای پوست حساس"
+      ],
+      "specs": [
+        {
+          "label": "نوع",
+          "value": "درب از جلو",
+          "group": "general"
+        },
+        {
+          "label": "رنگ",
+          "value": "سفید",
+          "group": "general"
+        },
+        {
+          "label": "ظرفیت",
+          "value": "۹ کیلوگرم",
+          "group": "technical"
+        },
+        {
+          "label": "دور موتور",
+          "value": "۱۲۰۰ دور در دقیقه",
+          "group": "technical"
+        },
+        {
+          "label": "ابعاد (عرض×ارتفاع×عمق)",
+          "value": "۶۰ × ۸۵ × ۵۹ سانتی‌متر",
+          "group": "dimensions"
+        },
+        {
+          "label": "رده انرژی",
+          "value": "A+++",
+          "group": "energy"
+        }
+      ]
+    },
+    {
+      "slug": "snowa-split-12000",
+      "name": "کولر گازی اسنوا ۱۲۰۰۰ اینورتر",
+      "shortDescription": "اسپلیت ۱۲۰۰۰ مناسب اتاق‌های ۲۰ تا ۳۰ متری با خدمات سراسری.",
+      "description": "اسنوا ۱۲۰۰۰ برای اتاق خواب و اتاق کار با متراژ متوسط طراحی شده است. گاز مبرد سازگار با محیط زیست و شبکه خدمات پس از فروش گسترده از مزایای آن است.",
+      "price": 32700000,
+      "compareAtPrice": null,
+      "stock": 15,
+      "rating": 4.3,
+      "reviewCount": 209,
+      "images": [],
+      "brand": {
+        "name": "اسنوا",
+        "slug": "snowa"
+      },
+      "category": {
+        "name": "کولر گازی و اسپلیت",
+        "slug": "air-conditioner"
+      },
+      "highlights": [
+        "مناسب اتاق ۲۰ تا ۳۰ متری",
+        "گاز مبرد سازگار با محیط زیست",
+        "شبکه خدمات سراسری",
+        "فیلتر قابل شست‌وشو"
+      ],
+      "specs": [
+        {
+          "label": "نوع",
+          "value": "اسپلیت دیواری",
+          "group": "general"
+        },
+        {
+          "label": "رنگ",
+          "value": "سفید",
+          "group": "general"
+        },
+        {
+          "label": "ظرفیت",
+          "value": "۱۲۰۰۰ BTU",
+          "group": "technical"
+        },
+        {
+          "label": "نوع کمپرسور",
+          "value": "اینورتر",
+          "group": "technical"
+        },
+        {
+          "label": "مناسب متراژ",
+          "value": "۲۰ تا ۳۰ متر مربع",
+          "group": "technical"
+        },
+        {
+          "label": "رده انرژی",
+          "value": "A+",
+          "group": "energy"
+        }
+      ]
+    },
+    {
+      "slug": "snowa-dishwasher-14",
+      "name": "ماشین ظرفشویی اسنوا ۱۴ نفره مدل SDW14",
+      "shortDescription": "ظرفشویی ۱۴ نفره اقتصادی با خدمات پس از فروش سراسری در ایران.",
+      "description": "اسنوا SDW14 با قیمت مناسب، گزینه‌ای منطقی برای خانواده‌های ایرانی است. هشت برنامه شست‌وشو و تاخیرانداز ۲۴ ساعته از امکانات آن است.",
+      "price": 33800000,
+      "compareAtPrice": null,
+      "stock": 11,
+      "rating": 4.2,
+      "reviewCount": 189,
+      "images": [],
+      "brand": {
+        "name": "اسنوا",
+        "slug": "snowa"
+      },
+      "category": {
+        "name": "ماشین ظرفشویی",
+        "slug": "dishwasher"
+      },
+      "highlights": [
+        "قیمت رقابتی نسبت به رقبای خارجی",
+        "تاخیرانداز تا ۲۴ ساعت",
+        "۸ برنامه شست‌وشو",
+        "سرویس‌های سراسری در ایران"
+      ],
+      "specs": [
+        {
+          "label": "نوع",
+          "value": "رومیزی مستقل",
+          "group": "general"
+        },
+        {
+          "label": "ظرفیت",
+          "value": "۱۴ نفره",
+          "group": "general"
+        },
+        {
+          "label": "رنگ",
+          "value": "سفید",
+          "group": "general"
+        },
+        {
+          "label": "تعداد برنامه",
+          "value": "۸",
+          "group": "technical"
+        },
+        {
+          "label": "ابعاد (عرض×ارتفاع×عمق)",
+          "value": "۶۰ × ۸۵ × ۶۰ سانتی‌متر",
+          "group": "dimensions"
+        },
+        {
+          "label": "رده انرژی",
+          "value": "A+",
+          "group": "energy"
+        }
+      ]
+    },
+    {
+      "slug": "pakshoma-gas-5-burner",
+      "name": "اجاق گاز پاکشوما پنج شعله مدل ۵۰۰۰",
+      "shortDescription": "اجاق گاز پنج شعله با ترموکوپل، شعله پلوپز و بدنه استیل ضدخش.",
+      "description": "پاکشوما ۵۰۰۰ با ترموکوپل روی تمام شعله‌ها، ایمنی بالایی دارد و با قطع شعله، گاز قطع می‌شود. شعله پلوپز برای پخت برنج ایرانی طراحی شده است.",
+      "price": 24000000,
+      "compareAtPrice": 27500000,
+      "stock": 9,
+      "rating": 4.4,
+      "reviewCount": 98,
+      "images": [],
+      "brand": {
+        "name": "پاکشوما",
+        "slug": "pakshoma"
+      },
+      "category": {
+        "name": "اجاق‌گاز و فر",
+        "slug": "oven"
+      },
+      "highlights": [
+        "ترموکوپل روی همه شعله‌ها",
+        "شعله پلوپز مخصوص برنج ایرانی",
+        "بدنه استیل ضدخش",
+        "فر با جوجه‌گردان"
+      ],
+      "specs": [
+        {
+          "label": "نوع",
+          "value": "پنج شعله",
+          "group": "general"
+        },
+        {
+          "label": "رنگ",
+          "value": "استیل",
+          "group": "general"
+        },
+        {
+          "label": "تعداد شعله",
+          "value": "۵",
+          "group": "technical"
+        },
+        {
+          "label": "سیستم ایمنی",
+          "value": "ترموکوپل",
+          "group": "technical"
+        },
+        {
+          "label": "ابعاد (عرض×ارتفاع×عمق)",
+          "value": "۱۱۰ × ۹۰ × ۶۰ سانتی‌متر",
+          "group": "dimensions"
+        }
+      ]
+    },
+    {
+      "slug": "bosch-bottom-freezer-kgn56",
+      "name": "یخچال فریزر پایین بوش مدل KGN56",
+      "shortDescription": "کمبی پایین بوش با فناوری VitaFresh برای تازگی طولانی‌مدت مواد غذایی.",
+      "description": "یخچال بوش KGN56 با کشوی VitaFresh رطوبت و دما را مستقل تنظیم می‌کند و سبزیجات تا سه برابر بیشتر تازه می‌مانند. کمپرسور بی‌صدا و رده انرژی A++ آن را به گزینه‌ای کم‌هزینه در بلندمدت تبدیل کرده است.",
+      "price": 78000000,
+      "compareAtPrice": null,
+      "stock": 4,
+      "rating": 4.9,
+      "reviewCount": 56,
+      "images": [],
+      "brand": {
+        "name": "بوش",
+        "slug": "bosch"
+      },
+      "category": {
+        "name": "یخچال و فریزر",
+        "slug": "refrigerator"
+      },
+      "highlights": [
+        "کشوی VitaFresh با کنترل رطوبت",
+        "کمپرسور کاملاً بی‌صدا",
+        "نورپردازی LED داخلی",
+        "تولید آلمان با کیفیت بوش"
+      ],
+      "specs": [
+        {
+          "label": "نوع",
+          "value": "کمبی پایین",
+          "group": "general"
+        },
+        {
+          "label": "رنگ",
+          "value": "استیل ضدلک",
+          "group": "general"
+        },
+        {
+          "label": "ظرفیت کل",
+          "value": "۵۳۰ لیتر",
+          "group": "technical"
+        },
+        {
+          "label": "فناوری",
+          "value": "No Frost + VitaFresh",
+          "group": "technical"
+        },
+        {
+          "label": "ابعاد (عرض×ارتفاع×عمق)",
+          "value": "۷۰ × ۲۰۰ × ۶۷ سانتی‌متر",
+          "group": "dimensions"
+        },
+        {
+          "label": "رده انرژی",
+          "value": "A++",
+          "group": "energy"
+        }
+      ]
+    },
+    {
+      "slug": "emersun-front-7kg",
+      "name": "ماشین لباسشویی امرسان درب از جلو ۷ کیلو",
+      "shortDescription": "ارزان‌ترین لباسشویی اینورتر ۷ کیلویی بازار با گارانتی معتبر.",
+      "description": "امرسان ۷ کیلو برای زوج‌های جوان و خانواده‌های کم‌جمعیت طراحی شده است. مصرف آب و برق آن استاندارد است و قطعات آن به‌راحتی در بازار پیدا می‌شود.",
+      "price": 18900000,
+      "compareAtPrice": 21500000,
+      "stock": 25,
+      "rating": 4,
+      "reviewCount": 402,
+      "images": [],
+      "brand": {
+        "name": "امرسان",
+        "slug": "emersun"
+      },
+      "category": {
+        "name": "ماشین لباسشویی",
+        "slug": "washer"
+      },
+      "highlights": [
+        "قیمت اقتصادی برای شروع",
+        "موتور اینورتر کم‌صدا",
+        "۱۰ برنامه شست‌وشو",
+        "مناسب خانواده ۲ تا ۳ نفره"
+      ],
+      "specs": [
+        {
+          "label": "نوع",
+          "value": "درب از جلو",
+          "group": "general"
+        },
+        {
+          "label": "رنگ",
+          "value": "سفید",
+          "group": "general"
+        },
+        {
+          "label": "ظرفیت",
+          "value": "۷ کیلوگرم",
+          "group": "technical"
+        },
+        {
+          "label": "دور موتور",
+          "value": "۱۰۰۰ دور در دقیقه",
+          "group": "technical"
+        },
+        {
+          "label": "ابعاد (عرض×ارتفاع×عمق)",
+          "value": "۶۰ × ۸۵ × ۵۲ سانتی‌متر",
+          "group": "dimensions"
+        },
+        {
+          "label": "رده انرژی",
+          "value": "A+",
+          "group": "energy"
+        }
+      ]
+    },
+    {
+      "slug": "emersun-top-freezer-13ft",
+      "name": "یخچال فریزر امرسان مدل ۱۳ فوت",
+      "shortDescription": "یخچال فریزر اقتصادی ۱۳ فوت مناسب خانه‌های کوچک و دفتر کار.",
+      "description": "امرسان ۱۳ فوت با ابعاد جمع‌وجور، گزینه‌ای مناسب آپارتمان‌های کوچک است. قطعات آن در بازار به‌وفور یافت می‌شود و هزینه نگهداری پایینی دارد.",
+      "price": 28900000,
+      "compareAtPrice": 32400000,
+      "stock": 22,
+      "rating": 4.1,
+      "reviewCount": 341,
+      "images": [],
+      "brand": {
+        "name": "امرسان",
+        "slug": "emersun"
+      },
+      "category": {
+        "name": "یخچال و فریزر",
+        "slug": "refrigerator"
+      },
+      "highlights": [
+        "ابعاد جمع‌وجور مناسب آپارتمان",
+        "قیمت اقتصادی با قطعات در دسترس",
+        "گارانتی ۱۸ ماهه",
+        "مصرف برق پایین"
+      ],
+      "specs": [
+        {
+          "label": "نوع",
+          "value": "بالا پایین",
+          "group": "general"
+        },
+        {
+          "label": "رنگ",
+          "value": "سفید",
+          "group": "general"
+        },
+        {
+          "label": "ظرفیت کل",
+          "value": "۳۶۰ لیتر",
+          "group": "technical"
+        },
+        {
+          "label": "ابعاد (عرض×ارتفاع×عمق)",
+          "value": "۶۰ × ۱۶۵ × ۶۲ سانتی‌متر",
+          "group": "dimensions"
+        },
+        {
+          "label": "رده انرژی",
+          "value": "A+",
+          "group": "energy"
+        }
+      ]
+    },
+    {
+      "slug": "pars-khazar-tea-maker-3l",
+      "name": "چای‌ساز پارس خزر مدل ۳ لیتری",
+      "shortDescription": "چای‌ساز ۳ لیتری با کتری استیل و قوری پیرکس و قطع خودکار.",
+      "description": "چای‌ساز پارس خزر با کتری استیل ضدزنگ و قوری پیرکس، دم‌آوری یکنواخت چای را تضمین می‌کند. سیستم قطع خودکار از سوختن کتری جلوگیری می‌کند.",
+      "price": 4200000,
+      "compareAtPrice": 4900000,
+      "stock": 45,
+      "rating": 4.3,
+      "reviewCount": 623,
+      "images": [],
+      "brand": {
+        "name": "پارس خزر",
+        "slug": "pars-khazar"
+      },
+      "category": {
+        "name": "لوازم خانگی کوچک",
+        "slug": "small-appliance"
+      },
+      "highlights": [
+        "قطع خودکار هنگام جوشیدن",
+        "کتری استیل و قوری پیرکس",
+        "مصرف برق بهینه",
+        "بدنه مقاوم در برابر حرارت"
+      ],
+      "specs": [
+        {
+          "label": "نوع",
+          "value": "چای‌ساز",
+          "group": "general"
+        },
+        {
+          "label": "رنگ",
+          "value": "استیل",
+          "group": "general"
+        },
+        {
+          "label": "ظرفیت",
+          "value": "۳ لیتر",
+          "group": "technical"
+        },
+        {
+          "label": "توان",
+          "value": "۱۳۰۰ وات",
+          "group": "technical"
+        }
+      ]
+    },
+    {
+      "slug": "snowa-top-load-8kg",
+      "name": "ماشین لباسشویی اسنوا درب از بالا ۸ کیلو",
+      "shortDescription": "لباسشویی درب از بالا با فضای نصب کم و مناسب آشپزخانه‌های کوچک.",
+      "description": "اسنوا درب از بالا با عرض کم، گزینه مناسبی برای آشپزخانه‌هایی است که فضای کمی دارند. اضافه کردن لباس در میانه شست‌وشو بدون قطع برنامه ممکن است.",
+      "price": 22400000,
+      "compareAtPrice": 25000000,
+      "stock": 18,
+      "rating": 4.2,
+      "reviewCount": 267,
+      "images": [],
+      "brand": {
+        "name": "اسنوا",
+        "slug": "snowa"
+      },
+      "category": {
+        "name": "ماشین لباسشویی",
+        "slug": "washer"
+      },
+      "highlights": [
+        "مناسب فضاهای کوچک",
+        "افزودن لباس در میانه شست‌وشو",
+        "۱۲ برنامه شست‌وشو",
+        "گارانتی ۱۸ ماهه با خدمات سراسری"
+      ],
+      "specs": [
+        {
+          "label": "نوع",
+          "value": "درب از بالا",
+          "group": "general"
+        },
+        {
+          "label": "رنگ",
+          "value": "سفید",
+          "group": "general"
+        },
+        {
+          "label": "ظرفیت",
+          "value": "۸ کیلوگرم",
+          "group": "technical"
+        },
+        {
+          "label": "ابعاد (عرض×ارتفاع×عمق)",
+          "value": "۵۵ × ۹۰ × ۵۵ سانتی‌متر",
+          "group": "dimensions"
+        },
+        {
+          "label": "رده انرژی",
+          "value": "A+",
+          "group": "energy"
+        }
+      ]
+    },
+    {
+      "slug": "pars-khazar-vacuum-2200",
+      "name": "جاروبرقی پارس خزر مدل ۲۲۰۰ وات",
+      "shortDescription": "جاروبرقی کیسه‌دار اقتصادی با توان مکش مناسب و وزن سبک.",
+      "description": "پارس خزر ۲۲۰۰ وات گزینه‌ای مقرون‌به‌صرفه برای مصارف روزمره است. وزن سبک و چرخ‌های نرم جابه‌جایی آن را راحت می‌کند.",
+      "price": 6800000,
+      "compareAtPrice": 7900000,
+      "stock": 30,
+      "rating": 4,
+      "reviewCount": 512,
+      "images": [],
+      "brand": {
+        "name": "پارس خزر",
+        "slug": "pars-khazar"
+      },
+      "category": {
+        "name": "جاروبرقی",
+        "slug": "vacuum"
+      },
+      "highlights": [
+        "قیمت بسیار اقتصادی",
+        "وزن سبک و جابه‌جایی راحت",
+        "کیسه قابل تعویض و در دسترس",
+        "گارانتی ۱۸ ماهه"
+      ],
+      "specs": [
+        {
+          "label": "نوع",
+          "value": "کیسه‌دار",
+          "group": "general"
+        },
+        {
+          "label": "رنگ",
+          "value": "قرمز و مشکی",
+          "group": "general"
+        },
+        {
+          "label": "توان",
+          "value": "۲۲۰۰ وات",
+          "group": "technical"
+        },
+        {
+          "label": "ظرفیت کیسه",
+          "value": "۳ لیتر",
+          "group": "technical"
+        },
+        {
+          "label": "طول سیم",
+          "value": "۵ متر",
+          "group": "technical"
+        }
+      ]
+    },
+    {
+      "slug": "ariston-front-7kg",
+      "name": "ماشین لباسشویی آریستون ۷ کیلویی",
+      "shortDescription": "طراحی ایتالیایی با دریچه پهن برای بارگیری راحت لباس.",
+      "description": "آریستون با دریچه بزرگ ۳۴ سانتی‌متری، بارگیری و تخلیه لباس را ساده می‌کند. برنامه ضدچروک آن نیاز به اتوی زیاد را کاهش می‌دهد.",
+      "price": 34700000,
+      "compareAtPrice": null,
+      "stock": 0,
+      "rating": 4.3,
+      "reviewCount": 61,
+      "images": [],
+      "brand": {
+        "name": "آریستون",
+        "slug": "ariston"
+      },
+      "category": {
+        "name": "ماشین لباسشویی",
+        "slug": "washer"
+      },
+      "highlights": [
+        "دریچه پهن برای بارگیری راحت",
+        "برنامه ضدچروک",
+        "قفل کودک",
+        "طراحی ایتالیایی"
+      ],
+      "specs": [
+        {
+          "label": "نوع",
+          "value": "درب از جلو",
+          "group": "general"
+        },
+        {
+          "label": "رنگ",
+          "value": "سفید",
+          "group": "general"
+        },
+        {
+          "label": "ظرفیت",
+          "value": "۷ کیلوگرم",
+          "group": "technical"
+        },
+        {
+          "label": "ابعاد (عرض×ارتفاع×عمق)",
+          "value": "۶۰ × ۸۵ × ۵۵ سانتی‌متر",
+          "group": "dimensions"
+        },
+        {
+          "label": "رده انرژی",
+          "value": "A+",
+          "group": "energy"
+        }
+      ]
+    }
+  ],
+  "categories": [
+    {
+      "slug": "refrigerator",
+      "name": "یخچال و فریزر",
+      "nameEn": "refrigerator",
+      "seoIntro": "خرید یخچال فریزر با کمترین مصرف انرژی و گارانتی معتبر. مقایسه مدل‌های ساید بای ساید، درب فرانسوی و بالا پایین از برندهای سامسونگ، ال‌جی، اسنوا و بوش.",
+      "description": "یخچال فریزر بالا، پایین، ساید بای ساید و درب فرانسوی",
+      "count": 5
+    },
+    {
+      "slug": "washer",
+      "name": "ماشین لباسشویی",
+      "nameEn": "washing-machine",
+      "seoIntro": "راهنمای خرید ماشین لباسشویی بر اساس ظرفیت، دور موتور و مصرف آب و انرژی. قیمت روز لباسشویی ال‌جی، سامسونگ، بوش و اسنوا با ارسال سریع.",
+      "description": "ماشین لباسشویی درب از جلو و درب از بالا",
+      "count": 6
+    },
+    {
+      "slug": "dishwasher",
+      "name": "ماشین ظرفشویی",
+      "nameEn": "dishwasher",
+      "seoIntro": "خرید ماشین ظرفشویی کم‌مصرف با ظرفیت ۱۴ و ۱۵ نفره، سبدهای انعطاف‌پذیر و برنامه شست‌وشوی سریع. مقایسه برندهای بوش، سامسونگ، ال‌جی و اسنوا.",
+      "description": "ظرفشویی ۱۴ و ۱۵ نفره با برنامه‌های متنوع شست‌وشو",
+      "count": 3
+    },
+    {
+      "slug": "tv",
+      "name": "تلویزیون",
+      "nameEn": "television",
+      "seoIntro": "خرید تلویزیون هوشمند ۴K و ۸K در سایز ۴۳ تا ۷۵ اینچ. مقایسه فناوری QLED، OLED و LED به همراه قیمت و گارانتی رسمی.",
+      "description": "تلویزیون هوشمند LED، QLED و OLED در سایزهای مختلف",
+      "count": 3
+    },
+    {
+      "slug": "air-conditioner",
+      "name": "کولر گازی و اسپلیت",
+      "nameEn": "air-conditioner",
+      "seoIntro": "خرید کولر گازی اینورتر با مصرف برق پایین و کمپرسور گارانتی‌دار. انتخاب ظرفیت مناسب بر اساس متراژ خانه و مقایسه برندهای ایرانی و کره‌ای.",
+      "description": "اسپلیت دیواری و کولر گازی اینورتر با مصرف بهینه",
+      "count": 2
+    },
+    {
+      "slug": "vacuum",
+      "name": "جاروبرقی",
+      "nameEn": "vacuum-cleaner",
+      "seoIntro": "خرید جاروبرقی پرقدرت با توان مکش بالا، فیلتر HEPA و گارانتی موتور. مقایسه مدل‌های کیسه‌دار، مخزنی و شارژی مناسب خانه و فرش.",
+      "description": "جاروبرقی کیسه‌دار، مخزنی و شارژی بدون سیم",
+      "count": 2
+    },
+    {
+      "slug": "oven",
+      "name": "اجاق‌گاز و فر",
+      "nameEn": "oven",
+      "seoIntro": "خرید اجاق گاز و فر توکار با شعله پلوپز، ترموکوپل و بدنه استیل. مقایسه مدل‌های پنج‌شعله و فرهای برقی و گازی.",
+      "description": "اجاق گاز، فر توکار و مایکروویو",
+      "count": 1
+    },
+    {
+      "slug": "small-appliance",
+      "name": "لوازم خانگی کوچک",
+      "nameEn": "small-appliance",
+      "seoIntro": "خرید لوازم خانگی کوچک شامل چای‌ساز، غذاساز، مخلوط‌کن و آبمیوه‌گیری از برندهای پارس خزر، پاکشوما و فیلیپس با قیمت مناسب.",
+      "description": "چای‌ساز، غذاساز، آبمیوه‌گیری و لوازم آشپزخانه",
+      "count": 1
+    }
+  ],
+  "brands": [
+    {
+      "slug": "samsung",
+      "name": "سامسونگ",
+      "nameEn": "Samsung",
+      "origin": "کره جنوبی",
+      "description": "فناوری اینورتر دیجیتال، دوام بالا و خدمات پس از فروش گسترده در ایران."
+    },
+    {
+      "slug": "lg",
+      "name": "ال‌جی",
+      "nameEn": "LG",
+      "origin": "کره جنوبی",
+      "description": "موتورهای اینورتر کم‌مصرف با گارانتی بلندمدت و طراحی مدرن."
+    },
+    {
+      "slug": "bosch",
+      "name": "بوش",
+      "nameEn": "Bosch",
+      "origin": "آلمان",
+      "description": "بالاترین استانداردهای ساخت آلمان، بی‌صدا و کم‌مصرف."
+    },
+    {
+      "slug": "snowa",
+      "name": "اسنوا",
+      "nameEn": "Snowa",
+      "origin": "ایران",
+      "description": "تولید داخل با کیفیت رقابتی و شبکه خدمات پس از فروش سراسری."
+    },
+    {
+      "slug": "pakshoma",
+      "name": "پاکشوما",
+      "nameEn": "Pakshoma",
+      "origin": "ایران",
+      "description": "یکی از قدیمی‌ترین برندهای لوازم خانگی ایران با قطعات فراوان."
+    },
+    {
+      "slug": "pars-khazar",
+      "name": "پارس خزر",
+      "nameEn": "Pars Khazar",
+      "origin": "ایران",
+      "description": "تخصص در لوازم خانگی کوچک با قیمت اقتصادی و گارانتی داخلی."
+    },
+    {
+      "slug": "emersun",
+      "name": "امرسان",
+      "nameEn": "Emersun",
+      "origin": "ایران",
+      "description": "انتخاب اقتصادی با تنوع مدل بالا و قطعات در دسترس."
+    },
+    {
+      "slug": "midea",
+      "name": "مایدیا",
+      "nameEn": "Midea",
+      "origin": "چین",
+      "description": "تولیدکننده بزرگ جهانی با تمرکز بر تهویه مطبوع و مصرف بهینه."
+    },
+    {
+      "slug": "ariston",
+      "name": "آریستون",
+      "nameEn": "Ariston",
+      "origin": "ایتالیا",
+      "description": "کیفیت اروپایی در گرمایش و شست‌وشو با طراحی مینیمال."
+    }
+  ],
+  "articles": [
+    {
+      "slug": "how-to-choose-refrigerator",
+      "title": "چطور یخچال مناسب آشپزخانه را انتخاب کنیم؟",
+      "excerpt": "راهنمای خرید یخچال: مقایسه سایدبای‌ساید، دوقلو و کمبی با توجه به فضای آشپزخانه، مصرف انرژی و بودجه.",
+      "category": "buying-guide",
+      "categoryLabel": "راهنمای خرید",
+      "author": "تیم محتوای نودهی",
+      "publishedAt": "2026-08-12",
+      "updatedAt": "2026-08-12",
+      "readingMinutes": 8,
+      "keywords": [
+        "راهنمای خرید یخچال",
+        "یخچال سایدبای‌ساید",
+        "مصرف انرژی"
+      ],
+      "body": [
+        "پیش از هر چیز فضای آشپزخانه را اندازه بگیرید: عمق، ارتفاع و مسیر درِ یخچال تعیین می‌کند که کدام مدل بدون دردسر وارد خانه می‌شود. اگر آشپزخانه کوچک است، مدل‌های کمبی و کم‌عمق انتخاب بهتری هستند.",
+        "ظرفیت مفید را بر اساس جمعیت خانوار بسنجید: برای هر نفر حدود ۷۰ تا ۹۰ لیتر فضای مفید کافی است. سایدبای‌ساید برای خانواده‌های ۴ نفره به بالا و دوقلو برای آشپزخانه‌های بزرگ مناسب‌ترند.",
+        "برچسب انرژی را جدی بگیرید؛ یخچال ۲۴ ساعته روشن است و اختلاف یک درجه برچسب در قبض برق سالانه دیده می‌شود. کمپرسور اینورتر هم صدای کمتری دارد و هم مصرف پایین‌تر.",
+        "یخ‌ساز اتوماتیک، محفظه فرا‌سرد و فیلتر تصفیه آب امکاناتی هستند که قیمت را بالا می‌برند؛ اگر از آب شهری استفاده می‌کنید فیلتر داخلی کافی است و لازم نیست بیشتر هزینه کنید.",
+        "در نهایت گارانتی و شبکه خدمات پس از فروش را بررسی کنید؛ تعمیرکار مجاز و قطعات یدکی موجود، ارزش واقعی خرید را در سال‌های بعد مشخص می‌کند."
+      ]
+    },
+    {
+      "slug": "washing-machine-maintenance",
+      "title": "نگهداری از ماشین لباسشویی؛ ۷ کار ساده برای عمر بیشتر",
+      "excerpt": "با رعایت چند نکته ساده در مصرف مواد شوینده، تمیز کردن فیلتر و بارگذاری صحیح، عمر ماشین لباسشویی چند سال بیشتر می‌شود.",
+      "category": "maintenance",
+      "categoryLabel": "نگهداری",
+      "author": "تیم محتوای نودهی",
+      "publishedAt": "2026-08-05",
+      "updatedAt": "2026-08-19",
+      "readingMinutes": 6,
+      "keywords": [
+        "نگهداری لباسشویی",
+        "تمیز کردن فیلتر",
+        "تعمیر لباسشویی"
+      ],
+      "body": [
+        "پس از هر شست‌وشو درِ دستگاه را باز بگذارید تا رطوبت داخل دِهانی خشک شود؛ همین کار ساده جلوی بوی نامطبوع و رشد قارچ را می‌گیرد.",
+        "فیلتر پُشت دستگاه را هر دو ماه یک بار باز کنید و رسوب‌های آن را تمیز کنید. گرفتگی فیلتر فشار روی پمپ تخلیه می‌آورد و رایج‌ترین دلیل خرابی‌های گران‌قیمت است.",
+        "میزان شوینده را با سختی آب و حجم بار تنظیم کنید؛ استفاده بیش از حد از پودر، باقیماندهٔ کف روی لباس و رسوب در مخزن ایجاد می‌کند.",
+        "بار را تا ۸۰ درصد ظرفیت پر کنید: هم فضایی برای جنبش آب می‌ماند و هم تعادل دِهانی حفظ می‌شود و لرزش دستگاه کم می‌شود.",
+        "هر شش ماه یک بار یک شست‌وشوی توخالی با دمای بالا و جوش‌شیرین انجام دهید تا چربی و رسوب لوله‌های داخلی پاک شود.",
+        "پایه‌های دستگاه را روی سطح تراز تنظیم کنید؛ تراز نبودن علاوه بر صدا، به بلبرینگ و فنرها آسیب می‌زند.",
+        "در نهایت نوسانات برق را با محافظ ولتاژ کنترل کنید؛ برد الکترونیکی حساس‌ترین بخش دستگاه در برابر نوسان است."
+      ]
+    },
+    {
+      "slug": "tv-size-guide",
+      "title": "راهنمای انتخاب سایز تلویزیون؛ فاصله تماشا را جدی بگیرید",
+      "excerpt": "سایز مناسب تلویزیون به فاصله نشستن تا صفحه بستگی دارد؛ جدول ساده‌ای برای انتخاب اندازه و وضوح مناسب.",
+      "category": "buying-guide",
+      "categoryLabel": "راهنمای خرید",
+      "author": "تیم محتوای نودهی",
+      "publishedAt": "2026-07-28",
+      "updatedAt": "2026-07-28",
+      "readingMinutes": 5,
+      "keywords": [
+        "سایز تلویزیون",
+        "خرید تلویزیون",
+        "فاصله تماشا"
+      ],
+      "body": [
+        "قاعده کلی: فاصلهٔ تماشا باید حدود ۱٫۵ تا ۲٫۵ برابر قطر صفحه باشد. برای تلویزیون ۵۵ اینچ، فاصله مناسب حدود ۲ تا ۳ متر است.",
+        "رزولوشن را متناسب با سایز انتخاب کنید: برای ۴۳ تا ۵۵ اینچ، ۴K جزئیات را نشان می‌دهد؛ در ۶۵ اینچ به بالا رزولوشن پایین‌تر واقعاً دیده می‌شود.",
+        "اگر اتاق روشن است، پنل با روشنایی بالاتر و پوشش ضدانعکاس انتخاب کنید؛ فناوری QLED در نور روز خوانایی بهتری دارد.",
+        "پورت‌ها را بررسی کنید: تعداد درگاه HDMI 2.1 و نرخ نوسازی ۱۲۰ هرتز برای بازی اهمیت دارد، اما برای تماشای فیلم همان HDMI استاندارد کافی است.",
+        "پایه دیواری را پیش از خرید در نظر بگیرید؛ علاوه بر صرفه‌جویی در فضا، دسترسی به کابل‌ها و پخش گرما بهتر می‌شود."
+      ]
+    },
+    {
+      "slug": "home-appliance-energy-label",
+      "title": "برچسب انرژی لوازم خانگی را چطور بخوانیم؟",
+      "excerpt": "حرف‌ها و اعداد روی برچسب انرژی چه معنایی دارند و چطور می‌توان با آن هزینه برق سالانه را پیش‌بینی کرد.",
+      "category": "technology",
+      "categoryLabel": "فناوری",
+      "author": "تیم محتوای نودهی",
+      "publishedAt": "2026-07-15",
+      "updatedAt": "2026-07-15",
+      "readingMinutes": 4,
+      "keywords": [
+        "برچسب انرژی",
+        "مصرف برق",
+        "لوازم خانگی"
+      ],
+      "body": [
+        "حروف A تا G نشان‌دهندهٔ بازده دستگاه هستند؛ هرچه حرف به ابتدای الفبا نزدیک‌تر باشد، مصرف سالانه کمتر است. تفاوت یک درجه در یخچال می‌تواند سالانه ده‌ها کیلووات‌ساعت باشد.",
+        "عدد «کیلووات‌ساعت در سال» میزان مصرف واقعی آزمایشگاهی دستگاه است؛ با ضرب در تعرفهٔ برق خانگی، هزینه سالانه تقریبی به دست می‌آید.",
+        "برچسب به شما می‌گوید دستگاه در چه شرایطی اندازه‌گیری شده؛ مثلاً یخچال بر اساس دمای محیط استاندارد و چرخهٔ باز و بسته شدن درِ تخمین زده شده است.",
+        "در لباسشویی، مصرف آب هم در کنار برق درج شده است؛ در مناطق با کمبود آب این عدد اهمیت بیشتری پیدا می‌کند.",
+        "دستگاه‌هایی که گارانتی بلندمدت کمپرسور دارند معمولاً بازده بالاتری هم دارند؛ سازنده با اطمینان از طول عمر قطعه، ریسک خود را می‌پذیرد."
+      ]
+    },
+    {
+      "slug": "dishwasher-buying-checklist",
+      "title": "چک‌لیست خرید ماشین ظرفشویی؛ از مصرف آب تا صدا",
+      "excerpt": "قبل از خرید ظرفشویی این ۶ نکته را بررسی کنید: ظرفیت، مصرف آب، صدا، برنامه‌شویی، خشک‌کن و هزینهٔ نگهداری.",
+      "category": "buying-guide",
+      "categoryLabel": "راهنمای خرید",
+      "author": "تیم محتوای نودهی",
+      "publishedAt": "2026-06-30",
+      "updatedAt": "2026-06-30",
+      "readingMinutes": 6,
+      "keywords": [
+        "خرید ظرفشویی",
+        "مصرف آب",
+        "ماشین ظرفشویی"
+      ],
+      "body": [
+        "ظرفیت را بر اساس تعداد اعضای خانواده انتخاب کنید: ۱۲ تا ۱۴ نفره برای خانواده متوسط و ۸ نفره برای خانواده‌های کوچک کافی است.",
+        "مصرف آب هر چرخه را مقایسه کنید؛ ظرفشویی خوب حدود ۹ تا ۱۲ لیتر برای هر شست‌وشو مصرف می‌کند، یعنی کمتر از نصف آب شست‌وشوی دستی.",
+        "صدای دستگاه زیر ۴۴ دسی‌بل برای آشپزخانه‌های باز مناسب است؛ در شب، هر ۳ دسی‌بل اختلاف محسوس است.",
+        "برنامهٔ نیمه‌بار و شست‌وشوی سریع برای روزهای کم‌ظرفیت واقعاً استفاده می‌شود؛ وجود این برنامه‌ها را قبل از خرید چک کنید.",
+        "سیستم خشک‌کن با دریچهٔ بازشو (Zeolite یا المنت) بوی نامطبوع و رطوبت داخل دستگاه را حذف می‌کند؛ در مدل‌های اقتصادی به جای آن، خشک‌کن طبیعی کافی است.",
+        "فیلتر و بازوهای آب‌پاش هر چند ماه نیاز به تمیزکاری دارند؛ مدلی را انتخاب کنید که دسترسی به این بخش‌ها آسان باشد."
+      ]
+    },
+    {
+      "slug": "air-conditioner-summer-prep",
+      "title": "آماده‌سازی کولر گازی برای تابستان؛ قبل از اولین روز گرم",
+      "excerpt": "چک‌لیست سرویس کولر گازی: تمیز کردن فیلتر، بررسی گاز، عایق لوله‌ها و تنظیم درجه برای مصرف بهینه.",
+      "category": "maintenance",
+      "categoryLabel": "نگهداری",
+      "author": "تیم محتوای نودهی",
+      "publishedAt": "2026-06-10",
+      "updatedAt": "2026-06-10",
+      "readingMinutes": 5,
+      "keywords": [
+        "سرویس کولر گازی",
+        "مصرف برق کولر",
+        "نگهداری کولر"
+      ],
+      "body": [
+        "فیلترهای پنل داخلی را قبل از روشن کردن کولر بشویید؛ فیلتر کثیف جریاهوا را کم می‌کند و کولر برای رسیدن به دما مصرف را بالا می‌برد.",
+        "پنل بیرونی را از برگ و گرد و غبار پاک کنید و فاصله آن با دیوار را حداقل ۳۰ سانتی‌متر نگه دارید؛ کندانسور خفه، عامل رایج سرمای کم است.",
+        "سطح گاز را با دستگاه توسط سرویس‌کار چک کنید؛ کمبود گاز نه‌تنها سرمای کم می‌آورد بلکه به کمپرسور فشار وارد می‌کند.",
+        "عایق لوله‌های مسی را بازرسی کنید؛ عایق پاره، تراکم و اتلاف انرژی ایجاد می‌کند.",
+        "دمای بهینه ۲۴ تا ۲۶ درجه است؛ هر درجه کمتر حدود ۳ درصد مصرف برق را بالا می‌برد. حالت خشک‌کن در روزهای بارانی جایگزین مناسبی است.",
+        "برای شب، تایمر روشن/خاموش و حالت خواب را فعال کنید تا هم راحت بخوابید هم مصرف کنترل شود."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "id": 1,
+      "category": "shipping",
+      "question": "ارسال سفارش‌ها چقدر طول می‌کشد؟",
+      "answer": "سفارش‌های تهران و کرج در همان‌روز (برای ثبت تا ساعت ۱۴) و شهرهای دیگر بین ۲ تا ۴ روز کاری با پست پیشتاز تحویل داده می‌شوند. کد رهگیری پس از تحویل به مرسوله پیامک می‌شود."
+    },
+    {
+      "id": 2,
+      "category": "shipping",
+      "question": "هزینه ارسال چگونه محاسبه می‌شود؟",
+      "answer": "هزینه ارسال بر اساس وزن و مقصد محاسبه می‌شود و برای سفارش‌های بالای ۵ میلیون تومان رایگان است. هزینه دقیق در مرحله نهایی سبد خرید نمایش داده می‌شود."
+    },
+    {
+      "id": 3,
+      "category": "shipping",
+      "question": "امکان ارسال به شهرستان وجود دارد؟",
+      "answer": "بله، ارسال به سراسر ایران از طریق پست پیشتاز و تیپاکس انجام می‌شود. برای کالاهای سنگین مانند یخچال و لباسشویی، باربری هماهنگ و هزینه ارسال بر اساس فاصله تعیین می‌شود."
+    },
+    {
+      "id": 4,
+      "category": "warranty",
+      "question": "گارانتی کالاها چه شرایطی دارد؟",
+      "answer": "همه کالاها با گارانتی رسمی شرکت واردکننده و ضمانت اصالت نودهی عرضه می‌شوند. برای استفاده از گارانتی، کالا باید در شرایط عادی استفاده شده باشد و شماره سریال با فاکتور مطابقت داشته باشد."
+    },
+    {
+      "id": 5,
+      "category": "warranty",
+      "question": "ضمانت اصالت کالا یعنی چه؟",
+      "answer": "ضمانت اصالت یعنی کالا مستقیم از نمایندگی یا واردکننده معتبر تهیه شده و کالای اصل و بدون دستکاری است. در صهر اثبات خلاف این ادعا، کالا بدون هیچ شرطی پس گرفته می‌شود."
+    },
+    {
+      "id": 6,
+      "category": "warranty",
+      "question": "برای لوازم بزرگ نصب هم انجام می‌شود؟",
+      "answer": "بله، نصب یخچال، لباسشویی، ظرفشویی و کولر گازی توسط تکنسین‌های مجاز شرکت و در اولین فرصت پس از تحویل انجام می‌شود. هزینه نصب طبق تعرفه شرکت سازنده دریافت می‌شود."
+    },
+    {
+      "id": 7,
+      "category": "payment",
+      "question": "روش‌های پرداخت چیست؟",
+      "answer": "پرداخت اینترنتی از طریق درگاه بانکی معتبر، پرداخت در محل (برای شهر تهران و کرج) و خرید اقساطی از طریق سرویس‌های اعتبارسنجی آنلاین امکان‌پذیر است."
+    },
+    {
+      "id": 8,
+      "category": "payment",
+      "question": "خرید اقساطی چه شرایطی دارد؟",
+      "answer": "خرید اقساطی نیازی به ضامن یا چک ندارد؛ با مدارک هویتی و فیش حقوقی، اعتبار شما در چند دقیقه بررسی و سقف اعتبار اعلام می‌شود. بازپرداخت بسته به انتخاب شما ۳ تا ۱۸ ماهه است."
+    },
+    {
+      "id": 9,
+      "category": "payment",
+      "question": "آیا اطلاعات کارت بانکی من ذخیره می‌شود؟",
+      "answer": "خیر. اطلاعات کارت فقط در درگاه بانکی وارد می‌شود و نودهی هیچ‌گونه اطلاعات بانکی مشتری را ذخیره یا نگهداری نمی‌کند."
+    },
+    {
+      "id": 10,
+      "category": "returns",
+      "question": "امکان مرجوعی کالا وجود دارد؟",
+      "answer": "تا ۷ روز پس از تحویل، در صورتی که کالا استفاده نشده و بسته‌بندی اولیه سالم باشد، امکان مرجوعی وجود دارد. برای کالاهای برقی، روشن شدن دستگاه از شرایط مرجوعی خارج است مگر وجود ایراد فنی."
+    },
+    {
+      "id": 11,
+      "category": "returns",
+      "question": "اگر کالا ایراد داشته باشد چه کنم؟",
+      "answer": "کافی است حداکثر تا ۲۴ ساعت پس از تحویل با پشتیبانی تماس بگیرید. کالای معیوب بررسی و در صورت تأیید ایراد فنی، تعویض یا عودت کامل مبلغ انجام می‌شود."
+    },
+    {
+      "id": 12,
+      "category": "returns",
+      "question": "هزینه مرجوعی با چه کسی است؟",
+      "answer": "اگر ایراد از کالا باشد، هزینه جمع‌آوری و مرجوعی با نودهی است. در مرجوعی‌های بدون ایراد، هزینه ارسال مرجوعی بر عهده مشتری است."
+    },
+    {
+      "id": 13,
+      "category": "account",
+      "question": "برای خرید حتماً باید ثبت‌نام کنم؟",
+      "answer": "خیر، خرید مهمان هم ممکن است؛ اما با ثبت‌نام امتیاز باشگاه مشتریان، پیگیری سریع‌تر سفارش‌ها و دسترسی به تاریخچه خرید و فاکتورها را خواهید داشت."
+    },
+    {
+      "id": 14,
+      "category": "account",
+      "question": "امتیاز باشگاه مشتریان چطور محاسبه می‌شود؟",
+      "answer": "به ازای هر خرید موفق، امتیاز متناسب با مبلغ سفارش دریافت می‌کنید؛ پس از تحویل کالا به حساب شما اضافه و در خرید بعدی قابل استفاده است. سطح عضویت بر اساس مجموع خریدهای سالانه تعیین می‌شود."
+    }
+  ],
+  "faqCategories": [
+    {
+      "slug": "shipping",
+      "label": "ارسال و تحویل"
+    },
+    {
+      "slug": "warranty",
+      "label": "گارانتی و خدمات"
+    },
+    {
+      "slug": "payment",
+      "label": "پرداخت و اقساط"
+    },
+    {
+      "slug": "returns",
+      "label": "مرجوعی"
+    },
+    {
+      "slug": "account",
+      "label": "حساب کاربری و باشگاه"
+    }
+  ],
+  "legal": [
+    {
+      "slug": "terms",
+      "title": "قوانین و مقررات فروشگاه نودهی",
+      "intro": "این قوانین برای روشن کردن شرایط خرید، ارسال، گارانتی و مسئولیت‌های طرفین تنظیم شده است و با ثبت سفارش در نودهی پذیرفته می‌شود.",
+      "updatedAt": "2026-09-01",
+      "sections": [
+        {
+          "id": "orders",
+          "title": "ثبت سفارش و تأیید خرید",
+          "paragraphs": [
+            "سفارش پس از پرداخت موفق یا تأیید پرداخت در محل، نهایی می‌شود و پیامک تأیید برای مشتری ارسال می‌گردد.",
+            "در موارد خاص (مغایرت قیمت یا موجودی)، نودهی حداکثر ظرف ۲۴ ساعت با مشتری تماس گرفته و امکان لغو سفارش با بازپرداخت کامل را فراهم می‌کند."
+          ],
+          "bullets": [
+            "قیمت‌ها به تومان و شامل مالیات بر ارزش افزوده هستند.",
+            "سفارش‌های بالای سقف مجاز توسط سازنده، نیازمند احراز هویت دریافت‌کننده است."
+          ]
+        },
+        {
+          "id": "shipping",
+          "title": "شرایط ارسال و تحویل",
+          "paragraphs": [
+            "ارسال در تهران و کرج با پیک اختصاصی و در سایر شهرها با پست پیشتاز یا تیپاکس انجام می‌شود.",
+            "هنگام تحویل، بسته‌بندی باید سالم باشد و کالا در حضور مشتری بازرسی شود."
+          ],
+          "bullets": [
+            "ثبت اعتراض درباره سالمت بسته باید هنگام تحویل در حضور مأمور ارسال انجام شود.",
+            "برای کالاهای سنگین، هماهنگی تخلیه و حمل تا طبقه بر عهده مشتری است مگر هنگام خرید توافق دیگری شده باشد."
+          ]
+        },
+        {
+          "id": "warranty",
+          "title": "گارانتی و خدمات پس از فروش",
+          "paragraphs": [
+            "همه کالاها با گارانتی رسمی شرکت واردکننده عرضه می‌شوند و شماره سریال در فاکتور درج می‌گردد.",
+            "استفاده غیرمعمول، دستکاری یا نصب توسط افراد غیرمجاز، گارانتی را باطل می‌کند."
+          ],
+          "bullets": [
+            "مدارک لازم برای استفاده از گارانتی: فاکتور خرید و کارت گارانتی.",
+            "پیگیری روند تعمیر با شماره پیگیری مرکز خدمات امکان‌پذیر است."
+          ]
+        },
+        {
+          "id": "returns",
+          "title": "مرجوعی و عودت کالا",
+          "paragraphs": [
+            "تا ۷ روز پس از تحویل، در صورت سالم بودن بسته‌بندی و استفاده‌نشدن کالا، مرجوعی پذیرفته می‌شود.",
+            "پس از دریافت و تأیید سالمت کالا، عودت مبلغ حداکثر تا ۳ روز کاری انجام می‌شود."
+          ],
+          "bullets": [
+            "کالاهای با بسته‌بندی باز‌شده در دسته لوازم برقی، تنها در صورت ایراد فنی پذیرفته می‌شوند.",
+            "هزینه مرجوعی بدون ایراد فنی بر عهده مشتری است."
+          ]
+        },
+        {
+          "id": "privacy",
+          "title": "حریم خصوصی و اطلاعات مشتری",
+          "paragraphs": [
+            "اطلاعات هویتی و سفارش مشتری فقط برای پردازش خرید، ارسال و خدمات پس از فروش استفاده می‌شود.",
+            "اطلاعات بانکی مشتری نزد نودهی ذخیره نمی‌شود و پرداخت مستقیماً در درگاه بانکی انجام می‌گیرد."
+          ],
+          "bullets": [
+            "شماره موبایل صرفاً برای اطلاع‌رسانی سفارش استفاده می‌شود.",
+            "امکان حذف کامل حساب و داده‌های شخصی با درخواست کتبی وجود دارد."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "privacy",
+      "title": "سیاست حریم خصوصی نودهی",
+      "intro": "نودهی به حریم خصوصی مشتریان پایبند است؛ این سند توضیح می‌دهد چه اطلاعاتی جمع‌آوری می‌شود، چرا و چگونه از آن محافظت می‌شود.",
+      "updatedAt": "2026-09-01",
+      "sections": [
+        {
+          "id": "collect",
+          "title": "اطلاعاتی که جمع‌آوری می‌شود",
+          "paragraphs": [
+            "برای ثبت سفارش، نام، شماره موبایل، نشانی و — در صورت نیاز — کد ملی گیرنده دریافت می‌شود.",
+            "اطلاعات فنی مانند نوع مرورگر و IP برای امنیت سرویس و جلوگیری از سوءاستفاده ثبت می‌شود."
+          ],
+          "bullets": [
+            "اطلاعات بانکی (شماره کارت و رمز) هرگز در سرورهای نودهی ذخیره نمی‌شود.",
+            "شناسه پرداخت (TRR) تنها برای استعلام وضعیت تراکنش نگه داشته می‌شود."
+          ]
+        },
+        {
+          "id": "use",
+          "title": "نحوه استفاده از اطلاعات",
+          "paragraphs": [
+            "اطلاعات صرفاً برای پردازش سفارش، ارسال، خدمات پس از فروش و اطلاع‌رسانی وضعیت سفارش استفاده می‌شود.",
+            "اطلاعات با هیچ شخص ثالثی به‌جز شرکت‌های حمل و درگاه پرداخت — در حد ضروری — به اشتراک گذاشته نمی‌شود."
+          ],
+          "bullets": [
+            "ارسال پیامک تبلیغاتی تنها با رضایت صریح مشتری انجام می‌شود.",
+            "امکان لغو عضویت در خبرنامه در هر زمان وجود دارد."
+          ]
+        },
+        {
+          "id": "security",
+          "title": "محافظت و نگهداری داده‌ها",
+          "paragraphs": [
+            "ارتباط کاربر با سرور با رمزنگاری TLS انجام می‌شود و دسترسی به داده‌ها محدود به کارکنان ضروری است.",
+            "داده‌های سفارش تا پایان مدت قانونی نگهداری و سپس به‌صورت امن حذف می‌شوند."
+          ],
+          "bullets": [
+            "رمز عبور کاربران به‌صورت هش‌شده نگهداری می‌شود.",
+            "ورود با رمز یک‌بارمصرف (OTP) برای حساب‌های مشتریان فعال است."
+          ]
+        },
+        {
+          "id": "rights",
+          "title": "حقوق کاربران",
+          "paragraphs": [
+            "کاربر می‌تواند در هر زمان دسترسی به اطلاعات، اصلاح آن‌ها یا حذف حساب را از طریق پشتیبانی درخواست کند.",
+            "درخواست‌ها حداکثر ظرف ۱۰ روز کاری بررسی و نتیجه از طریق شماره تماس ثبت‌شده اعلام می‌شود."
+          ],
+          "bullets": [
+            "راه‌های ارتباط: تلفن ۰۲۱-۹۱۰۰۰۰۰۰ و ایمیل info@nodehi.ir.",
+            "درخواست حذف حساب، اطلاعات سفارش‌های قانونی را شامل نمی‌شود."
+          ]
+        }
+      ]
+    }
+  ],
+  "loyalty": {
+    "tiers": [
+      {
+        "name": "نقره‌ای",
+        "requirement": "از ۱۰ میلیون تومان خرید سالانه",
+        "discount": "۲٪ تخفیف دائمی",
+        "points": "به ازای هر ۱۰۰ هزار تومان، ۱ امتیاز",
+        "perks": [
+          "دسترسی زودهنگام به حراج‌ها",
+          "ارسال رایگان بالای ۳ میلیون تومان"
+        ]
+      },
+      {
+        "name": "طلایی",
+        "requirement": "از ۳۰ میلیون تومان خرید سالانه",
+        "discount": "۵٪ تخفیف دائمی",
+        "points": "به ازای هر ۱۰۰ هزار تومان، ۲ امتیاز",
+        "perks": [
+          "پشتیبانی اختصاصی تلفنی",
+          "ارسال رایگان بدون سقف",
+          "۱ سرویس نصب رایگان"
+        ]
+      },
+      {
+        "name": "الماسی",
+        "requirement": "از ۸۰ میلیون تومان خرید سالانه",
+        "discount": "۸٪ تخفیف دائمی",
+        "points": "به ازای هر ۱۰۰ هزار تومان، ۳ امتیاز",
+        "perks": [
+          "کارشناس خرید اختصاصی",
+          "۲ سرویس نصب رایگان",
+          "اولویت تحویل همان‌روز"
+        ]
+      }
+    ],
+    "installments": [
+      {
+        "months": 3,
+        "label": "۳ ماهه",
+        "interest": "بدون بهره",
+        "note": "مناسب خریدهای زیر ۲۰ میلیون تومان",
+        "featured": false
+      },
+      {
+        "months": 6,
+        "label": "۶ ماهه",
+        "interest": "کارمزد ۲٪",
+        "note": "پرطرفترین بازه اقساط",
+        "featured": true
+      },
+      {
+        "months": 12,
+        "label": "۱۲ ماهه",
+        "interest": "کارمزد ۴٪",
+        "note": "برای لوازم خانگی بزرگ",
+        "featured": false
+      },
+      {
+        "months": 18,
+        "label": "۱۸ ماهه",
+        "interest": "کارمزد ۶٪",
+        "note": "سقف اعتبار تا ۱۰۰ میلیون تومان",
+        "featured": false
+      }
+    ],
+    "steps": [
+      {
+        "step": 1,
+        "title": "انتخاب کالا",
+        "description": "کالای مورد نظر را به سبد خرید اضافه و روش پرداخت اقساطی را انتخاب کنید."
+      },
+      {
+        "step": 2,
+        "title": "ثبت مدارک",
+        "description": "مدارک هویتی و فیش حقوقی را در پنل اعتبارسنجی بارگذاری کنید."
+      },
+      {
+        "step": 3,
+        "title": "اعتبارسنجی آنلاین",
+        "description": "نتیجه بررسی اعتبار در چند دقیقه اعلام و سقف اعتبار مشخص می‌شود."
+      },
+      {
+        "step": 4,
+        "title": "تحویل و بازپرداخت",
+        "description": "کالا تحویل و اقساط ماهانه از حساب شما کسر می‌شود."
+      }
+    ]
+  }
+}

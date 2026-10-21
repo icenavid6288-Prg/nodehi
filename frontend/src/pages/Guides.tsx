@@ -5,6 +5,7 @@ import Breadcrumbs from '../components/Breadcrumbs'
 import { useCatalog } from '../context/CatalogContext'
 import { get, type ArticleListResponse } from '../lib/api'
 import { toFa } from '../lib/format'
+import { guidesMeta, usePageMeta } from '../lib/seo'
 
 const decisionRows = [
   { name: 'یخچال فریزر', small: '۳۰۰ تا ۴۵۰ لیتر', medium: '۴۵۰ تا ۶۰۰ لیتر', large: 'بالای ۶۰۰ لیتر' },
@@ -20,6 +21,8 @@ export default function Guides() {
   const { categories } = useCatalog()
   const [articles, setArticles] = useState<ArticleListResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  usePageMeta(guidesMeta())
 
   useEffect(() => {
     let alive = true
@@ -53,7 +56,7 @@ export default function Guides() {
           {categories.map((category) => (
             <Link
               key={category.slug}
-              to={`/shop?category=${category.slug}`}
+              to={`/category/${category.slug}`}
               className="group rounded-2xl border border-surface-border bg-white p-5 shadow-card transition hover:-translate-y-0.5 hover:border-secondary/50 hover:shadow-float"
             >
               <div className="flex items-center justify-between gap-2">

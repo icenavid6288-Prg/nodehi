@@ -1,16 +1,17 @@
 <?php
 
-use App\Http\Controllers\Api\Admin\AdminAuditController;
-use App\Http\Controllers\Api\Admin\AdminOrderController;
-use App\Http\Controllers\Api\Admin\AdminProductController;
-use App\Http\Controllers\Api\Admin\AdminReviewController;
-use App\Http\Controllers\Api\Admin\DashboardController;
+use App\Http\Controllers\Api\AdminCouponController;
+use App\Http\Controllers\Api\AdminOrderController;
+use App\Http\Controllers\Api\AdminProductController;
+use App\Http\Controllers\Api\AdminReviewController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CatalogController;
 use App\Http\Controllers\Api\CheckoutController;
 use App\Http\Controllers\Api\ContentController;
+use App\Http\Controllers\Api\CouponController;
 use App\Http\Controllers\Api\EngagementController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\SettingController;
@@ -20,7 +21,8 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 | API فروشگاه نودهی
 |--------------------------------------------------------------------------
-| این فایل جایگزین مسیرهای src/app/api/* نسخه Next.js است.
+| همهٔ مسیرهای فروشگاه زیر /api هستند و فرانت‌اند React از همین قرارداد
+| استفاده می‌کند. مسیرهای /api/admin فقط برای نقش admin و operator است.
 */
 
 Route::get('/health', [CatalogController::class, 'health']);
@@ -31,16 +33,17 @@ Route::get('/products/by-slugs', [ProductController::class, 'bySlugs']);
 Route::get('/products/{slug}', [ProductController::class, 'show']);
 Route::get('/products/{slug}/reviews', [ProductController::class, 'reviews']);
 Route::post('/products/{slug}/reviews', [ProductController::class, 'storeReview'])
-    ->middleware(['throttle:reviews', 'auth.token:optional']);
+    ->middleware(['throttle:6,1', 'auth.optional']);
 Route::get('/categories', [CatalogController::class, 'categories']);
 Route::get('/categories/{slug}', [CatalogController::class, 'category']);
 Route::get('/brands', [CatalogController::class, 'brands']);
 Route::get('/brands/{slug}', [CatalogController::class, 'brand']);
-Route::get('/search', SearchController::class);
+Route::get('/search', SearchController::class)->middleware('throttle:120,1');
 
-// تنظیمات و پرداخت
+// تنظیمات، پرداخت و کد تخفیف
 Route::get('/settings/public', [SettingController::class, 'publicSettings']);
 Route::get('/payments/methods', [SettingController::class, 'paymentMethods']);
+Route::post('/coupons/validate', [CouponController::class, 'validateCoupon'])->middleware('throttle:30,1');
 
 // محتوای صفحات عمومی
 Route::get('/articles', [ContentController::class, 'articles']);
@@ -51,21 +54,23 @@ Route::get('/legal/{slug}', [ContentController::class, 'legalPage']);
 Route::get('/loyalty', [ContentController::class, 'loyalty']);
 
 // تعامل با مشتری
-Route::post('/contact', [EngagementController::class, 'contact'])->middleware('throttle:contact');
+Route::post('/contact', [EngagementController::class, 'contact'])->middleware('throttle:5,1');
 Route::post('/stock-alerts', [EngagementController::class, 'stockAlert'])
-    ->middleware(['throttle:stock-alerts', 'auth.token:optional']);
+    ->middleware(['throttle:10,1', 'auth.optional']);
 
-// سفارش — توکن اختیاری است تا سفارش مهمان ثبت شود و سفارش کاربر واردشده
-// به حسابش وصل شود.
-Route::post('/checkout', CheckoutController::class)
-    ->middleware(['throttle:checkout', 'auth.token:optional']);
-Route::post('/orders/track', [OrderController::class, 'track'])->middleware('throttle:contact');
+// سفارش
+Route::post('/checkout', CheckoutController::class)->middleware(['throttle:10,1', 'auth.optional']);
+Route::post('/orders/track', [OrderController::class, 'track'])->middleware('throttle:20,1');
+
+// پرداخت آنلاین (زرین‌پال)
+Route::post('/payments/zarinpal/start', [PaymentController::class, 'start'])
+    ->middleware(['throttle:10,1', 'auth.optional']);
+Route::get('/payments/zarinpal/callback', [PaymentController::class, 'callback'])
+    ->middleware('throttle:60,1');
 
 // احراز هویت
-Route::post('/auth/otp/request', [AuthController::class, 'requestOtp'])
-    ->middleware(['throttle:otp-phone', 'throttle:otp-ip']);
-Route::post('/auth/otp/verify', [AuthController::class, 'verifyOtp'])
-    ->middleware('throttle:otp-ip');
+Route::post('/auth/otp/request', [AuthController::class, 'requestOtp'])->middleware('throttle:10,1');
+Route::post('/auth/otp/verify', [AuthController::class, 'verifyOtp'])->middleware('throttle:30,1');
 
 Route::middleware('auth.token')->group(function () {
     Route::get('/auth/session', [AuthController::class, 'session']);
@@ -73,28 +78,24 @@ Route::middleware('auth.token')->group(function () {
     Route::get('/account/orders', [OrderController::class, 'myOrders']);
 });
 
-/*
-|--------------------------------------------------------------------------
-| پنل مدیریت
-|--------------------------------------------------------------------------
-| همهٔ مسیرها به توکن معتبر و نقش admin/operator نیاز دارند. هر تغییر
-| مدیریتی در audit_logs ثبت می‌شود (App\Support\Audit).
-*/
+// پنل مدیریت — فقط نقش admin و operator
 Route::middleware(['auth.token', 'admin'])->prefix('admin')->group(function () {
-    Route::get('/stats', DashboardController::class);
-
     Route::get('/products', [AdminProductController::class, 'index']);
-    Route::get('/products/{slug}', [AdminProductController::class, 'show']);
     Route::post('/products', [AdminProductController::class, 'store']);
-    Route::patch('/products/{slug}', [AdminProductController::class, 'update']);
-    Route::delete('/products/{slug}', [AdminProductController::class, 'destroy']);
+    Route::get('/products/{product}', [AdminProductController::class, 'show']);
+    Route::match(['put', 'patch'], '/products/{product}', [AdminProductController::class, 'update']);
+    Route::delete('/products/{product}', [AdminProductController::class, 'destroy']);
 
     Route::get('/orders', [AdminOrderController::class, 'index']);
-    Route::get('/orders/{orderNumber}', [AdminOrderController::class, 'show']);
-    Route::patch('/orders/{orderNumber}', [AdminOrderController::class, 'update']);
+    Route::get('/orders/{order}', [AdminOrderController::class, 'show']);
+    Route::match(['put', 'patch'], '/orders/{order}', [AdminOrderController::class, 'update']);
+
+    Route::get('/coupons', [AdminCouponController::class, 'index']);
+    Route::post('/coupons', [AdminCouponController::class, 'store']);
+    Route::match(['put', 'patch'], '/coupons/{coupon}', [AdminCouponController::class, 'update']);
+    Route::delete('/coupons/{coupon}', [AdminCouponController::class, 'destroy']);
 
     Route::get('/reviews', [AdminReviewController::class, 'index']);
-    Route::patch('/reviews/{review}', [AdminReviewController::class, 'update']);
-
-    Route::get('/audit', [AdminAuditController::class, 'index']);
+    Route::match(['put', 'patch'], '/reviews/{review}', [AdminReviewController::class, 'update']);
+    Route::delete('/reviews/{review}', [AdminReviewController::class, 'destroy']);
 });

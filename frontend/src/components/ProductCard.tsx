@@ -37,7 +37,7 @@ export default function ProductCard({ product }: { product: ProductSummary }) {
 
       <div className="flex flex-1 flex-col gap-2 p-4">
         <div className="flex items-center justify-between text-[11px] text-ink-subtle">
-          <Link to={`/shop?brand=${product.brand}`} className="hover:text-primary">
+          <Link to={`/brand/${product.brand}`} className="hover:text-primary">
             {brandName(product.brand)}
           </Link>
           <span>{categoryName(product.category)}</span>

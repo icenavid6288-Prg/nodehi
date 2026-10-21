@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import Breadcrumbs from '../components/Breadcrumbs'
 import { ApiError, get, type LegalPageResponse } from '../lib/api'
 import { formatDate } from '../lib/format'
+import { legalMeta, usePageMeta } from '../lib/seo'
 
 export default function Legal({ slug }: { slug: 'terms' | 'privacy' }) {
   const { hash } = useLocation()
@@ -38,6 +39,19 @@ export default function Legal({ slug }: { slug: 'terms' | 'privacy' }) {
   }, [page, hash])
 
   const otherPage = slug === 'terms' ? { to: '/privacy', label: 'سیاست حریم خصوصی' } : { to: '/terms', label: 'قوانین و مقررات' }
+
+  // متادیتای سند حقوقی (WebPage + Breadcrumb در JSON-LD) از هستهٔ مشترک سئو
+  // می‌آید تا با نسخهٔ پررندرشدهٔ ایستا یکی باشد.
+  usePageMeta(
+    page
+      ? legalMeta(page)
+      : {
+          title: slug === 'terms' ? 'قوانین و مقررات | نودهی' : 'سیاست حریم خصوصی | نودهی',
+          description: 'قوانین و سیاست‌های فروشگاه نودهی.',
+          path: `/${slug}`,
+          robots: error ? 'noindex' : 'index',
+        },
+  )
 
   return (
     <div className="container-page py-8">

@@ -1,8 +1,11 @@
 import { Link } from 'react-router-dom'
 import { useCatalog } from '../context/CatalogContext'
+import { brandsMeta, usePageMeta } from '../lib/seo'
 
 export default function Brands() {
   const { brands } = useCatalog()
+
+  usePageMeta(brandsMeta())
 
   return (
     <div className="container-page py-10">
@@ -13,7 +16,7 @@ export default function Brands() {
         {brands.map((brand) => (
           <Link
             key={brand.slug}
-            to={`/shop?brand=${brand.slug}`}
+            to={`/brand/${brand.slug}`}
             className="rounded-2xl border border-surface-border bg-white p-5 transition hover:-translate-y-0.5 hover:border-secondary/50 hover:shadow-card"
           >
             <div className="flex items-center justify-between">

@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { FREE_SHIPPING_THRESHOLD, SHIPPING_COST, price, toFa } from '../lib/format'
+import { useNoindex } from '../lib/seo'
 
 export default function Cart() {
   const { lines, subtotal, setQuantity, remove } = useCart()
+  useNoindex('سبد خرید', '/cart')
   const shipping = subtotal === 0 || subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST
   const remaining = Math.max(FREE_SHIPPING_THRESHOLD - subtotal, 0)
 

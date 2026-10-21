@@ -1,170 +1,62 @@
-# راهنمای اجرا (Run Doc) — نودهی
+# Nodehi — راه‌اندازی پیش‌نمایش (این worktree)
 
-نکته: این مخزن هیچ وابستگی محیطی اجباری برای اجرای توسعه ندارد.
-دیتابیس پیش‌فرض یک فایل SQLite است و بدون کلید API هم همه مسیرها رفتار امن و
-مشخص دارند.
+## ۱. بازتولید artifactهای committed-نشده
 
----
+از یک checkout تازه، به ترتیب:
 
-## ۱) بازتولید پیش‌نیازها (Artifacts)
+1. **وابستگی‌های فرانت‌اند** (با npm و با توجه به `frontend/package-lock.json`):
 
-یک چک‌اوت تازه به این ترتیب بالا می‌آید:
+   ```bash
+   npm --prefix frontend ci
+   ```
 
-```bash
-# ۱. نصب وابستگی‌ها با پکیج‌منیجر پروژه (npm — فایل package-lock.json وجود دارد)
-npm install
+2. **فایل‌های env**: `frontend/.env.local` در صورت وجود از checkout اصلی «کپی»
+   شود (نه symlink)؛ فقط کلیدهای عمومی `VITE_API_URL`/`VITE_SITE_URL` و در صورت
+   نیاز پورت. مقدارهای secret هرگز در این فایل یا ریپو نوشته نمی‌شوند.
 
-# ۲. فایل محیطی
-cp .env.example .env
+3. **دیتابیس توسعهٔ بک‌اند** (SQLite):
 
-# ۳. دیتابیس — SQLite فایلی، بدون نیاز به PostgreSQL/Docker
-npm run db:migrate     # ساخت جداول و اعمال migration‌ها
-npm run db:seed        # کد تخفیف، حساب مدیر، چند نظر نمونه و پیش‌فرض درگاه‌های پرداخت
-```
+   ```bash
+   cd backend
+   touch database/database.sqlite
+   php artisan migrate --seed
+   ```
 
-`DATABASE_URL="file:./dev.db"` پیش‌فرض `.env` است و فایل دیتابیس خودکار ساخته
-می‌شود. نسخه پشتیبان/بازنشانی هم فقط همین یک فایل است.
+   در این VM نصب PHP در PATH نیست و باینری موجود روی `/tmp/php84/php` است؛
+   اگر از بین رفته باشد دوباره نصب شود (PHP 8.4 CLI + افزونه‌های sqlite/pdo).
 
-### متغیرهای محیطی مؤثر
+4. **متادیتای ایستا (اختیاری، برای `dist/`)** — نیاز به API بالا:
 
-| متغیر | اثر |
-| --- | --- |
-| `DATABASE_URL` | آدرس دیتابیس. پیش‌فرض `file:./dev.db` (SQLite) |
-| `AUTH_OTP_DEV_MODE` | با `1`، کد ورود در پاسخ API و روی صفحه بازگردانده می‌شود. در `NODE_ENV=production` نادیده گرفته می‌شود |
-| `AUTH_OTP_TTL_SECONDS` | اعتبار کد یک‌بارمصرف (پیش‌فرض ۱۲۰ ثانیه) |
-| `AUTH_SESSION_DAYS` | طول عمر نشست ورود (پیش‌فرض ۳۰ روز) |
-| `SEED_ADMIN_PHONE` | شماره‌ای که `db:seed` به آن نقش admin می‌دهد |
-| `KAVENEGAR_API_KEY` | بدون آن، سرویس پیامک غیرفعال و حالت توسعه فعال می‌شود |
-| `KAVENEGAR_SENDER` | شماره فرستنده پیامک؛ قابل بازنویسی از پنل (`/admin/sms`) |
-| `KAVENEGAR_OTP_TEMPLATE` | نام قالب کد ورود؛ خالی‌بودنش حالت توسعه را فعال می‌کند |
-| `SETTINGS_ENCRYPTION_KEY` | کلید ۳۲ بایتی (`openssl rand -hex 32`) برای رمزنگاری AES-256-GCM مقدارهای حساس تنظیمات. بدون آن، مقدارها متن ساده ذخیره می‌شوند و پنل هشدار می‌دهد |
-| `NODEHI_WEBHOOK_SECRET` | بدون آن، `POST /api/webhooks/order-paid` با ۵۰۳ بسته می‌ماند |
-| `AUTOMATION_WEBHOOK_URL` | بدون آن، رویدادهای خروجی بی‌صدا نادیده گرفته می‌شوند |
-| `AUTOMATION_WEBHOOK_SECRET` | کلید امضای HMAC رویدادهای خروجی؛ بدون آن ارسال متوقف می‌شود |
-| `ZARINPAL_MERCHANT_ID` | شناسه پذیرنده زرین‌پال. اولویت با مقدار پنل (`/admin/payments`) است؛ این متغیر فقط جایگزین پیش‌فرض است |
-| `ZARINPAL_CALLBACK_URL` | بازنویسی آدرس بازگشت از درگاه (پیش‌فرض از هدر درخواست ساخته می‌شود) |
-| `ZARINPAL_API_BASE` / `ZARINPAL_STARTPAY_BASE` | بازنویسی نقاط پایانی زرین‌پال. برای تست سرتاسری محلی، یک درگاه شبیه‌ساز روی همین دو متغیر سوار می‌شود |
-| `SNAPPAY_MERCHANT_ID` / `SNAPPAY_API_KEY` | مقدار اولیه اسنپ‌پی؛ اولویت با پنل `/admin/integrations` است. اتصال واقعی هنوز پیاده‌سازی نشده و فعال‌کردنش اثری ندارد |
-| `DIGIKALA_SELLER_ID` / `DIGIKALA_VENDOR_API_KEY` | مقدار اولیه دیجی‌کالا؛ اولویت با پنل. اتصال واقعی هنوز پیاده‌سازی نشده است |
-| `TOROB_API_KEY` | مقدار اولیه ترب؛ اولویت با پنل. با فعال‌سازی در پنل، `/api/feeds/torob` فهرست کالاها را می‌دهد |
+   ```bash
+   npm run seo:refresh      # تازه‌سازی فهرست کاتالوگ در prerender-targets.json
+   npm run seo:prerender    # build کامل + پررندر صفحات + sitemap/robots
+   ```
 
-ترتیب خواندن هر تنظیم: **مقدار دیتابیس (پنل مدیریت) → متغیر محیطی → پیش‌فرض کد**.
-پس می‌توان همان متغیرهای بالا را از پنل هم مدیریت کرد و اولویت با پنل است. کلیدهای
-تنظیمات در `src/lib/server/settings.ts` به‌صورت **فهرست بسته** تعریف شده‌اند؛ کلید
-ناشناخته در جدول `Setting` هیچ اثری ندارد و نیازی به seed کردن تنظیمات نیست.
+## ۲. اجرای سرورها
 
-هیچ مقدار حساسی در این سند ثبت نمی‌شود — فقط روش.
-
-### ورود به پنل مدیریت
-
-۱. `/login` را باز کنید و شماره مدیر را بزنید (پیش‌فرض `09120000000`).
-۲. کد ورود در همان صفحه زیر عنوان «حالت توسعه» نمایش داده می‌شود.
-۳. پس از ورود، `/admin` باز می‌شود. کاربر بدون نقش مدیریتی به‌جای خطای دسترسی،
-   همان صفحه ۴۰۴ سایت را می‌بیند (عمداً، تا وجود مسیر افشا نشود).
-
-سه راه رسیدن به پنل وجود دارد تا «راه ورود پیدا نمی‌شود» پیش نیاید:
-
-- لینک «ورود کارکنان» در فوتر سایت → `/login?next=/admin`
-- دکمه «پنل مدیریت» در نوار کناری حساب کاربری (`/account`) برای نقش‌های کارکنان
-- باز کردن مستقیم `/login` با `?next=/admin`؛ پس از ورود همان آدرس باز می‌شود،
-  و اگر کاربر واردشده به `/login` برود، بلافاصله به `next` یا `/admin` هدایت می‌شود.
-
----
-
-## ۲) اجرای سرور
+دو پروسهٔ جدا لازم است (هر دو باید تا انتهای جلسه زنده بمانند؛ لاگ در
+`logs/` نوشته می‌شود):
 
 ```bash
-npm run dev -- -p 3000
+# ۱) API لاراول روی 127.0.0.1:8000
+cd backend && setsid nohup /tmp/php84/php artisan serve --host=127.0.0.1 --port=8000 \
+  > ../logs/api-dev.log 2>&1 < /dev/null &
+
+# ۲) vite روی 0.0.0.0:3000 — دامنهٔ پیش‌نمایش باید صریح allow شود (نه allowedHosts:true)
+VITE_ALLOWED_HOSTS=pv-dfdfac0b1d6d-9b89a97f-7f3f-4d44-8989-75d940f4cbd0.style.dev \
+  setsid nohup npm run dev --prefix frontend -- --host 0.0.0.0 --port 3000 \
+  > logs/vite-dev.log 2>&1 < /dev/null &
 ```
 
-- اسکریپت `dev` معادل `next dev` است.
-- ⚠️ **پورت را همیشه صریح بدهید.** در این محیط متغیر محیطی `PORT=0` تنظیم
-  شده است (مقدار پیش‌فرض قالب پریویو). Next.js به `PORT` احترام می‌گذارد و
-  با `PORT=0` یک پورت **تصادفی** مثل `55508` انتخاب می‌کند؛ نتیجه این است که
-  آدرس پریویو با پورت ثبت‌شده هم‌خوان در نمی‌آید. با `-p 3000` این رفتار
-  بازنویسی می‌شود.
-- اگر ۳۰۰۰ اشغال بود: `npm run dev -- -p <PORT>` و آدرس پریویو را با همان پورت ثبت کنید.
-- بیلد تولید: `npm run build` و سپس `npm start`.
-
-### ⚠️ هرگز بیلد را وقتی سرور توسعه بالاست اجرا نکنید
-
-هر دو از پوشه `.next` استفاده می‌کنند. اجرای `npm run build` در حالی که
-`npm run dev` بالا است، فایل‌های chunk سرور توسعه را پاک می‌کند و نتیجه‌اش
-خطاهای عجیب است: صفحه‌هایی مثل `/brand/samsung` با **۵۰۰** برمی‌گردند و
-`/_next/static/...` ها **۴۰۴** می‌شوند. این خطا کد نیست، وضعیت پوشه است.
-
-ترتیب درست: سرور را متوقف کنید → `npm run build` → دوباره بالا بیاورید.
-
-### 🚨 `prisma generate` به فایل موتور قفل‌شده گیر می‌کند
-
-اگر سرور توسعه بالا باشد، `npm run db:generate` با خطای
-`EPERM: operation not permitted, rename ... query_engine-windows.dll.node` شکست
-می‌خورد. سرور را متوقف کنید، generate را اجرا کنید، بعد دوباره بالا بیاورید.
-
-### اجرای تک‌کلیکی (bat)
-
-در ریشه پروژه فایل `start-nodehi.bat` هست: با دابل‌کلیک، اول چک می‌کند سایت
-روی `http://127.0.0.1:3000/` جواب می‌دهد یا نه؛ اگر نه، سرور را detached و
-مخفی بالا می‌آورد (لاگ‌ها در `.freebuff/nodehi-dev.log` و `.nodehi-dev.log.err`)
-و بعد از بالا آمدن، سایت را در مرورگر پیش‌فرض باز می‌کند. این فایل همان
-رسپی PowerShell بالا را داخل خودش دارد و نیازی به درخواست preview از دستیار نیست.
-
-### اجرای جدا‌شده (detached) روی ویندوز
-
-```powershell
-powershell -NoProfile -Command "(Start-Process -FilePath 'npm.cmd' -ArgumentList 'run','dev','--','-p','3000' -RedirectStandardOutput '<log>' -RedirectStandardError '<log>.err' -WindowStyle Hidden -PassThru).Id"
-```
-
-نکته: این فرمان در ترمینال همگام ممکن است **timeout بخورد ولی در واقع اجرا
-شده باشد** (PowerShell دسته‌های خروجی را باز نگه می‌دارد). بعد از اجرا با
-`netstat -ano | grep ':3000 '` و یک درخواست HTTP وجود سرور را تأیید کنید،
-نه با کد خروج آن فرمان. `stdout` و `stderr` باید دو فایل جدا باشند.
-
-### نکته پایداری اتوماسیون
-
-هر تلاش ارسال رویداد در جدول `AutomationEvent` ثبت می‌شود (وضعیت `sent` / `failed` /
-`skipped`) و پنل `/admin/automation` همان بدنه را دوباره می‌فرستد؛ در نتیجه شناسه
-رویداد ثابت می‌ماند و سمت n8n پردازش تکراری رخ نمی‌دهد. اگر پنل وضعیت `failed` با
-کد ۴۰۵ نشان می‌دهد، آدرس وبهوک درست است ولی متد را قبول نمی‌کند.
-
-### دستورهای بررسی (بدون اجرای سرور)
+راستی‌آزمایی:
 
 ```bash
-npm run typecheck   # tsc --noEmit
-npm test            # vitest run — ۳۱۴ تست (۱۹ فایل)
-npm run lint        # next lint
-npm run build       # بیلد تولید (سرور توسعه باید خاموش باشد)
+curl http://127.0.0.1:8000/api/health                       # ok:true
+curl -H "Host: pv-dfdfac0b1d6d-9b89a97f-7f3f-4d44-8989-75d940f4cbd0.style.dev" \
+     -o /dev/null -w "%{http_code}\n" http://127.0.0.1:3000/   # 200 (نه 403)
+curl http://127.0.0.1:3000/api/health                        # پروکسی vite
 ```
 
-هر چهار مورد در وضعیت فعلی سبز هستند.
-
-### نقاط پایانی مفید برای بررسی سریع
-
-```
-GET  /                  صفحه اصلی
-GET  /shop              فیلتر پیشرفته
-GET  /brands            فهرست برندها
-GET  /category/refrigerator  صفحه اختصاصی دسته
-GET  /product/[slug]    صفحه محصول
-GET  /track             پیگیری سفارش مهمان
-GET  /login             ورود با شماره همراه
-GET  /admin             پنل مدیریت (نیازمند نقش)
-GET  /admin/orders      فهرست سفارش‌ها + جست‌وجو
-GET  /admin/customers   فهرست کاربران + جست‌وجو
-GET  /admin/products    مدیریت کالاها: افزودن/ویرایش/حذف و حذف قطعی
-GET  /admin/content     نمای کاتالوگ و محتوا (معرفی به /admin/products)
-GET  /admin/audit       گزارش فعالیت (لاگ حسابرسی)
-GET  /admin/settings    تنظیمات سایت و صفحات (اعلان، تعمیرات، بنر تبلیغاتی)
-GET  /admin/sms         سرویس پیامک + ارسال پیامک آزمایشی
-GET  /admin/payments    درگاه‌های پرداخت (فعال‌سازی، حالت آزمایشی، مرچنت)
-GET  /admin/automation  رویدادهای اتوماسیون + ارسال دوباره ناموفق‌ها
-GET  /api/health        بررسی سلامت
-GET  /api/settings/public   تنظیمات عمومی (خروجی بدون فیلد حساس)
-GET  /api/products?category=refrigerator
-GET  /api/search?q=یخچال
-GET  /api/reviews?slug=samsung-side-by-side-rs68-28ft
-POST /api/orders/track  { orderNumber, phone }
-POST /api/admin/products         ساختن کالا (admin|operator)
-PATCH /api/admin/products/[id]    ویرایش تفرقی (فقط فیلدهای تغییرکرده)
-DELETE /api/admin/products/[id]   حذف قطعی؛ اگر سفارشی برای آن ثبت شده باشد کد ۴۰۹ برمی‌گردد
-```
+نکته: پیکربندی vite پورت پیش‌فرض 5173 و `strictPort` دارد؛ پیش‌نمایش با
+`-- --port 3000` روی همان کانفیگ سوار می‌شود. پوشهٔ `frontend/dist` نباید روی
+پورت 3000 سرو شود؛ پیش‌نمایشِ dev سرور است.
