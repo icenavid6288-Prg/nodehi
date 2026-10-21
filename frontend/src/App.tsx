@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Navigate, Route, Routes, Link, useParams } from 'react-router-dom'
 import Layout from './components/Layout'
 import Home from './pages/Home'
@@ -17,6 +18,14 @@ import Faq from './pages/Faq'
 import Guides from './pages/Guides'
 import Loyalty from './pages/Loyalty'
 import Legal from './pages/Legal'
+// پنل مدیریت فقط برای کارکنان است؛ جدا کردن آن در chunk جداگانه، حجم
+// باندل فروشگاه برای مشتریان را بالا نمی‌برد.
+const AdminLayout = lazy(() => import('./admin/AdminLayout'))
+const AdminDashboard = lazy(() => import('./admin/Dashboard'))
+const AdminProducts = lazy(() => import('./admin/Products'))
+const AdminOrders = lazy(() => import('./admin/Orders'))
+const AdminReviews = lazy(() => import('./admin/Reviews'))
+const AdminAudit = lazy(() => import('./admin/Audit'))
 import { CartProvider } from './context/CartContext'
 import { AuthProvider } from './context/AuthContext'
 import { CatalogProvider } from './context/CatalogContext'
@@ -45,7 +54,22 @@ export default function App() {
       <CatalogProvider>
         <AuthProvider>
           <CartProvider>
+            <Suspense
+              fallback={
+                <div className="container-page py-20 text-center text-sm text-ink-muted">
+                  در حال بارگذاری...
+                </div>
+              }
+            >
             <Routes>
+              <Route path="admin" element={<AdminLayout />}>
+                <Route index element={<AdminDashboard />} />
+                <Route path="products" element={<AdminProducts />} />
+                <Route path="orders" element={<AdminOrders />} />
+                <Route path="reviews" element={<AdminReviews />} />
+                <Route path="audit" element={<AdminAudit />} />
+              </Route>
+
               <Route element={<Layout />}>
                 <Route index element={<Home />} />
                 <Route path="shop" element={<Shop />} />
@@ -72,6 +96,7 @@ export default function App() {
                 <Route path="*" element={<NotFound />} />
               </Route>
             </Routes>
+            </Suspense>
           </CartProvider>
         </AuthProvider>
       </CatalogProvider>

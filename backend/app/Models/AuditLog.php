@@ -11,6 +11,11 @@ class AuditLog extends Model
         'actor_id', 'action', 'entity', 'entity_id', 'metadata', 'ip', 'user_agent',
     ];
 
+    protected function casts(): array
+    {
+        return ['metadata' => 'array'];
+    }
+
     public function actor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'actor_id');

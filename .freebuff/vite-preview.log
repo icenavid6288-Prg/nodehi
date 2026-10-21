@@ -1,0 +1,18 @@
+
+> nodehi-frontend@0.1.0 dev
+> vite --host 0.0.0.0 --port 3000
+
+
+  VITE v5.4.21  ready in 216 ms
+
+  ➜  Local:   http://localhost:3000/
+  ➜  Network: http://169.254.77.2:3000/
+6:07:11 PM [vite] hmr update /src/index.css, /src/pages/Home.tsx, /src/pages/Contact.tsx, /src/pages/Shop.tsx, /src/pages/Product.tsx, /src/pages/Checkout.tsx, /src/pages/Login.tsx, /src/pages/Guides.tsx, /src/pages/Legal.tsx, /src/pages/BlogPost.tsx, /src/pages/Account.tsx, /src/pages/Blog.tsx, /src/pages/Track.tsx, /src/pages/Loyalty.tsx, /src/pages/Faq.tsx, /src/context/CatalogContext.tsx, /src/context/AuthContext.tsx
+6:07:15 PM [vite] hmr invalidate /src/context/CatalogContext.tsx Could not Fast Refresh ("useCatalog" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+6:07:15 PM [vite] hmr update /src/App.tsx, /src/index.css, /src/components/Layout.tsx, /src/pages/Home.tsx, /src/pages/Shop.tsx, /src/pages/Product.tsx, /src/pages/Guides.tsx, /src/pages/BlogPost.tsx, /src/pages/Brands.tsx, /src/components/ProductCard.tsx
+6:07:15 PM [vite] hmr invalidate /src/context/AuthContext.tsx Could not Fast Refresh ("useAuth" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+6:07:15 PM [vite] hmr update /src/App.tsx, /src/index.css, /src/components/Layout.tsx, /src/pages/Checkout.tsx, /src/pages/Login.tsx, /src/pages/Account.tsx, /src/pages/Loyalty.tsx
+6:11:45 PM [vite] hmr update /src/App.tsx, /src/index.css
+6:12:22 PM [vite] hmr update /src/pages/Login.tsx, /src/index.css
+6:12:53 PM [vite] hmr update /src/components/Layout.tsx, /src/index.css
+6:15:28 PM [vite] hmr update /src/App.tsx, /src/index.css

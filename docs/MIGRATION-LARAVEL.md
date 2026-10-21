@@ -35,6 +35,10 @@ npm run dev:full
 تنظیمات بک‌اند در `backend/.env` است. فرانت‌اند در توسعه از پروکسی Vite
 استفاده می‌کند؛ در تولید `VITE_API_URL` را تنظیم کنید.
 
+> برای دیدن کد ورود در توسعه، در `backend/.env` مقدار
+> `AUTH_OTP_DEV_MODE=true` را بگذارید. پیش‌فرض این کلید `false` است و در
+> محیط production هرگز کد را برنمی‌گرداند.
+
 ## دیتابیس
 
 - موتور: SQLite (`backend/database/database.sqlite`) — همان انتخاب نسخهٔ Next
@@ -44,11 +48,16 @@ npm run dev:full
   SmsMessage, PaymentGateway, AutomationEvent, AuditLog, Article,
   ArticleCategory, Faq, FaqCategory, LegalPage, LoyaltyTier,
   LoyaltyInstallment, LoyaltyStep`
-- داده اولیه از همان فایل‌های `prisma/seed-data/*.json` خوانده می‌شود تا دو
-  نسخه داده متفاوت نداشته باشند.
-- محتوای صفحات عمومی در `backend/database/seeders/data/content.json` است؛
-  این فایل با `node scripts/export-content.mjs` از سورس Next.js استخراج شده و
-  `ContentSeeder` آن را در جداول محتوا می‌نویسد.
+- داده اولیه (محصولات، دسته‌ها، برندها) در `backend/database/seeders/data/`
+  نگه‌داری می‌شود و از `prisma/seed-data` کپی شده است؛ دلیل کپی این است که
+  بک‌اند بدون وابستگی به سورس Next هم قابل نصب باشد.
+- محتوای صفحات عمومی (مقالات، پرسش‌ها، صفحات حقوقی، باشگاه مشتریان) در همان
+  پوشه در `content.json` است. این فایل منبع حقیقت است و
+  `node scripts/export-content.mjs` فقط سلامت آن را بررسی می‌کند.
+- اگر یکی از فایل‌های داده گم شود، seeder با پیام روشن متوقف می‌شود و داده
+  خالی نمی‌کارد.
+- پوشهٔ `data/` در `.gitignore` ریشه فقط برای دیتابیس محلی است؛ فایل‌های seed
+  با الگوی `/data/` دیگر نادیده گرفته نمی‌شوند.
 
 ## API (پیاده‌شده)
 
@@ -78,6 +87,23 @@ npm run dev:full
 | GET | `/api/legal`, `/api/legal/{slug}` | فهرست و متن صفحات حقوقی (`terms`, `privacy`) |
 | GET | `/api/loyalty` | سطوح عضویت، گزینه‌های اقساط و مراحل خرید اقساطی |
 
+### API مدیریت (توکن `admin`/`operator`)
+
+| متد | مسیر | توضیح |
+|---|---|---|
+| GET | `/api/admin/stats` | آمار کاتالوگ، سفارش‌ها، درآمد، نظرات و آخرین فعالیت‌ها |
+| GET | `/api/admin/products` | فهرست مدیریتی با `q, status, page, perPage` |
+| GET | `/api/admin/products/{slug}` | جزئیات کامل کالا |
+| POST | `/api/admin/products` | ساخت کالا |
+| PATCH | `/api/admin/products/{slug}` | ویرایش جزئی (فقط فیلدهای ارسالی) |
+| DELETE | `/api/admin/products/{slug}` | حذف؛ اگر سابقهٔ سفارش دارد ۴۰۹ و باید غیرفعال شود |
+| GET | `/api/admin/orders` | فهرست با `status, q, page` |
+| GET | `/api/admin/orders/{orderNumber}` | جزئیات سفارش |
+| PATCH | `/api/admin/orders/{orderNumber}` | تغییر وضعیت/کد رهگیری/یادداشت؛ لغو، موجودی را برمی‌گرداند |
+| GET | `/api/admin/reviews` | صف نظرات با `status` |
+| PATCH | `/api/admin/reviews/{id}` | تأیید/رد و بازمحاسبهٔ امتیاز محصول |
+| GET | `/api/admin/audit` | گزارش فعالیت مدیریتی |
+
 ## امنیت
 
 - ورود فقط با OTP؛ رمز عبور وجود ندارد. کد با SHA-256 ذخیره می‌شود و حداکثر
@@ -97,7 +123,8 @@ npm run dev:full
 | ثبت سفارش با کد تخفیف و کنترل موجودی | ✅ منتقل شده |
 | بلاگ (`/blog`, `/blog/:slug`)، راهنما، FAQ، وفاداری | ✅ منتقل شده |
 | صفحات حقوقی (`/terms`, `/privacy`) | ✅ منتقل شده |
-| پنل مدیریت (۱۶ صفحه) و APIهای ادمین | ⏳ باقی‌مانده |
+| پنل مدیریت: داشبورد، محصولات (CRUD)، سفارش‌ها (وضعیت/رهگیری/لغو با برگشت موجودی)، نظرات، گزارش فعالیت | ✅ پیاده‌شده |
+| پنل مدیریت: کوپن، مشتریان، تنظیمات، پرداخت، گزارش فروش، اتوماسیون | ⏳ باقی‌مانده |
 | درگاه‌های پرداخت (زرین‌پال/اسنپ‌پی) و بازگشت تراکنش | ⏳ باقی‌مانده |
 | حذف نهایی Next.js | ⏳ بعد از توازن کامل |
 

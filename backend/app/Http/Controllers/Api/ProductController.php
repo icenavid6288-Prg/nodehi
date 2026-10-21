@@ -120,17 +120,27 @@ class ProductController extends Controller
         }
 
         $user = $request->user();
+        $attributes = [
+            'author' => $data['author'] ?? $user?->fullName() ?? 'کاربر نودهی',
+            'rating' => $data['rating'],
+            'title' => $data['title'],
+            'body' => $data['body'],
+            // هر ویرایش دوباره به صف بازبینی می‌رود؛ نظر تأییدشده بی‌سر‌و‌صدا
+            // با متن تازه جایگزین نمی‌شود.
+            'status' => 'pending',
+        ];
 
-        $review = Review::updateOrCreate(
-            ['product_slug' => $slug, 'user_id' => $user?->id],
-            [
-                'author' => $data['author'] ?? $user?->fullName() ?? 'کاربر نودهی',
-                'rating' => $data['rating'],
-                'title' => $data['title'],
-                'body' => $data['body'],
-                'status' => 'pending',
-            ]
-        );
+        if ($user) {
+            // کاربر واردشده فقط نظر خودش را ویرایش می‌کند.
+            $review = Review::updateOrCreate(
+                ['product_slug' => $slug, 'user_id' => $user->id],
+                $attributes
+            );
+        } else {
+            // مهمان: هر نظر یک ردیف تازه است. updateOrCreate با user_id تهی
+            // باعث می‌شد نظر مهمان بعدی، نظر قبلی را بازنویسی کند.
+            $review = Review::create($attributes + ['product_slug' => $slug, 'user_id' => null]);
+        }
 
         return response()->json([
             'ok' => true,

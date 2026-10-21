@@ -1,122 +1,71 @@
+#!/usr/bin/env node
 /**
- * استخراج محتوای صفحات عمومی از سورس Next.js به یک فایل JSON برای Seeder لاراول.
+ * اعتبارسنجی دادهٔ seed بک‌اند لاراول.
  *
- * اجرا: node scripts/export-content.mjs
- * خروجی: backend/database/seeders/data/content.json
+ *   node scripts/export-content.mjs
+ *
+ * پیش‌تر این اسکریپت محتوای صفحات را از سورس Next.js استخراج می‌کرد؛ با حذف
+ * لایهٔ داده‌ای Next دیگر چنین سورسی وجود ندارد و اجرای قبلی با ENOENT
+ * می‌شکست. حالا `backend/database/seeders/data/content.json` منبع حقیقت است
+ * و این اسکریپت فقط وجود و ساختار فایل‌ها را بررسی می‌کند تا پیش از
+ * `migrate --seed` معلوم شود چه چیزی کم است.
+ *
+ * نام فایل برای سازگاری با مستندات و اسکریپت‌های قبلی حفظ شده است.
  */
-import { readFileSync, writeFileSync } from 'node:fs'
 
-const read = (p) => readFileSync(p, 'utf8')
+import { existsSync, readFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-/** متن بین دو نشانگر را می‌برد (نشانگر پایان شامل نمی‌شود). */
-function slice(source, start, end, label) {
-  const from = source.indexOf(start)
-  if (from === -1) throw new Error(`شروع «${label}» پیدا نشد`)
-  const to = source.indexOf(end, from + start.length)
-  if (to === -1) throw new Error(`پایان «${label}» پیدا نشد`)
-  return source.slice(from + start.length, to)
+const root = dirname(dirname(fileURLToPath(import.meta.url)))
+const dir = join(root, 'backend', 'database', 'seeders', 'data')
+
+const files = {
+  'categories.json': (data) => Array.isArray(data) && data.length > 0,
+  'brands.json': (data) => Array.isArray(data) && data.length > 0,
+  'products.json': (data) => Array.isArray(data) && data.length > 0,
+  'content.json': (data) =>
+    Array.isArray(data.articles) &&
+    data.articles.length > 0 &&
+    Array.isArray(data.faqs) &&
+    Array.isArray(data.legal) &&
+    data.legal.length > 0 &&
+    Array.isArray(data.loyalty?.tiers),
 }
 
-/** یک literal جاوااسکریپت (آرایه/آبجکت) را ارزیابی می‌کند. */
-function evaluate(source, scope = {}) {
-  const keys = Object.keys(scope)
-  const fn = new Function(...keys, `return (${source});`)
-  return fn(...keys.map((key) => scope[key]))
+let failed = 0
+
+for (const [file, validate] of Object.entries(files)) {
+  const path = join(dir, file)
+
+  if (!existsSync(path)) {
+    console.error(`✗ ${file} پیدا نشد — ${path}`)
+    failed += 1
+    continue
+  }
+
+  let data
+  try {
+    data = JSON.parse(readFileSync(path, 'utf8'))
+  } catch (error) {
+    console.error(`✗ ${file} JSON معتبر نیست — ${error.message}`)
+    failed += 1
+    continue
+  }
+
+  if (!validate(data)) {
+    console.error(`✗ ${file} ساختار مورد انتظار را ندارد.`)
+    failed += 1
+    continue
+  }
+
+  const count = Array.isArray(data) ? data.length : Object.keys(data).length
+  console.log(`✓ ${file} (${count} گروه داده)`)
 }
 
-const brand = {
-  name: 'نودهی',
-  contact: { phone: '۰۲۱-۹۱۰۰۰۰۰۰', phoneRaw: '02191000000', email: 'info@nodehi.ir' },
+if (failed > 0) {
+  console.error(`\n${failed} فایل داده مشکل دارد؛ seeder با این وضعیت اجرا نمی‌شود.`)
+  process.exit(1)
 }
 
-// ── مقالات ────────────────────────────────────────────────────────────────
-const articlesSource = read('src/lib/data/articles.ts')
-const articles = evaluate(
-  slice(articlesSource, 'export const articles: Article[] =', '\n]\n\nexport const articleBySlug', 'articles') + '\n]',
-)
-const articleCategories = evaluate(
-  slice(
-    articlesSource,
-    "export const articleCategoryLabels: Record<Article['category'], string> =",
-    '\n}\n',
-    'articleCategoryLabels',
-  ) + '\n}',
-)
-
-// ── سوالات متداول ────────────────────────────────────────────────────────
-const contentSource = read('src/lib/data/content.ts')
-const faqs = evaluate(
-  slice(contentSource, 'export const faqs: FaqItem[] =', '\n]\n\n/** نقاط اعتماد', 'faqs') + '\n]',
-)
-
-const faqPageSource = read('src/app/faq/page.tsx')
-const faqCategories = evaluate(
-  slice(
-    faqPageSource,
-    'const categoryLabels: Record<string, string> =',
-    '\n}\n',
-    'faqCategoryLabels',
-  ) + '\n}',
-)
-
-// ── صفحات حقوقی ──────────────────────────────────────────────────────────
-function legalFrom(path, slug, title, intro, updatedAt) {
-  const source = read(path)
-  const sections = evaluate(
-    slice(source, 'const sections: LegalSection[] =', '\n]\n\nexport default function', `sections ${slug}`) + '\n]',
-    { brand },
-  )
-  return { slug, title, intro, updatedAt, sections }
-}
-
-const legal = [
-  legalFrom(
-    'src/app/terms/page.tsx',
-    'terms',
-    'قوانین و مقررات',
-    `با ثبت سفارش در فروشگاه ${brand.name}، شما شرایط زیر را می‌پذیرید. این سند حقوق و تعهدات دو طرف را شفاف مشخص می‌کند تا خرید بدون ابهام انجام شود.`,
-    '2026-08-01',
-  ),
-  legalFrom(
-    'src/app/privacy/page.tsx',
-    'privacy',
-    'سیاست حریم خصوصی',
-    `حفاظت از اطلاعات مشتریان ${brand.name} بخشی از تعهد ما به شماست. در این سند شفاف توضیح می‌دهیم چه داده‌هایی جمع‌آوری می‌شود، چرا، چگونه محافظت می‌شود و شما چه اختیاراتی دارید.`,
-    '2026-08-01',
-  ),
-]
-
-// ── باشگاه مشتریان ───────────────────────────────────────────────────────
-const loyaltySource = read('src/app/loyalty/page.tsx')
-const tiers = evaluate(
-  slice(loyaltySource, 'const tiers =', '\n]\n\nconst installments', 'loyalty tiers') + '\n]',
-)
-const installments = evaluate(
-  slice(loyaltySource, 'const installments =', '\n]\n\nexport default function', 'loyalty installments') + '\n]',
-)
-
-const steps = [
-  { step: 1, title: 'انتخاب کالا', description: 'محصول را به سبد خرید اضافه کنید.' },
-  { step: 2, title: 'انتخاب اقساط', description: 'در تسویه حساب گزینه اقساطی را بزنید.' },
-  { step: 3, title: 'اعتبارسنجی', description: 'مدارک را بارگذاری و نتیجه را ببینید.' },
-  { step: 4, title: 'ارسال کالا', description: 'پس از تأیید، کالا بدون ضامن ارسال می‌شود.' },
-]
-
-const payload = {
-  articleCategories,
-  articles,
-  faqCategories: Object.entries(faqCategories).map(([slug, label]) => ({ slug, label })),
-  faqs,
-  legal,
-  loyalty: {
-    tiers: tiers.map(({ current, ...tier }) => tier),
-    installments,
-    steps,
-  },
-}
-
-writeFileSync('backend/database/seeders/data/content.json', JSON.stringify(payload, null, 2) + '\n')
-
-console.log(
-  `articles=${articles.length} faqs=${faqs.length} legal=${legal.length} tiers=${tiers.length} installments=${installments.length}`,
-)
+console.log('\nدادهٔ seed کامل است.')

@@ -7,6 +7,7 @@ use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Setting;
+use App\Support\Phone;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -34,9 +35,36 @@ class CheckoutController extends Controller
             'idempotencyKey' => ['nullable', 'string', 'max:80'],
         ]);
 
-        if (! empty($data['idempotencyKey'])) {
-            $existing = Order::where('idempotency_key', $data['idempotencyKey'])->first();
+        $phone = Phone::normalize($data['phone']);
+        if (! Phone::isValid($phone)) {
+            return response()->json(['ok' => false, 'error' => 'شماره همراه معتبر نیست.'], 422);
+        }
+        $data['phone'] = $phone;
+
+        $user = $request->user();
+        $idempotencyKey = trim((string) ($data['idempotencyKey'] ?? ''));
+
+        if ($idempotencyKey !== '') {
+            if (! preg_match('/^[A-Za-z0-9._-]{8,80}$/', $idempotencyKey)) {
+                return response()->json(['ok' => false, 'error' => 'کلید یکتای سفارش نامعتبر است.'], 422);
+            }
+
+            $existing = Order::where('idempotency_key', $idempotencyKey)->first();
             if ($existing) {
+                // کلید باید به همان کاربر (یا برای مهمان، همان شماره) تعلق داشته
+                // باشد؛ وگرنه پاسخ یک سفارش متعلق به کاربر دیگر لو می‌رود.
+                $ownedByUser = $user !== null && $existing->user_id === $user->id;
+                $ownedByGuest = $user === null
+                    && $existing->user_id === null
+                    && Phone::normalize($existing->customer_phone) === $phone;
+
+                if (! $ownedByUser && ! $ownedByGuest) {
+                    return response()->json([
+                        'ok' => false,
+                        'error' => 'این درخواست قبلاً با مشخصات دیگری ثبت شده است.',
+                    ], 409);
+                }
+
                 return response()->json([
                     'ok' => true,
                     'order' => $this->payload($existing->load('items')),
@@ -45,7 +73,7 @@ class CheckoutController extends Controller
             }
         }
 
-        return DB::transaction(function () use ($data, $request) {
+        return DB::transaction(function () use ($data, $request, $user, $idempotencyKey) {
             $lines = [];
             $subtotal = 0;
 
@@ -54,6 +82,9 @@ class CheckoutController extends Controller
 
                 if (! $product) {
                     return response()->json(['ok' => false, 'error' => "کالای {$row['slug']} یافت نشد."], 422);
+                }
+                if (in_array($product->slug, array_column($lines, 'product_slug'), true)) {
+                    return response()->json(['ok' => false, 'error' => 'یک کالا نمی‌تواند دو بار در سفارش باشد.'], 422);
                 }
                 if ($product->stock < $row['quantity']) {
                     return response()->json([
@@ -96,7 +127,7 @@ class CheckoutController extends Controller
 
             $order = Order::create([
                 'order_number' => $this->nextOrderNumber(),
-                'user_id' => $request->user()?->id,
+                'user_id' => $user?->id,
                 'status' => 'pending',
                 'payment_method' => $data['paymentMethod'],
                 'shipping_method' => $data['shippingMethod'] ?? 'standard',
@@ -114,7 +145,7 @@ class CheckoutController extends Controller
                 'shipping_line' => $data['line'],
                 'shipping_postal_code' => $data['postalCode'] ?? null,
                 'note' => $data['note'] ?? null,
-                'idempotency_key' => $data['idempotencyKey'] ?? null,
+                'idempotency_key' => $idempotencyKey !== '' ? $idempotencyKey : null,
             ]);
 
             foreach ($lines as $line) {

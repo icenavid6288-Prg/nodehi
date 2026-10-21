@@ -1,6 +1,6 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { Link, Navigate } from 'react-router-dom'
-import { post, type OrderResponse } from '../lib/api'
+import { get, post, type OrderResponse } from '../lib/api'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 import { FREE_SHIPPING_THRESHOLD, SHIPPING_COST, price, toFa } from '../lib/format'
@@ -11,10 +11,13 @@ type CheckoutResponse = {
   payment?: { type: string; message: string; redirectUrl: string | null }
 }
 
-const paymentOptions = [
-  { key: 'cod', label: 'پرداخت در محل', hint: 'هنگام تحویل کالا پرداخت می‌کنید.' },
-  { key: 'online', label: 'پرداخت آنلاین', hint: 'درگاه بانکی (در این محیط آزمایشی).' },
-  { key: 'installment', label: 'خرید اقساطی', hint: 'پرداخت اقساطی با اسنپ‌پی.' },
+type PaymentMethodRow = { key: string; label: string; description?: string; hint?: string; sandbox?: boolean }
+
+/** فقط وقتی API روش‌ها را برنگرداند استفاده می‌شود. */
+const fallbackPaymentOptions: PaymentMethodRow[] = [
+  { key: 'cod', label: 'پرداخت در محل', description: 'هنگام تحویل کالا پرداخت می‌کنید.' },
+  { key: 'online', label: 'پرداخت آنلاین', description: 'درگاه بانکی (در این محیط آزمایشی).' },
+  { key: 'installment', label: 'خرید اقساطی', description: 'پرداخت اقساطی با اسنپ‌پی.' },
 ]
 
 export default function Checkout() {
@@ -25,8 +28,49 @@ export default function Checkout() {
   const [done, setDone] = useState<CheckoutResponse | null>(null)
   const [paymentMethod, setPaymentMethod] = useState('cod')
   const [couponCode, setCouponCode] = useState('')
+  const [methods, setMethods] = useState<PaymentMethodRow[]>([])
+  const [settings, setSettings] = useState<Record<string, string>>({})
 
-  const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST
+  // کلید یکتا یک‌بار در شروع تسویه ساخته می‌شود. نسخهٔ قبلی از Date.now()
+  // استفاده می‌کرد که قابل حدس بود و می‌توانست به سفارش کاربر دیگری برخورد کند.
+  const idempotencyKey = useRef(
+    typeof crypto !== 'undefined' && 'randomUUID' in crypto
+      ? crypto.randomUUID()
+      : `ui-${Date.now()}-${Math.random().toString(16).slice(2)}`
+  )
+
+  useEffect(() => {
+    get<{ settings: Record<string, string> }>('/settings/public')
+      .then((data) => setSettings(data.settings ?? {}))
+      .catch(() => undefined)
+
+    get<{ items: PaymentMethodRow[] }>('/payments/methods')
+      .then((data) => setMethods(data.items ?? []))
+      .catch(() => undefined)
+  }, [])
+
+  const paymentOptions = useMemo(
+    () =>
+      (methods.length > 0 ? methods : fallbackPaymentOptions).map((method) => ({
+        key: method.key,
+        label: method.label,
+        hint: method.description ?? method.hint ?? '',
+      })),
+    [methods]
+  )
+
+  // اگر روش انتخاب‌شده از پنل غیرفعال شده باشد، اولین روش فعال انتخاب می‌شود.
+  useEffect(() => {
+    if (paymentOptions.length > 0 && !paymentOptions.some((option) => option.key === paymentMethod)) {
+      setPaymentMethod(paymentOptions[0].key)
+    }
+  }, [paymentOptions, paymentMethod])
+
+  // هزینهٔ ارسال از تنظیمات سرور می‌آید؛ نسخهٔ قبلی آن را هاردکد کرده بود و
+  // با تغییر تنظیمات پنل، مبلغ نمایشی با مبلغ نهایی اختلاف پیدا می‌کرد.
+  const freeThreshold = Number(settings['shipping.freeThreshold'] ?? FREE_SHIPPING_THRESHOLD)
+  const shippingCost = Number(settings['shipping.cost'] ?? SHIPPING_COST)
+  const shipping = subtotal >= freeThreshold ? 0 : shippingCost
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -50,7 +94,7 @@ export default function Checkout() {
         note: String(form.get('note') ?? '') || null,
         paymentMethod,
         couponCode: couponCode || null,
-        idempotencyKey: `ui-${Date.now()}-${lines.length}`,
+        idempotencyKey: idempotencyKey.current,
       })
 
       clear()
