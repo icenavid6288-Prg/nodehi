@@ -5,6 +5,7 @@ import Breadcrumbs from '../components/Breadcrumbs'
 import { ApiError, get, type ArticleResponse, type ArticleSummary } from '../lib/api'
 import { useCatalog } from '../context/CatalogContext'
 import { formatDate, price, toFa } from '../lib/format'
+import { articleMeta, usePageMeta } from '../lib/seo'
 
 type RelatedProduct = { slug: string; name: string; price: number; image: string | null }
 
@@ -15,6 +16,31 @@ export default function BlogPost() {
   const [products, setProducts] = useState<RelatedProduct[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  const seoArticle = data?.article
+  // متادیتای کامل (Article + Breadcrumb + WebPage در JSON-LD) از هستهٔ مشترک
+  // سئو می‌آید تا نسخهٔ ایستای همین مقاله عنوان و دادهٔ یکسانی داشته باشد.
+  usePageMeta(
+    seoArticle
+      ? articleMeta({
+          slug: seoArticle.slug,
+          title: seoArticle.title,
+          excerpt: seoArticle.excerpt,
+          category: seoArticle.category,
+          categoryLabel: seoArticle.categoryLabel,
+          author: seoArticle.author,
+          publishedAt: seoArticle.publishedAt,
+          updatedAt: seoArticle.updatedAt,
+          readingMinutes: seoArticle.readingMinutes,
+          keywords: seoArticle.keywords,
+        })
+      : {
+          title: error ? 'مقاله یافت نشد | نودهی' : 'مقالات نودهی',
+          description: 'راهنمای خرید و مقایسهٔ لوازم خانگی از کارشناسان نودهی.',
+          path: `/blog/${slug}`,
+          robots: error ? 'noindex' : 'index',
+        },
+  )
 
   useEffect(() => {
     let alive = true
@@ -154,7 +180,7 @@ export default function BlogPost() {
             <ul className="mt-3 flex flex-col gap-2 text-xs">
               {categories.slice(0, 5).map((category) => (
                 <li key={category.slug}>
-                  <Link to={`/shop?category=${category.slug}`} className="text-ink-muted transition-colors hover:text-primary">
+                  <Link to={`/category/${category.slug}`} className="text-ink-muted transition-colors hover:text-primary">
                     {category.name}
                   </Link>
                 </li>

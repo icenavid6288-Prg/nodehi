@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use App\Support\Phone;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -18,14 +17,9 @@ class OrderController extends Controller
             'phone' => ['required', 'string', 'max:20'],
         ]);
 
-        $phone = Phone::normalize($data['phone']);
-        if (! Phone::isValid($phone)) {
-            return response()->json(['ok' => false, 'error' => 'شماره همراه معتبر نیست.'], 422);
-        }
-
         $order = Order::with('items')
-            ->where('order_number', strtoupper(trim($data['orderNumber'])))
-            ->where('customer_phone', $phone)
+            ->where('order_number', $data['orderNumber'])
+            ->where('customer_phone', $data['phone'])
             ->first();
 
         if (! $order) {

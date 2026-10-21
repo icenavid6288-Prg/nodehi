@@ -20,6 +20,9 @@ return [
         'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
     ],
 
+    // طول عمر نشست‌های OTP (روز) — در AuthController استفاده می‌شود
+    'session_days' => (int) env('AUTH_SESSION_DAYS', 30),
+
     /*
     |--------------------------------------------------------------------------
     | Authentication Guards

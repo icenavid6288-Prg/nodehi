@@ -1,39 +1,37 @@
 # وابستگی‌ها
 node_modules/
-.pnp
-.pnp.js
+backend/vendor/
 
-# build
-.next/
-out/
-build/
-dist/
+# خروجی بیلد فرانت‌اند
+frontend/dist/
+frontend/.vite/
 
-# محلی
+# فایل‌های محیطی — نمونه‌ها باید کامیت شوند
 .env
-.env*.local
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
 
-# دیتابیس محلی SQLite (migrationها باید کامیت شوند، خود فایل دیتابیس نه)
-prisma/dev.db
-/data/
-prisma/dev.db-journal
-prisma/dev.db-wal
-prisma/dev.db-shm
+# دیتابیس محلی و فایل‌های موقت لاراول
+backend/database/*.sqlite
+backend/database/*.sqlite-journal
+backend/.phpunit.result.cache
+
+# عمومی
 .DS_Store
-*.pem
-
-# بسته‌های استقرار
 *.zip
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.vercel
-
-# تست
 coverage/
 
-# typescript
+# فایل‌های ابزار/ایجنт (لاگ و کوکی) نباید کامیت شوند
+.freebuff/
+
+# خروجی TypeScript
 *.tsbuildinfo
-next-env.d.ts
+
+# لاگ سرورهای توسعه
+logs/

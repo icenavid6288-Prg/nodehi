@@ -13,24 +13,15 @@ use App\Models\LoyaltyTier;
 use Illuminate\Database\Seeder;
 
 /**
- * محتوای صفحات عمومی — همان متون نسخه Next.js که در
- * database/seeders/data/content.json استخراج شده‌اند.
+ * محتوای صفحات عمومی — از فایل database/seeders/data/content.json خوانده
+ * می‌شود تا متن‌ها بدون انتشار مجدد فرانت‌اند قابل تغییر باشند.
  */
 class ContentSeeder extends Seeder
 {
     public function run(): void
     {
         $path = database_path('seeders/data/content.json');
-
-        if (! is_file($path)) {
-            throw new \RuntimeException("فایل محتوای seed پیدا نشد: {$path}");
-        }
-
-        $data = json_decode((string) file_get_contents($path), true);
-
-        if (! is_array($data)) {
-            throw new \RuntimeException("فایل محتوای seed معتبر نیست: {$path}");
-        }
+        $data = json_decode(file_get_contents($path), true) ?: [];
 
         foreach (($data['articleCategories'] ?? []) as $slug => $label) {
             ArticleCategory::updateOrCreate(['slug' => $slug], ['label' => $label, 'sort_order' => 0]);

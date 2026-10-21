@@ -1,748 +1,450 @@
 # مرجع API نودهی
 
-همه مسیرها زیر `/api` قرار دارند و قالب پاسخ یکسان است تا کلاینت‌ها
-(وب، اپ موبایل، n8n و مارکت‌پلیس‌ها) بتوانند یکنواخت خطاها را تشخیص دهند.
+همهٔ مسیرها زیر `/api` هستند و پاسخ‌ها JSON‌اند. مسیرهای محافظت‌شده توکن
+`Authorization: Bearer <token>` می‌خواهند.
+
+---
 
 ## قالب پاسخ
 
 **موفق**
 
 ```json
-{ "ok": true, "...": "داده مخصوص هر مسیر" }
+{ "ok": true, "...": "دادهٔ مخصوص هر مسیر" }
 ```
 
-**ناموفق**
+**خطای منطقی** (کنترلرها)
+
+```json
+{ "ok": false, "error": "پیام قابل نمایش به کاربر" }
+```
+
+**خطای اعتبارسنجی لاراول** (۴۲۲)
 
 ```json
 {
-  "ok": false,
-  "error": {
-    "code": "invalid_input",
-    "message": "پیام قابل نمایش به کاربر",
-    "fields": { "phone": "شماره همراه باید ۱۱ رقم و با ۰۹ شروع شود." }
-  }
+  "message": "The phone field is required. (and 1 more error)",
+  "errors": { "phone": ["The phone field is required."] }
 }
 ```
 
-فیلد `fields` تنها برای فرم‌ها برگردانده می‌شود و کلیدهای آن با نام
-فیلدهای همان فرم یکسان است.
-
-### کدهای خطای رایج
-
-| کد | وضعیت | معنا |
-| --- | --- | --- |
-| `invalid_input` | 400 | ورودی نامعتبر؛ جزئیات در `fields` |
-| `invalid_signature` | 401 | امضای وبهوک نادرست است |
-| `not_found` | 404 | منبع یافت نشد |
-| `unauthorized` | 401 | ورود لازم است |
-| `forbidden` | 403 | نقش کاربری اجازه این عملیات را ندارد |
-| `read_only_role` | 403 | نقش فقط-خواندنی (مثلاً حسابدار) |
-| `insufficient_role` | 403 | این عمل مخصوص «مدیر کل» است |
-| `address_limit` | 409 | سقف آدرس‌های ذخیره‌شده پر شده |
-| `out_of_stock` | 409 | کالا ناموجود شده است |
-| `insufficient_stock` | 409 | تعداد درخواستی بیش از موجودی است |
-| `already_reviewed` | 409 | کاربر قبلاً برای این کالا نظر داده است |
-| `rate_limited` | 429 | سهمیه درخواست تمام شده؛ هدر `Retry-After` را ببینید |
-| `webhook_disabled` | 503 | کلید وبهوک تنظیم نشده (حالت امن) |
+کلاینت فرانت‌اند هر دو شکل را می‌خواند و پیام فارسی کنترلر را در اولویت قرار
+می‌دهد.
 
 ---
 
-## ۱) سلامت سرویس
+## ۱) سلامت
 
 ```
 GET /api/health
 ```
 
-پاسخ هرگز کش نمی‌شود. برای Load Balancer و مانیتورینگ مناسب است.
-
-```bash
-curl -s https://nodehi.ir/api/health
-```
-
 ```json
-{
-  "ok": true,
-  "status": "healthy",
-  "service": "Nodehi",
-  "version": "1.0.0",
-  "environment": "production",
-  "catalogSize": 23,
-  "timestamp": "2026-09-27T14:42:24.308Z"
-}
+{ "ok": true, "status": "healthy", "service": "Nodehi", "catalogSize": 23 }
 ```
 
 ---
 
-## ۲) فهرست محصولات
+## ۲) کاتالوگ
+
+### فهرست محصولات
 
 ```
 GET /api/products
 ```
 
-پارامترها **دقیقاً** همان پارامترهای صفحه فروشگاه هستند، چون هر دو از
-یک پارسر مشترک (`src/lib/filters.ts`) استفاده می‌کنند. بنابراین هر
-فیلتری که در سایت پشتیبانی می‌شود، از طریق API هم قابل استفاده است.
+| پارامتر | مقدار |
+| --- | --- |
+| `q` | جستجوی متنی در نام و توضیح |
+| `category` | نامک یا چند نامک جداشده با کاما |
+| `brand` | نامک یا چند نامک جداشده با کاما |
+| `minPrice` / `maxPrice` | تومان |
+| `inStock` | `1` |
+| `onSale` | `1` |
+| `tag` | تگ محصول |
+| `sort` | `relevance`, `price-asc`, `price-desc`, `newest`, `popular`, `rating`, `discount` |
+| `page` / `perPage` | صفحه‌بندی (حداکثر ۶۰) |
 
-| پارامتر | نمونه | توضیح |
-| --- | --- | --- |
-| `q` | `یخچال ساید` | جستجوی متنی (ی/ک عربی هم‌ارز شده و نام فارسی برند هم ایندکس می‌شود) |
-| `category` | `refrigerator,washer` | فهرست دسته‌ها با کاما |
-| `brand` | `samsung,bosch` | نامک برند، جدا شده با کاما |
-| `minPrice` / `maxPrice` | `10000000` | بازه قیمت به تومان |
-| `energy` | `A+++,A++` | رتبه انرژی |
-| `color` | `سفید,نقره‌ای` | رنگ |
-| `inverter` | `1` | فقط اینورتر |
-| `installment` | `1` | فقط قابل خرید اقساطی |
-| `ready` | `1` | فقط آماده ارسال |
-| `instock` | `1` | فقط موجود |
-| `discounted` | `1` | فقط تخفیف‌دار |
-| `sort` | `price-asc` | `relevance`، `newest`، `price-asc`، `price-desc`، `rating`، `popular` |
-| `page` | `2` | شماره صفحه (از ۱) |
-| `perPage` | `24` | بین ۸ تا ۴۸ |
-
-پاسخ شامل `facets` است: گزینه‌های فیلتر همراه با **شمارش واقعی** روی
-نتیجه فیلترشده. با این کار می‌توانید UI فیلتر را روی کلاینت بسازید.
-
-```bash
-curl -s "https://nodehi.ir/api/products?category=refrigerator&sort=price-asc&perPage=8"
+```json
+{ "ok": true, "total": 23, "page": 1, "perPage": 24, "pageCount": 1, "items": [] }
 ```
+
+### چند محصول با نامک
+
+```
+GET /api/products/by-slugs?slugs=slug-a,slug-b
+```
+
+حداکثر ۸ نامک؛ ترتیب ورودی حفظ می‌شود. برای جدول مقایسه استفاده می‌شود.
+
+### جزئیات محصول
+
+```
+GET /api/products/{slug}
+```
+
+شامل `product`، `related` و مشخصات کامل.
+
+### نظرات محصول
+
+```
+GET  /api/products/{slug}/reviews
+POST /api/products/{slug}/reviews
+```
+
+بدنهٔ ثبت نظر:
+
+```json
+{ "rating": 5, "title": "کیفیت خوب", "body": "متن نظر", "author": "نام" }
+```
+
+نظر پس از ثبت در وضعیت `pending` می‌ماند. اگر توکن معتبر بفرستید، نظر به حساب
+شما وصل می‌شود؛ در غیر این صورت مهمان ثبت می‌شود.
+
+### دسته‌ها و برندها
+
+```
+GET /api/categories          GET /api/categories/{slug}
+GET /api/brands              GET /api/brands/{slug}
+```
+
+### جستجوی سریع
+
+```
+GET /api/search?q=یخچال
+```
+
+حداکثر ۸ محصول، ۴ دسته و ۴ برند.
+
+---
+
+## ۳) تنظیمات، پرداخت و تخفیف
+
+```
+GET /api/settings/public
+GET /api/payments/methods
+POST /api/coupons/validate
+```
+
+درخواست اعتبارسنجی کد تخفیف:
+
+```json
+{ "code": "NODEHI10", "subtotal": 12000000 }
+```
+
+پاسخ موفق:
 
 ```json
 {
   "ok": true,
-  "total": 5,
-  "page": 1,
-  "perPage": 8,
-  "pageCount": 1,
-  "sort": "price-asc",
-  "query": "",
-  "items": [
-    {
-      "id": "p-1005",
-      "slug": "emersun-top-freezer-13ft",
-      "name": "یخچال فریزر امرسان مدل ۱۳ فوت",
-      "url": "https://nodehi.ir/product/emersun-top-freezer-13ft",
-      "category": "refrigerator",
-      "brand": "emersun",
-      "brandName": "امرسان",
-      "price": 28900000,
-      "compareAtPrice": 32400000,
-      "discountPercent": 11,
-      "stock": 22,
-      "inStock": true,
-      "rating": 4.1,
-      "reviewCount": 341,
-      "shortDescription": "یخچال فریزر اقتصادی ۱۳ فوت مناسب خانه‌های کوچک و دفتر کار.",
-      "image": null,
-      "readyToShip": true,
-      "installmentAvailable": true,
-      "energyRating": "A+",
-      "color": "سفید",
-      "capacity": "360 لیتر",
-      "inverter": false,
-      "warrantyMonths": 24,
-      "publishedAt": "2026-05-12"
-    }
-  ],
-  "facets": {
-    "brands": [{ "value": "samsung", "label": "سامسونگ", "count": 2 }],
-    "colors": [{ "value": "سفید", "label": "سفید", "count": 3 }],
-    "energyRatings": [{ "value": "A+", "label": "A+", "count": 2 }],
-    "capacities": [{ "value": "360 لیتر", "label": "360 لیتر", "count": 1 }],
-    "priceRange": { "min": 28900000, "max": 89000000 }
-  }
+  "coupon": { "code": "NODEHI10", "label": "۱۰٪ تخفیف", "percent": 10, "discount": 1200000 }
 }
 ```
 
-این مسیر برای **همگام‌سازی با ترب و دیجی‌کالا** طراحی شده است؛ برای هر
-محصول از `url` به‌عنوان لینک صفحه استفاده کنید.
+اگر کد معتبر نباشد، پاسخ ۴۲۲ با `ok: false` برمی‌گردد. این مسیر فقط برای نمایش
+است؛ هنگام ثبت سفارش دوباره روی سرور بررسی می‌شود.
 
 ---
 
-## ۳) پیشنهاد خودکار جستجو
+## ۴) محتوا
 
 ```
-GET /api/search?q=یخچال&limit=7
+GET /api/articles            ?category=&limit=
+GET /api/articles/{slug}
+GET /api/faqs
+GET /api/legal
+GET /api/legal/{slug}
+GET /api/loyalty
 ```
 
-| پارامتر | پیش‌فرض | توضیح |
-| --- | --- | --- |
-| `q` | — | حداقل ۲ نویسه؛ کوتاه‌تر از آن آرایه خالی برمی‌گرداند |
-| `limit` | `7` | بین ۱ تا ۱۰ |
-
-```bash
-curl -s "https://nodehi.ir/api/search?q=یخچال&limit=3"
-```
-
-```json
-{
-  "ok": true,
-  "query": "یخچال",
-  "count": 3,
-  "suggestions": [
-    { "type": "category", "label": "یخچال و فریزر", "href": "/shop?category=refrigerator", "meta": "..." },
-    { "type": "product", "label": "یخچال فریزر بالا اسنوا مدل S16 ۱۶ فوت", "href": "/product/snowa-top-freezer-16ft", "meta": "..." }
-  ]
-}
-```
-
-`type` یکی از `category`، `brand` یا `product` است. خروجی همیشه به این
-ترتیب مرتب می‌شود تا دسته و برند (که به صفحه فهرست می‌روند) بالاتر از
-محصول تک قرار بگیرند.
-
-**محدودیت نرخ:** ۱۲۰ درخواست در دقیقه برای هر IP (این مسیر پرترافیک‌ترین
-نقطه سایت است چون با هر تایپ کاربر فراخوانی می‌شود).
+> محتوا از دیتابیس خوانده می‌شود و در نصب تازه با `php artisan migrate --seed`
+> از `backend/database/seeders/data/content.json` پر می‌شود.
 
 ---
 
-## ۴) تسویه حساب و ثبت سفارش
+## ۵) تعامل با مشتری
+
+```
+POST /api/contact        { name, phone, email?, subject, message }
+POST /api/stock-alerts   { productSlug, phone, email? }
+```
+
+هر دو محدودیت نرخ دارند. هشدار موجودی برای هر محصول و شماره یکتا است.
+
+---
+
+## ۶) تسویه و سفارش
+
+### ثبت سفارش
 
 ```
 POST /api/checkout
 ```
 
-### ⚠️ اصل امنیتی: قیمت هرگز از مرورگر پذیرفته نمی‌شود
-
-کلاینت **فقط** نامک محصول (`slug`) و تعداد (`quantity`) می‌فرستد. سرور
-قیمت را از کاتالوگ می‌خواند، موجودی را بررسی می‌کند و مبلغ نهایی را
-محاسبه می‌کند. هر فیلد قیمتی که در بدنه ارسال شود (مثل `price` یا
-`lineTotal`) کاملاً نادیده گرفته می‌شود. با این کار دستکاری قیمت در
-DevTools هیچ اثری ندارد.
-
-### بدنه درخواست
-
 ```json
 {
-  "items": [{ "slug": "samsung-side-by-side-rs68-28ft", "quantity": 1 }],
+  "items": [{ "slug": "pars-khazar-tea-maker-3l", "quantity": 1 }],
+  "firstName": "نوید",
+  "lastName": "احمدی",
+  "phone": "09121234567",
+  "email": "user@example.com",
+  "province": "تهران",
+  "city": "تهران",
+  "line": "خیابان ولیعصر، پلاک ۱۲",
+  "postalCode": "1234567890",
+  "paymentMethod": "cod",
+  "shippingMethod": "standard",
   "couponCode": "NODEHI10",
-  "paymentMethod": "online",
-  "customer": {
-    "firstName": "مریم",
-    "lastName": "احمدی",
-    "phone": "09120000000",
-    "email": "maryam@example.com",
-    "province": "تهران",
-    "city": "تهران",
-    "line": "خیابان ولیعصر، پلاک ۱۲، واحد ۴",
-    "postalCode": "1968765432"
-  }
+  "note": "توضیح اختیاری",
+  "idempotencyKey": "cd1f2f3e-..."
 }
 ```
 
-| فیلد | قواعد |
-| --- | --- |
-| `items` | ۱ تا ۲۰ قلم؛ تعداد هر قلم ۱ تا ۱۰؛ نامک تکراری مجاز نیست |
-| `paymentMethod` | `online` (زرین‌پال/آیدی‌پی)، `cod` (درب منزل)، `installment` (اقساطی) |
-| `customer.firstName` / `lastName` | دست‌کم ۲ نویسه |
-| `customer.phone` | ۱۱ رقم، با ۰۹؛ ارقام فارسی و قالب `+۹۸` هم پذیرفته می‌شود |
-| `customer.email` | اختیاری، در صورت ارسال باید معتبر باشد |
-| `customer.line` | دست‌کم ۱۰ نویسه |
-| `customer.postalCode` | اختیاری، در صورت ارسال ۱۰ رقم |
-| `couponCode` | اختیاری؛ کد ناشناخته باعث خطای ۴۰۰ می‌شود |
+قواعد:
 
-**خرید اقساطی** تنها برای سفارش‌های بالای ۳۰٬۰۰۰٬۰۰۰ تومان فعال است.
+- قیمت و موجودی از دیتابیس خوانده می‌شود؛ فیلد قیمت از کلاینت پذیرفته نمی‌شود.
+- `paymentMethod`: `cod` | `online` | `installment`.
+- خرید اقساطی حداقل ۳۰٬۰۰۰٬۰۰۰ تومان است.
+- `idempotencyKey` یکتاست. تکرار همان کلید با همان کاربر/شماره پاسخ تکراری
+  (`duplicate: true`) می‌دهد؛ استفادهٔ همان کلید توسط شخص دیگر ۴۰۹ می‌گیرد.
+- سفارش `cod` با وضعیت `processing` و موجودی کاسته‌شده ثبت می‌شود.
+  سفارش `online`/`installment` با وضعیت `pending` ثبت می‌شود و موجودی را کم نمی‌کند.
 
-### نمونه موفق
-
-```bash
-curl -s -X POST https://nodehi.ir/api/checkout \
-  -H 'content-type: application/json' \
-  -d '{"items":[{"slug":"samsung-side-by-side-rs68-28ft","quantity":1}],"couponCode":"NODEHI10","paymentMethod":"online","customer":{"firstName":"مریم","lastName":"احمدی","phone":"09120000000","province":"تهران","city":"تهران","line":"خیابان ولیعصر، پلاک ۱۲","postalCode":"1968765432"}}'
-```
+پاسخ ۲۰۱:
 
 ```json
 {
   "ok": true,
   "order": {
-    "id": "ND-819298",
-    "createdAt": "2026-09-27T14:43:25.937Z",
-    "status": "pending",
-    "paymentMethod": "online",
-    "items": [{ "slug": "samsung-side-by-side-rs68-28ft", "quantity": 1, "unitPrice": 89000000, "lineTotal": 89000000 }],
-    "totals": {
-      "subtotal": 89000000,
-      "discount": 8900000,
-      "shipping": 0,
-      "total": 80100000,
-      "coupon": { "code": "NODEHI10", "percent": 10, "label": "۱۰٪ تخفیف عمومی" }
-    }
+    "id": 12,
+    "orderNumber": "ND-261021-A1B2C3",
+    "status": "processing",
+    "paymentMethod": "cod",
+    "subtotal": 4200000,
+    "discount": 420000,
+    "shipping": 450000,
+    "total": 4230000,
+    "items": []
   },
-  "payment": {
-    "gateway": "zarinpal",
-    "redirectUrl": "https://sandbox.zarinpal.com/pg/StartPay/A00000000000000000000000000000000123",
-    "sandbox": true,
-    "note": null
-  }
+  "payment": { "type": "cod", "message": "پرداخت هنگام تحویل..." }
 }
 ```
 
-`status` برای پرداخت درب منزل `processing` و برای بقیه `pending` است.
-
-### پاسخ پرداخت آنلاین
-
-برای `paymentMethod: "online"` سرور در همان درخواست، از درگاه authority
-می‌گیرد و آدرس صفحه بانک را برمی‌گرداند. کلاینت فقط باید کاربر را به
-`payment.redirectUrl` ببرد.
-
-| کلید | معنی |
-| --- | --- |
-| `redirectUrl` | آدرس صفحه پرداخت درگاه؛ اگر تهی باشد یعنی پرداخت آنلاین در دسترس نیست |
-| `sandbox` | `true` یعنی تراکنش واقعی نیست (حالت آزمایشی زرین‌پال) |
-| `note` | دلیل دقیق در دسترس نبودن درگاه (متن فارسی)، در غیر این صورت `null` |
-
-اگر درگاه در پنل مدیریت خاموش باشد، درخواست پیش از ساخت سفارش با **۴۰۰**
-رد می‌شود. اگر درگاه روشن باشد ولی در دسترس نباشد (مشکل شبکه یا خطای
-درگاه)، سفارش با `status: "pending"` ثبت می‌شود و `note` دلیل را توضیح
-می‌دهد؛ سفارش در این حالت گم نمی‌شود و قابل واریز دستی است.
-
-ارسال دوباره همین درخواست با همان هدر `Idempotency-Key` سفارش تازه‌ای
-نمی‌سازد و **همان** `redirectUrl` را برمی‌گرداند (پاسخ `duplicate: true`).
-
-### بازگشت از درگاه
+### پیگیری سفارش مهمان
 
 ```
-GET /api/payments/zarinpal/callback?Authority=...&Status=OK
+POST /api/orders/track   { orderNumber, phone }
 ```
 
-زرین‌پال کاربر را به این آدرس برمی‌گرداند. این مسیر امضا ندارد (مرورگر
-کاربر است) و امنیتش از دو چیز می‌آید: `authority` یک راز یکتا است و به
-`Status` بازگشتی **اعتماد نمی‌شود** — همیشه متد verify درگاه صدا زده
-می‌شود.
-
-| ورودی | معنی |
-| --- | --- |
-| `Authority` | شناسه تراکنش که سرور هنگام درخواست پرداخت روی سفارش ذخیره کرده است |
-| `Status` | `OK` یا `NOK` — فقط برای ثبت در لاگ، تصمیم‌گیری با آن انجام نمی‌شود |
-
-پاسخ همیشه یک **ریدایرکت ۳۰۳** به صفحه نتیجه است، نه JSON:
-
-```
-/checkout/result?state=paid&order=ND-123456
-/checkout/result?state=failed&order=ND-123456&code=-51
-```
-
-| `state` | معنی |
-| --- | --- |
-| `paid` | verify با کد ۱۰۰ تأیید شد؛ سفارش `paid` شد |
-| `already_paid` | سفارش پیش‌تر پرداخت شده بود (رفرش صفحه یا کد ۱۰۱ درگاه) |
-| `failed` | درگاه قطعاً رد کرده است؛ سفارش `pending` می‌ماند و قابل پرداخت دوباره است |
-| `unverifiable` | خطای ارتباطی؛ ممکن است پول رسیده باشد، پس `authority` پاک نمی‌شود و باید دستی بررسی شود |
-| `unknown` | authority ناشناخته است یا در آدرس نبوده |
-
-متن خطا در آدرس منتقل نمی‌شود؛ صفحه نتیجه متن فارسی را از کد خطا می‌سازد.
-این مسیر idempotent است: رفرش دوباره صفحه، سفارش را دوباره پرداخت‌شده
-نمی‌کند و رویداد `order.paid` دو بار فرستاده نمی‌شود.
-
-### هدر Idempotency
-
-اگر هدر `Idempotency-Key` بفرستید، در رکورد سفارش ذخیره می‌شود. در نسخه
-متصل به دیتابیس، قید یکتایی روی این ستون از ثبت سفارش تکراری هنگام
-دوباره‌فرستادن درخواست جلوگیری می‌کند.
-
-```bash
--H "Idempotency-Key: $(uuidgen)"
-```
-
-**محدودیت نرخ:** ۱۰ درخواست در ۱۰ دقیقه برای هر IP.
+پاسخ ۴۰۴ یعنی شمارهٔ سفارش و شمارهٔ همراه با هم مطابقت ندارند.
 
 ---
 
-## ۵) تماس با ما
-
-```
-POST /api/contact
-```
-
-| فیلد | قواعد |
-| --- | --- |
-| `name` | دست‌کم ۳ نویسه |
-| `phone` | ۱۱ رقم، با ۰۹ |
-| `email` | اختیاری |
-| `message` | دست‌کم ۱۰ نویسه |
-| `website` | **تله ربات** — کاربر واقعی این فیلد پنهان را پر نمی‌کند |
-
-اگر `website` پر باشد، سرور پاسخ **موفق با `ticketId: null`** می‌دهد تا
-ربات متوجه رد شدن نشود.
-
-```json
-{ "ok": true, "ticketId": "TCK-MUJXJY0I", "accepted": true }
-```
-
-شماره تیکت از شناسه رکورد ذخیره‌شده در جدول `ContactMessage` ساخته می‌شود، پس در
-پیگیری تلفنی قابل جست‌وجو است و در پنل مدیریت (`/admin/messages`) در صف «جدید»
-می‌نشیند.
-
-**محدودیت نرخ:** ۵ درخواست در ۱۰ دقیقه برای هر IP.
-
----
-
-## ۶) هشدار موجود شدن کالا
-
-```
-POST /api/stock-alerts   { "slug": "...", "phone": "09...", "email": "..." }
-```
-
-برای محصول ناموجود، کاربر را در فهرست اطلاع‌رسانی ثبت می‌کند. وقتی کالا
-شارژ شد، اتوماسیون پیامک/ایمیل می‌فرستد.
-
-- اگر کالا **موجود** باشد: `{ "alreadyAvailable": true, "subscribed": false }`
-- نامک ناشناخته: خطای ۴۰۴
-- نبود شماره همراه معتبر: خطای ۴۰۰ (کانال اصلی اطلاع‌رسانی پیامک است)
-- ثبت دوباره همان شماره برای همان کالا: `{ "alreadySubscribed": true }` بدون رکورد
-  تازه و بدون پیامک تکراری — قید یکتایی `(productSlug, phone)` در دیتابیس این را
-  حتی در شرایط درخواست هم‌زمان تضمین می‌کند
-
-رکورد در جدول `StockAlert` ذخیره می‌شود و در پنل مدیریت (`/admin/stock-alerts`)
-گروه‌بندی‌شده بر اساس کالا نمایش داده می‌شود؛ هر چه یک کالا درخواست بیشتری داشته
-باشد، اولویت شارژ انبارش بالاتر است.
-
-**محدودیت نرخ:** ۱۰ درخواست در هر ساعت برای هر IP.
-
----
-
-## ۷) وبهوک پرداخت موفق (ورودی)
-
-```
-POST /api/webhooks/order-paid
-```
-
-این مسیر وضعیت سفارش را تغییر می‌دهد، پس سخت‌گیرانه محافظت شده است:
-
-1. امضای **HMAC-SHA256** روی بدنه خام در هدر `x-nodehi-signature`
-   بررسی می‌شود (مقایسه زمان‌ثابت).
-2. بدون تنظیم `NODEHI_WEBHOOK_SECRET` مسیر با **۵۰۳** بسته می‌ماند؛
-   هرگز در حالت بدون محافظت اجرا نمی‌شود.
-3. حداکثر ۶۰ درخواست در دقیقه برای هر IP (محافظت از حمله Brute Force
-   روی امضا).
-4. پاسخ **۲۰۲** برمی‌گرداند تا فرستنده بداند دریافت شده است.
-
-### ساخت امضا در n8n / سرور
-
-```js
-const crypto = require('crypto')
-const body = JSON.stringify({ orderId: 'ND-482913', status: 'paid', transactionId: 'TX-99881' })
-const signature = crypto.createHmac('sha256', process.env.NODEHI_WEBHOOK_SECRET).update(body, 'utf8').digest('hex')
-// هدر x-nodehi-signature: signature  را بفرستید
-```
-
-### نمونه با curl
-
-```bash
-BODY='{"orderId":"ND-482913","status":"paid","transactionId":"TX-99881"}'
-SIG=$(node -e "const c=require('crypto');process.stdout.write(c.createHmac('sha256',process.env.NODEHI_WEBHOOK_SECRET).update(process.argv[1],'utf8').digest('hex'))" "$BODY")
-
-curl -s -X POST https://nodehi.ir/api/webhooks/order-paid \
-  -H 'content-type: application/json' \
-  -H "x-nodehi-signature: $SIG" \
-  -d "$BODY"
-```
-
-```json
-{ "ok": true, "received": true, "orderId": "ND-482913", "status": "paid", "transactionId": "TX-99881" }
-```
-
-اگر بدنه پس از امضا تغییر کند (حتی یک نویسه)، پاسخ `401 invalid_signature`
-برمی‌گردد.
-
----
-
-## ۸) احراز هویت — ورود با شماره همراه
-
-ثبت‌نام و ورود یک مسیر واحد است: شماره بدهید، کد بگیرید، اگر حساب نبود خودکار
-ساخته می‌شود. رمز عبوری وجود ندارد.
+## ۷) احراز هویت
 
 ### درخواست کد
 
 ```
-POST /api/auth/otp/request   { "phone": "09120000000" }
+POST /api/auth/otp/request   { "phone": "09121234567" }
 ```
-
-محدودیت نرخ: ۳ درخواست در ۲ دقیقه برای هر شماره و ۱۰ درخواست در ساعت برای هر IP.
 
 ```json
-{ "ok": true, "expiresInSeconds": 120, "devCode": "25754" }
+{
+  "ok": true,
+  "message": "کد ورود ارسال شد.",
+  "expiresIn": 120,
+  "smsDelivered": true,
+  "devCode": "12345"
+}
 ```
 
-`devCode` **فقط** وقتی برمی‌گردد که `NODE_ENV !== "production"` و
-`AUTH_OTP_DEV_MODE=1` باشد؛ در تولید این فیلد هرگز وجود ندارد.
+`devCode` فقط وقتی `APP_DEBUG=true` و `AUTH_OTP_DEV_MODE=1` باشد برمی‌گردد.
+اگر پیامک تنظیم نشده باشد و حالت توسعه خاموش باشد، پاسخ ۵۰۳ است.
 
 ### تأیید کد
 
 ```
-POST /api/auth/otp/verify   { "phone": "09120000000", "code": "25754" }
+POST /api/auth/otp/verify   { "phone": "09121234567", "code": "12345" }
 ```
-
-با موفقیت، کوکی نشست (`nodehi_session`، `httpOnly`، `sameSite=lax`) ست می‌شود و
-کاربر برمی‌گردد. کد یک‌بارمصرف است: پس از مصرف یا پس از ارسال کد تازه، دیگر کار
-نمی‌کند. حداکثر ۵ تلاش ناموفق مجاز است. محدودیت نرخ: ۲۰ درخواست در ۱۰ دقیقه.
-
-### نشست جاری
-
-```
-GET /api/auth/session     → { ok: true, user: {...} | null }
-PATCH /api/auth/session   → ویرایش نام، نام خانوادگی و ایمیل
-```
-
-شماره همراه از این مسیر قابل تغییر نیست (کلید هویت حساب است). ایمیل تکراری با
-خطای `invalid_input` رد می‌شود.
-
-### خروج
-
-```
-POST /api/auth/logout     → { ok: true, loggedOut: true }
-```
-
-رکورد نشست از دیتابیس حذف می‌شود، پس توکن دزدیده‌شده هم بی‌اعتبار می‌گردد.
-
----
-
-## ۹) حساب کاربری — آدرس‌ها
-
-```
-GET    /api/account/addresses        فهرست آدرس‌های کاربر
-POST   /api/account/addresses        افزودن (حداکثر ۱۰ آدرس؛ اولین آدرس خودکار پیش‌فرض)
-PATCH  /api/account/addresses/:id    ویرایش  یا  { "isDefault": true }
-DELETE /api/account/addresses/:id    حذف (اگر پیش‌فرض بود، جانشین انتخاب می‌شود)
-```
-
-بدنه آدرس: `title`، `receiver`، `phone`، `province`، `city`، `line`، `postalCode`
-(اختیاری، ۱۰ رقم).
-
-مالکیت در سطح رکورد بررسی می‌شود: شناسه آدرس کاربر دیگر با `findFirst` روی
-`{ id, userId }` خوانده می‌شود، پس حدس زدن شناسه به دسترسی منجر نمی‌شود (IDOR).
-
----
-
-## ۱۰) نظرات محصول
-
-### خواندن (عمومی)
-
-```
-GET /api/reviews?slug=samsung-side-by-side-rs68-28ft
-```
-
-فقط نظرهای `approved` برمی‌گردند؛ نظر در انتظار یا ردشده هرگز عمومی نمی‌شود.
-محدودیت نرخ: ۶۰ در دقیقه.
-
-### ثبت نظر (نیازمند ورود)
-
-```
-POST /api/reviews   { "slug": "...", "rating": 5, "title": "...", "body": "..." }
-```
-
-نظر تازه با وضعیت `pending` ذخیره می‌شود و تا تأیید کارشناس روی سایت دیده نمی‌شود.
-نویسنده از حساب کاربری خوانده می‌شود، نه از بدنه درخواست. هر کاربر برای هر کالا
-فقط یک نظر می‌تواند بنویسد و این قاعده با قید یکتایی `(userId, productSlug)` در
-سطح دیتابیس اعمال می‌شود — پس دو درخواست هم‌زمان هم رکورد تکراری نمی‌سازند.
-
----
-
-## ۱۱) پیگیری سفارش (مهمان)
-
-```
-POST /api/orders/track   { "orderNumber": "ND-624070", "phone": "09120000000" }
-```
-
-هر دو مقدار باید بخوانند. اگر شماره سفارش درست ولی شماره همراه نادرست باشد،
-پاسخ **همان** ۴۰۴ یکسان است تا کسی نتواند با تفاوت پاسخ‌ها وجود یک شماره سفارش را
-کشف کند. محدودیت نرخ: ۱۵ در ۱۰ دقیقه.
-
----
-
-## ۱۲) پنل مدیریت
-
-همه این مسیرها با `getStaffUser()` محافظت می‌شوند. نقش‌های `admin` و `operator`
-اجازه تغییر دارند؛ `accountant` فقط گزارش/مشاهده. تغییر کد تخفیف و وضعیت کاربران
-مخصوص `admin` است. هر تغییر در جدول `AuditLog` با شناسه کاربر و IP ثبت می‌شود.
-
-| متد | مسیر | بدنه | نتیجه |
-| --- | --- | --- | --- |
-| `PATCH` | `/api/admin/orders/:id` | `{ status?, trackingCode?, note?, shippingMethod? }` | تغییر وضعیت/کد رهگیری/یادداشت داخلی/روش ارسال |
-| `PATCH` | `/api/admin/reviews/:id` | `{ status }` | `pending` \| `approved` \| `rejected` |
-| `PATCH` | `/api/admin/messages/:id` | `{ status }` | `new` \| `in_progress` \| `resolved` |
-| `PATCH` | `/api/admin/stock-alerts/:id` | `{ notified }` | علامت‌زدن صف اطلاع‌رسانی موجودی |
-| `PATCH` | `/api/admin/users/:id` | `{ role?, isActive?, loyaltyPoints? }` | تغییر نقش، فعال/غیرفعال‌کردن حساب و اصلاح امتیاز باشگاه (فقط admin) |
-| `POST` | `/api/admin/coupons` | `{ code, label, percent, maxUses?, minSubtotal? }` | ساخت کد تخفیف (فقط admin) |
-| `PATCH` | `/api/admin/coupons/:id` | `{ label?, percent?, minSubtotal?, maxUses?, startsAt?, expiresAt?, isActive? }` | ویرایش کامل کمپین (فقط admin) |
-| `POST` | `/api/admin/products` | `{ name, categorySlug, brandSlug, price, shortDescription, slug?, … }` | افزودن کالا (admin و operator) |
-| `PATCH` | `/api/admin/products/:id` | `{ name?, price?, stock?, isActive?, attributes?, specs?, … }` | ویرایش کالا؛ فقط فیلدهای ارسالی نوشته می‌شوند |
-| `DELETE` | `/api/admin/products/:id` | — | حذف قطعی کالا؛ اگر در سفارشی باشد ۴۰۹ می‌دهد و باید غیرفعال شود |
-| `GET` | `/api/admin/reports/export?type=sales\|orders\|inventory&from=&to=` | — | خروجی CSV گزارش‌ها (BOM + ارقام لاتین برای اکسل) |
-| `GET` | `/api/admin/settings?group=pages` | — | خواندن یک گروه تنظیمات؛ مقدار حساس هرگز برنمی‌گردد، فقط `hasValue` |
-| `PATCH` | `/api/admin/settings` | `{ group, values: { "key": value } }` | ذخیره تنظیمات یک گروه (`general`, `pages`, `sms`, `automation`, `snappay`, `digikala`, `torob`) — سه گروه آخر فقط admin |
-| `POST` | `/api/admin/sms/test` | `{ phone }` | ارسال پیامک آزمایشی و ثبت نتیجه در لاگ (فقط admin) |
-| `PATCH` | `/api/admin/payments/:id` | `{ isActive?, isSandbox?, merchantId? }` | تنظیم درگاه پرداخت (فقط admin) |
-| `POST` | `/api/admin/automation/:id/retry` | — | ارسال دوباره یک رویداد با همان بدنه و همان امضا (فقط admin) |
-| `GET` | `/api/feeds/torob` | — | فید JSON کالاهای فعال برای ترب (نامک، عنوان، قیمت، موجودی، آدرس مطلق). تا وقتی «یکپارچه‌سازی‌ها → ترب» در پنل فعال نشده، ۴۰۴ می‌دهد |
-
-قاعده کد تخفیف: `/^[A-Z0-9]{3,20}$/`، درصد بین ۱ تا ۹۰ و کد تکراری با پاسخ ۴۰۰ رد
-می‌شود. کدها حذف نمی‌شوند تا سابقه کمپین و شمار مصرف از بین نرود. `code` عمداً
-تغییرناپذیر است: مشتری آن را در پیامک دیده و عوض‌کردنش کمپین فعال را بی‌اثر می‌کند.
-
-قاعده سفارش: در هر درخواست فقط فیلدهای تغییرکرده ذخیره و حسابرسی می‌شوند. کد رهگیری
-با الگوی `/^[A-Za-z0-9-]{4,40}$/` (ارقام فارسی یکسان‌سازی می‌شوند) و رشته خالی یعنی
-«پاک کن». روش ارسال یا با برچسب کامل یا با شناسه (`express`/`tipax`/`freight`) پذیرفته
-می‌شود. تفسیر ورودی در `src/lib/server/admin-orders.ts` انجام می‌شود.
-
-قاعده کاربر: نقش‌های مجاز `customer` / `operator` / `accountant` / `admin` هستند. دو
-محافظت الزامی است:
-
-1. **حساب خودِ فرستنده**: نه نقشش قابل تغییر است و نه غیرفعال‌شدنی — وگرنه مدیر
-   بیرون از پنل قفل می‌شود.
-2. **آخرین مدیر کلِ فعال**: نه تنزل‌پذیر است و نه غیرفعال‌شدنی. بررسی بر پایه
-   `activeAdminCount` (شمارش `role=admin AND isActive=true` پیش از تغییر) و روی
-   **نتیجه نهایی** انجام می‌شود، نه فیلد‌به‌فیلد؛ پس درخواست ترکیبی
-   «تنزل + غیرفعال در یک درخواست» هم گرفته می‌شود.
-
-سطح باشگاه از روی امتیاز محاسبه و ذخیره می‌شود تا با صفحه باشگاه مشتریان یکی بماند.
-برای هر تغییرِ واقعی یک رکورد جدا با کنش `user.role_changed` / `user.status_changed` /
-`user.loyalty_changed` ثبت می‌گردد. تفسیر ورودی و این محافظت‌ها در
-`src/lib/server/admin-users.ts` پیاده شده و آزمون واحد دارند.
-
-قاعده کمپین: انقضا باید بعد از شروع باشد و سقف استفاده نمی‌تواند کمتر از تعداد
-مصرف‌شده شود. تفسیر ورودی در `src/lib/server/admin-coupons.ts` انجام می‌شود.
-
-قاعده کالا: دسته و برند باید نامک موجود باشند، قیمت عددی صفر یا بیشتر (۰ = «تماس
-بگیرید»)، قیمت پیش از تخفیف باید از قیمت فروش بیشتر باشد و امتیاز بین ۰ تا ۵.
-نامک باید لاتین و یکتا باشد؛ اگر خالی بماند از **نام فارسی** ساخته می‌شود (آوانگاری)
-و در صورت تکرار پسوند عددی می‌گیرد. آرایه‌ها (نکته‌ها، مشخصات، تصاویر، تگ‌ها) به شکل
-JSON متنی ذخیره می‌شوند چون SQLite آرایه اسکالر ندارد.
-
-قاعده حذف کالا: **حذف قطعی همیشه ممکن نیست.** کالایی که در `OrderItem` دیده شده
-۴۰۹ می‌گیرد و باید با `{ "isActive": false }` غیرفعال شود؛ کالای بدون سابقه کاملاً
-حذف می‌شود و نظرها/هشدارهای موجودی وابسته به نامکش هم پاک می‌شوند. دلیل: حذف رکورد،
-گزارش فروش و سفارش‌های قدیمی را بی‌معنا می‌کند. هر سه مسیر پس از موفقیت
-`revalidatePath('/', 'layout')` می‌زنند تا کالای تازه فوراً در فروشگاه دیده شود.
-تفسیر ورودی در `src/lib/server/admin-products.ts` است و آزمون واحد دارد.
-
-### ۱۲.۱) صفحه‌های پنل مدیریت
-
-| مسیر | کاربرد |
-| --- | --- |
-| `/admin` | داشبورد: KPIs، کارهای در انتظار، پرفروش‌ها، دسترسی سریع |
-| `/admin/orders` | فهرست سفارش‌ها با جست‌وجو (شماره/نام/همراه/کد رهگیری) و فیلتر وضعیت |
-| `/admin/orders/:id` | جزئیات کامل سفارش + ویرایش ارسال/رهگیری/یادداشت + تاریخچه تغییرها |
-| `/admin/products` | مدیریت کالاها: افزودن، ویرایش (قیمت، موجودی، مشخصات، ویژگی‌ها)، غیرفعال‌سازی و حذف قطعی |
-| `/admin/customers` | فهرست کاربران با جست‌وجو و فیلتر نقش + مجموع خرید |
-| `/admin/customers/:id` | پروفایل کامل: سفارش‌ها، آدرس‌ها، نظرات، باشگاه و مدیریت حساب |
-| `/admin/users` | کاربران و نقش‌ها: شمارش هر نقش + تغییر نقش و وضعیت در همان جا |
-| `/admin/coupons` | ساخت، ویرایش و فعال/غیرفعال‌کردن کمپین‌ها |
-| `/admin/reviews` | صف بازبینی نظرات |
-| `/admin/messages` | پیام‌های فرم تماس |
-| `/admin/stock-alerts` | صف هشدار موجودی، گروه‌بندی‌شده بر پایه کالا |
-| `/admin/reports` | گزارش فروش: بازه‌های آماده و دلخواه + خروجی CSV فروش/سفارش‌ها/موجودی |
-| `/admin/content` | نمای کلی کاتالوگ و محتوا: کالاها، دسته‌بندی‌ها، برندها، مقالات، صفحات |
-| `/admin/settings` | تنظیمات سایت: تلفن/ایمیل پشتیبانی، آستانه هشدار موجودی، نوار اعلان، حالت تعمیرات، بنر تبلیغاتی صفحه اصلی |
-| `/admin/sms` | سرویس پیامک: فعال‌سازی، کلید API، فرستنده، قالب‌ها + فرم ارسال پیامک آزمایشی |
-| `/admin/payments` | درگاه‌های پرداخت: فعال/غیرفعال‌کردن روش پرداخت، حالت آزمایشی، شناسه درگاه |
-| `/admin/automation` | رویدادهای اتوماسیون: وضعیت هر ارسال، دلیل رد شدن و دکمه ارسال دوباره |
-| `/admin/audit` | گزارش فعالیت: چه کسی، چه زمانی، چه چیزی را عوض کرد |
-
-نوار کناری پنل به دو گروه تقسیم شده است — «عملیات روزانه» (داشبورد، کالاها،
-سفارش‌ها، مشتریان، کاربران و نقش‌ها، کدهای تخفیف، نظرات، پیام‌های تماس، هشدار موجودی)
-و «ابزارها و تنظیمات» (گزارش فروش، محتوا، تنظیمات سایت، سرویس پیامک، درگاه پرداخت،
-اتوماسیون، گزارش فعالیت).
-
-### ۱۲.۲) تنظیمات: چرا کلیدها در کد تعریف می‌شوند
-
-فهرست کلیدهای مجاز یک **فهرست بسته** در `src/lib/server/settings.ts` است. جدول
-`Setting` فقط مقدار نگه می‌دارد؛ ردیفی با کلید ناشناخته هیچ رفتاری را عوض نمی‌کند.
-ترتیب خواندن مقدار: مقدار دیتابیس → متغیر محیطی → پیش‌فرض کد. بنابراین سایت بدون
-هیچ کلید API هم بالا می‌آید و همان تنظیم‌ها از پنل قابل تغییرند.
-
-سطح دسترسی گروه‌به‌گروه است: `general` و `pages` کار روزمره (`admin` یا `operator`)،
-ولی `sms` و `automation` که کلید و راز در خود دارند فقط `admin`.
-
-مقدارهای نوع `secret` با **AES-256-GCM** رمزنگاری می‌شوند اگر
-`SETTINGS_ENCRYPTION_KEY` تنظیم شده باشد. کلید پیش‌فرض جادویی وجود ندارد: بدون آن
-مقدار متن ساده ذخیره می‌شود و پنل هشدار می‌دهد. در پاسخ `GET` هم مقدار حساس هرگز
-برنمی‌گردد — فقط `hasValue: true/false`. لاگ حسابرسی هم فقط **نام** کلیدهای
-تغییر‌یافته را ثبت می‌کند، نه مقدارشان.
-
----
-
-## ۱۳) تنظیمات عمومی سایت (بدون احراز هویت)
-
-```
-GET /api/settings/public
-```
-
-نوار اعلان در چیدمان ریشه سایت است. اگر مقدارش مستقیم از دیتابیس خوانده می‌شد،
-همه صفحه‌ها از حالت ایستا خارج می‌شدند؛ پس مرورگر فقط همین یک مسیر را صدا می‌زند و
-ادامه سایت ایستا می‌ماند.
-
-```json
-{ "ok": true, "settings": { "pages.announcement.enabled": "true", "pages.announcement.text": "ارسال رایگان ..." } }
-```
-
-فقط کلیدهایی برمی‌گردند که در فهرست بسته پرچم `public: true` دارند؛ فیلتر بر پایه
-همین پرچم است، نه نام کلید. هیچ کلید API یا رازی در پاسخ نیست.
-
----
-
-## رویدادهای خروجی (به n8n / Make)
-
-نودهی رویدادها را با همان امضای HMAC به `AUTOMATION_WEBHOOK_URL` می‌فرستد:
-
-| رویداد | زمان ارسال | کلید روشن/خاموش در تنظیمات |
-| --- | --- | --- |
-| `order.created` | پس از ثبت موفق سفارش | `automation.events.orderCreated` |
-| `order.status_changed` | پس از تغییر وضعیت سفارش در پنل | `automation.events.orderStatus` |
-| `contact.submitted` | پس از ثبت پیام تماس با ما | `automation.events.contact` |
-| `stock_alert.created` | پس از ثبت درخواست اطلاع‌رسانی موجودی | `automation.events.stockAlert` |
-| `review.submitted` | پس از ثبت نظر تازه (در انتظار تأیید) | `automation.events.review` |
-
-رویداد ناشناخته پیش‌فرض روشن است؛ رویداد شناخته‌شده فقط با مقدار `false` خاموش
-می‌شود. شرط‌های ارسال با هم جمع می‌شوند: `automation.enabled` روشن، آدرس وبهوک و
-کلید امضا پر، و خود رویداد روشن. اگر هر یک نباشد، رویداد با وضعیت `skipped` و
-دلیل فارسی در جدول رویدادها ثبت می‌شود و در `/admin/automation` دیده می‌شود.
-
-قالب بدنه:
 
 ```json
 {
-  "id": "evt_mfk2p1_a9x3k",
-  "event": "order.created",
-  "occurredAt": "2026-09-27T14:43:25.937Z",
-  "data": { "orderId": "ND-819298", "total": 80100000, "itemCount": 1 }
+  "ok": true,
+  "token": "hex-token",
+  "user": { "id": 1, "phone": "09121234567", "fullName": "کاربر نودهی", "role": "customer" }
 }
 ```
 
-هدر `x-nodehi-signature` با `AUTOMATION_WEBHOOK_SECRET` امضا شده است.
-زنجیره پیشنهادی پردازش این رویدادها در [`AUTOMATION.md`](./AUTOMATION.md)
-آمده است.
+کد یک‌بارمصرف است، حداکثر ۵ تلاش دارد و با درخواست تازه باطل می‌شود.
 
-> **نکته پایداری:** ارسال هنوز «آتش و فراموش» است و ثبت سفارش را متوقف نمی‌کند،
-> اما این بار بی‌ردپا نیست: هر تلاش در جدول `AutomationEvent` با وضعیت
-> `sent` / `failed` / `skipped`، کد پاسخ HTTP و پیام خطا ثبت می‌شود و از
-> `/admin/automation` با یک کلیک و **با همان بدنه و همان امضا** دوباره فرستاده
-> می‌شود (شناسه رویداد ثابت می‌ماند، پس سمت n8n پردازش تکراری رخ نمی‌دهد).
-> برای مقیاس تولید، همین نقطه را به یک صف پایدار (Redis/BullMQ) متصل کنید.
+### نشست و خروج
+
+```
+GET  /api/auth/session      (Bearer)
+POST /api/auth/logout       (Bearer)
+GET  /api/account/orders    (Bearer)
+```
 
 ---
 
-## امنیت
+## ۸) پرداخت آنلاین (زرین‌پال)
 
-| محافظت | جایگاه |
-| --- | --- |
-| محدودیت نرخ درخواست | همه مسیرهای عمومی |
-| بهداشت ورودی و رد prototype pollution | `readJson` |
-| قیمت‌گذاری معتبر روی سرور | `POST /api/checkout` |
-| امضای HMAC زمان‌ثابت | وبهوک ورودی و خروجی |
-| تله ربات | `POST /api/contact` |
-| پیام‌های خطای فارسی و بدون افشای جزئیات داخلی | همه مسیرها |
+مبلغ‌های کاتالوگ به **تومان** است و درگاه مبلغ را **ریال** می‌گیرد؛ تبدیل
+فقط یک‌بار و سمت سرور (`×۱۰`) انجام می‌شود و پارامتر `currency` عمداً
+فرستاده نمی‌شود تا مبلغ `request` و `verify` هم‌واحد بماند.
 
-جزئیات بیشتر در [`SECURITY.md`](./SECURITY.md).
+### شروع پرداخت در تسویه
 
-### محدودیت نرخ در محیط چندنمونه‌ای
+`POST /api/checkout` برای سفارش `online` در پاسخ، قصد پرداخت را برمی‌گرداند:
 
-پیاده‌سازی فعلی (`src/lib/server/rate-limit.ts`) در حافظه است. اگر روی
-چند نمونه اجرا می‌شود (لیارا/آروان با چند رپلیکا)، شمارش بین نمونه‌ها
-مشترک نیست. برای تولید، همان رابط توابع را با Redis پیاده کنید:
-
-```ts
-// جایگزین پیشنهادی: شمارش اتمیک در Redis
-const count = await redis.incr(key)
-if (count === 1) await redis.expire(key, windowSeconds)
-if (count > limit) return { ok: false, ... }
+```json
+{
+  "ok": true,
+  "order": { "orderNumber": "ND-261021-A1B2C3", "status": "pending", "total": 4650000 },
+  "payment": {
+    "type": "online",
+    "gateway": "zarinpal",
+    "redirectUrl": "https://sandbox.zarinpal.com/pg/StartPay/A000...",
+    "sandbox": true,
+    "message": null
+  }
+}
 ```
+
+اگر درگاه پیکربندی نشده یا در دسترس نباشد، سفارش باز هم ثبت می‌شود و
+`redirectUrl` تهی با `message` دلیل برمی‌گردد. اگر همان کلید idempotency دوباره
+فرستاده شود، همان `redirectUrl` قبلی برمی‌گردد و تراکنش تازه‌ای در درگاه ساخته
+نمی‌شود.
+
+### شروع یا ادامهٔ پرداخت
+
+```
+POST /api/payments/zarinpal/start   { "orderNumber": "ND-...", "phone": "0912..." }
+```
+
+توکن Bearer اختیاری است. مالکیت سفارش با حساب واردشده **یا** شمارهٔ همراه
+همان سفارش بررسی می‌شود؛ در غیر این صورت ۴۰۴ (بدون افشای سفارش دیگران).
+
+```json
+{ "ok": true, "gateway": "zarinpal", "authority": "A000...", "redirectUrl": "https://...", "sandbox": true, "reused": false }
+```
+
+- اگر سفارش قبلاً `authority` گرفته باشد همان برگردانده می‌شود (`reused: true`)
+  تا هر کلیک تراکنش تازه نسازد (خطای ‎-12).
+- `409` برای سفارش `paid`/`cancelled`، `503` وقتی درگاه خاموش یا پذیرنده تنظیم
+  نشده، `502` برای خطای درگاه یا شبکه، `422` برای سفارش غیرآنلاین.
+
+### بازگشت از درگاه
+
+```
+GET /api/payments/zarinpal/callback?Authority=A000...&Status=OK|NOK
+```
+
+- `Status` فقط ثبت می‌شود؛ **تنها منبع حقیقت پاسخ `verify` است**.
+- مرورگر با `303` به `FRONTEND_URL/checkout/result?state=...&order=...&code=...`
+  می‌رود. با `Accept: application/json` همان نتیجه به‌صورت JSON برمی‌گردد.
+- `state` یکی از `paid`، `already_paid`، `failed`، `unverifiable`، `unknown` است.
+
+### idempotency تأیید
+
+1. سفارش تسویه‌شده (`paid/processing/shipped/delivered`) دیگر وریفای نمی‌شود و
+   پاسخ `already_paid` می‌گیرد؛ تماس شبکه‌ای تازه‌ای رخ نمی‌دهد.
+2. به‌روزرسانی وضعیت با شرط `status = 'pending'` انجام می‌شود؛ دو بازگشت
+   هم‌زمان فقط یک اثر دارند.
+3. کد `101` زرین‌پال («قبلاً تأیید شده») موفق است، نه خطا.
+
+خطای قطعی درگاه (کد عددی) `authority` را آزاد می‌کند تا پرداخت تازه ممکن شود؛
+خطای ارتباطی (بدون کد) آن را نگه می‌دارد، چون ممکن است پول رسیده باشد و فقط
+پاسخ به سرور نرسیده باشد. شمارهٔ کارت فقط با چهار رقم آخر (`****1234`) ذخیره
+می‌شود.
+
+---
+
+## ۹) محدودیت نرخ
+
+| مسیر | سقف |
+| --- | --- |
+| `POST /api/auth/otp/request` | ۱۰ در دقیقه برای هر IP + ۳ در ۲ دقیقه برای هر شماره |
+| `POST /api/auth/otp/verify` | ۳۰ در دقیقه برای هر IP |
+| `POST /api/checkout` | ۱۰ در دقیقه برای هر IP |
+| `POST /api/coupons/validate` | ۳۰ در دقیقه |
+| `POST /api/contact` | ۵ در دقیقه |
+| `POST /api/stock-alerts` | ۱۰ در دقیقه |
+| `POST /api/products/{slug}/reviews` | ۶ در دقیقه |
+| `POST /api/orders/track` | ۲۰ در دقیقه |
+| `GET /api/search` | ۱۲۰ در دقیقه |
+| `POST /api/payments/zarinpal/start` | ۱۰ در دقیقه |
+| `GET /api/payments/zarinpal/callback` | ۶۰ در دقیقه |
+
+پاسخ ۴۲۹ هدر `Retry-After` دارد.
+
+---
+
+## ۱۰) پنل مدیریت
+
+همهٔ مسیرهای زیر `/api/admin` با میدل‌ور `auth.token` و `admin` محافظت
+می‌شوند: بدون توکن **۴۰۱** و با نقش `customer` **۴۰۳** برمی‌گردد. هر دو نقش
+`admin` و `operator` دسترسی دارند. فهرست‌ها همیشه صفحه‌بندی می‌شوند و قالب
+پاسخ `{ ok, total, page, perPage, pageCount, items }` است.
+
+### محصولات
+
+```
+GET    /api/admin/products        ?q=&status=&category=&brand=&page=&perPage=
+POST   /api/admin/products
+GET    /api/admin/products/{id}
+PUT    /api/admin/products/{id}    (PATCH هم پذیرفته می‌شود)
+DELETE /api/admin/products/{id}
+```
+
+`status` یکی از `active`، `inactive`، `out_of_stock` یا `low_stock` است.
+نامک (`slug`) فقط هنگام ساخت تعیین می‌شود و تغییر آن در ویرایش نادیده گرفته
+می‌شود. حذف محصولی که در سفارشی استفاده شده **۴۰۹** می‌دهد؛ در این حالت آن را
+غیرفعال کنید. حذف محصول بدون سفارش، نظرات همان محصول را هم پاک می‌کند.
+
+### سفارش‌ها
+
+```
+GET   /api/admin/orders          ?q=&status=&paymentMethod=&page=&perPage=
+GET   /api/admin/orders/{id}
+PATCH /api/admin/orders/{id}      { status, trackingCode, note }
+```
+
+جزئیات سفارش شامل مشتری، آدرس، اقلام، پرداخت و یادداشت داخلی است.
+جابه‌جایی وضعیت فقط در مسیر مجاز امکان‌دار است:
+
+```
+pending → paid | cancelled
+paid → processing | cancelled
+processing → shipped | cancelled
+shipped → delivered
+delivered / cancelled → (پایان)
+```
+
+هر تغییر نامعتبر **۴۲۲** می‌گیرد. رفتن به `paid`، `shipped` و `delivered`
+زمان‌های `paid_at`، `shipped_at` و `delivered_at` را پر می‌کند. لغو سفارش
+پرداخت در محل، موجودی اقلام را فقط یک‌بار به انبار برمی‌گرداند.
+
+### کدهای تخفیف
+
+```
+GET    /api/admin/coupons         ?q=&page=&perPage=
+POST   /api/admin/coupons
+PATCH  /api/admin/coupons/{id}
+DELETE /api/admin/coupons/{id}
+```
+
+`code` یکتاست و بدون حساسیت به بزرگی/کوچکی حرف ذخیره می‌شود. `percent` بین
+۱ تا ۱۰۰ است و سقف استفاده (`maxUses`) را نمی‌توان کمتر از تعداد استفاده‌شده
+(`usedCount`) گذاشت.
+
+### نظرات
+
+```
+GET    /api/admin/reviews         ?status=&productSlug=&q=&page=&perPage=
+PATCH  /api/admin/reviews/{id}     { status }
+DELETE /api/admin/reviews/{id}
+```
+
+`status` یکی از `pending`، `approved` یا `rejected` است. تأیید یا رد نظر،
+میانگین امتیاز و تعداد نظرات محصول را بازمحاسبه می‌کند.

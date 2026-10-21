@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { post, type OrderResponse } from '../lib/api'
 import { price, toFa } from '../lib/format'
+import { trackMeta, usePageMeta } from '../lib/seo'
 
 const statusLabels: Record<string, string> = {
   pending: 'در انتظار پرداخت / تأیید',
@@ -12,23 +13,31 @@ const statusLabels: Record<string, string> = {
 }
 
 export default function Track() {
+  // صفحهٔ پیگیری عمومی و قابل ایندکس است (بدون نمایش دادهٔ خصوصی).
+  usePageMeta(trackMeta())
   const [order, setOrder] = useState<OrderResponse | null>(null)
+  const [phone, setPhone] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [paying, setPaying] = useState(false)
+  const [payError, setPayError] = useState<string | null>(null)
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const form = new FormData(event.currentTarget)
+    const submittedPhone = String(form.get('phone') ?? '').trim()
     setLoading(true)
     setError(null)
     setOrder(null)
+    setPayError(null)
 
     try {
       const result = await post<{ ok: boolean; order: OrderResponse }>('/orders/track', {
         orderNumber: String(form.get('orderNumber') ?? '').trim(),
-        phone: String(form.get('phone') ?? '').trim(),
+        phone: submittedPhone,
       })
       setOrder(result.order)
+      setPhone(submittedPhone)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'سفارش پیدا نشد.')
     } finally {
@@ -100,6 +109,38 @@ export default function Track() {
               <span className="text-ink-muted">مبلغ کل</span>
               <span className="font-extrabold text-primary">{price(order.total)} تومان</span>
             </div>
+
+            {order.status === 'pending' && order.paymentMethod === 'online' && (
+              <div className="mt-4 border-t border-surface-border pt-4">
+                <p className="mb-3 text-xs leading-6 text-ink-muted">
+                  این سفارش هنوز پرداخت نشده است. می‌توانید همین‌جا به درگاه بانکی بروید.
+                </p>
+                {payError && (
+                  <p className="mb-3 rounded-xl bg-danger/10 p-3 text-xs leading-6 text-danger">{payError}</p>
+                )}
+                <button
+                  type="button"
+                  disabled={paying}
+                  onClick={async () => {
+                    setPaying(true)
+                    setPayError(null)
+                    try {
+                      const result = await post<{ ok: boolean; redirectUrl: string }>(
+                        '/payments/zarinpal/start',
+                        { orderNumber: order.orderNumber, phone },
+                      )
+                      window.location.assign(result.redirectUrl)
+                    } catch (err) {
+                      setPayError(err instanceof Error ? err.message : 'شروع پرداخت ممکن نشد.')
+                      setPaying(false)
+                    }
+                  }}
+                  className="w-full rounded-xl bg-primary py-3 text-sm font-extrabold text-white hover:bg-primary-light disabled:opacity-60"
+                >
+                  {paying ? 'در حال انتقال به درگاه...' : 'پرداخت این سفارش'}
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>

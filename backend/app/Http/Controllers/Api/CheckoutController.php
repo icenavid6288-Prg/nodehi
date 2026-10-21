@@ -7,17 +7,22 @@ use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Setting;
-use App\Support\Phone;
+use App\Services\OnlinePaymentService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class CheckoutController extends Controller
 {
+    /** حداقل مبلغ سفارش برای خرید اقساطی (تومان) */
+    private const INSTALLMENT_MIN_TOTAL = 30_000_000;
+
+    public function __construct(private readonly OnlinePaymentService $payments) {}
+
     public function __invoke(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'items' => ['required', 'array', 'min:1'],
+            'items' => ['required', 'array', 'min:1', 'max:20'],
             'items.*.slug' => ['required', 'string'],
             'items.*.quantity' => ['required', 'integer', 'between:1,20'],
             'firstName' => ['required', 'string', 'max:60'],
@@ -35,45 +40,44 @@ class CheckoutController extends Controller
             'idempotencyKey' => ['nullable', 'string', 'max:80'],
         ]);
 
-        $phone = Phone::normalize($data['phone']);
-        if (! Phone::isValid($phone)) {
-            return response()->json(['ok' => false, 'error' => 'شماره همراه معتبر نیست.'], 422);
-        }
-        $data['phone'] = $phone;
-
         $user = $request->user();
-        $idempotencyKey = trim((string) ($data['idempotencyKey'] ?? ''));
 
-        if ($idempotencyKey !== '') {
-            if (! preg_match('/^[A-Za-z0-9._-]{8,80}$/', $idempotencyKey)) {
-                return response()->json(['ok' => false, 'error' => 'کلید یکتای سفارش نامعتبر است.'], 422);
+        /*
+         * کلید idempotency از مرورگر می‌آید و قابل حدس است. پاسخ تکراری
+         * فقط وقتی برگردانده می‌شود که همان کاربر (یا مهمان با همان شماره)
+         * صاحب سفارش باشد؛ وگرنه درخواست تازه پردازش می‌شود.
+         */
+        if (! empty($data['idempotencyKey'])) {
+            $query = Order::query()->where('idempotency_key', $data['idempotencyKey']);
+
+            if ($user) {
+                $query->where('user_id', $user->id);
+            } else {
+                $query->whereNull('user_id')->where('customer_phone', $data['phone']);
             }
 
-            $existing = Order::where('idempotency_key', $idempotencyKey)->first();
+            $existing = $query->first();
+
             if ($existing) {
-                // کلید باید به همان کاربر (یا برای مهمان، همان شماره) تعلق داشته
-                // باشد؛ وگرنه پاسخ یک سفارش متعلق به کاربر دیگر لو می‌رود.
-                $ownedByUser = $user !== null && $existing->user_id === $user->id;
-                $ownedByGuest = $user === null
-                    && $existing->user_id === null
-                    && Phone::normalize($existing->customer_phone) === $phone;
-
-                if (! $ownedByUser && ! $ownedByGuest) {
-                    return response()->json([
-                        'ok' => false,
-                        'error' => 'این درخواست قبلاً با مشخصات دیگری ثبت شده است.',
-                    ], 409);
-                }
-
                 return response()->json([
                     'ok' => true,
                     'order' => $this->payload($existing->load('items')),
+                    'payment' => $this->paymentIntent($existing),
                     'duplicate' => true,
                 ]);
             }
+
+            // کلید یکتاست؛ اگر به سفارش دیگری تعلق دارد، به‌جای خطای دیتابیس
+            // یا افشای آن سفارش، تعارض صریح برگردانده می‌شود.
+            if (Order::where('idempotency_key', $data['idempotencyKey'])->exists()) {
+                return response()->json([
+                    'ok' => false,
+                    'error' => 'این کلید درخواست قبلاً برای سفارش دیگری استفاده شده است.',
+                ], 409);
+            }
         }
 
-        return DB::transaction(function () use ($data, $request, $user, $idempotencyKey) {
+        $created = DB::transaction(function () use ($data, $user) {
             $lines = [];
             $subtotal = 0;
 
@@ -82,9 +86,6 @@ class CheckoutController extends Controller
 
                 if (! $product) {
                     return response()->json(['ok' => false, 'error' => "کالای {$row['slug']} یافت نشد."], 422);
-                }
-                if (in_array($product->slug, array_column($lines, 'product_slug'), true)) {
-                    return response()->json(['ok' => false, 'error' => 'یک کالا نمی‌تواند دو بار در سفارش باشد.'], 422);
                 }
                 if ($product->stock < $row['quantity']) {
                     return response()->json([
@@ -109,7 +110,10 @@ class CheckoutController extends Controller
             $couponCode = null;
 
             if (! empty($data['couponCode'])) {
-                $coupon = Coupon::whereRaw('UPPER(code) = ?', [strtoupper($data['couponCode'])])->first();
+                $coupon = Coupon::query()
+                    ->whereRaw('UPPER(code) = ?', [strtoupper(trim($data['couponCode']))])
+                    ->lockForUpdate()
+                    ->first();
 
                 if (! $coupon || ! $coupon->isUsableFor($subtotal)) {
                     return response()->json(['ok' => false, 'error' => 'کد تخفیف معتبر نیست یا شرایط آن برقرار نیست.'], 422);
@@ -125,10 +129,21 @@ class CheckoutController extends Controller
             $shipping = $subtotal >= $freeThreshold ? 0 : $shippingCost;
             $total = max($subtotal - $discount + $shipping, 0);
 
+            if ($data['paymentMethod'] === 'installment' && $total < self::INSTALLMENT_MIN_TOTAL) {
+                return response()->json([
+                    'ok' => false,
+                    'error' => 'برای خرید اقساطی، مبلغ سفارش باید بیشتر باشد.',
+                ], 422);
+            }
+
+            // پرداخت در محل، سفارش تأییدشده است؛ پرداخت آنلاین/اقساطی تا
+            // تأیید تراکنش در وضعیت pending می‌ماند و موجودی را قفل نمی‌کند.
+            $isCashOnDelivery = $data['paymentMethod'] === 'cod';
+
             $order = Order::create([
                 'order_number' => $this->nextOrderNumber(),
                 'user_id' => $user?->id,
-                'status' => 'pending',
+                'status' => $isCashOnDelivery ? 'processing' : 'pending',
                 'payment_method' => $data['paymentMethod'],
                 'shipping_method' => $data['shippingMethod'] ?? 'standard',
                 'coupon_code' => $couponCode,
@@ -145,34 +160,76 @@ class CheckoutController extends Controller
                 'shipping_line' => $data['line'],
                 'shipping_postal_code' => $data['postalCode'] ?? null,
                 'note' => $data['note'] ?? null,
-                'idempotency_key' => $idempotencyKey !== '' ? $idempotencyKey : null,
+                'idempotency_key' => $data['idempotencyKey'] ?? null,
             ]);
 
             foreach ($lines as $line) {
                 $order->items()->create($line);
-                Product::where('slug', $line['product_slug'])->decrement('stock', $line['quantity']);
+
+                if ($isCashOnDelivery) {
+                    Product::where('slug', $line['product_slug'])->decrement('stock', $line['quantity']);
+                }
             }
 
-            return response()->json([
-                'ok' => true,
-                'order' => $this->payload($order->load('items')),
-                'payment' => $this->paymentIntent($order),
-            ], 201);
+            return $order;
         });
+
+        // خطاهای داخل تراکنش همان پاسخ JSON آماده را برمی‌گردانند.
+        if (! $created instanceof Order) {
+            return $created;
+        }
+
+        /*
+         * شروع پرداخت بیرون از تراکنش انجام می‌شود: تماس با درگاه تا ۹ ثانیه
+         * طول می‌کشد و نگه‌داشتن قفل ردیف‌های کالا در این مدت، سفارش‌های
+         * هم‌زمان را معطل می‌کند.
+         */
+        $order = $created->load('items');
+
+        return response()->json([
+            'ok' => true,
+            'order' => $this->payload($order),
+            'payment' => $this->paymentIntent($order),
+        ], 201);
     }
 
+    /**
+     * قصد پرداخت برای پاسخ تسویه.
+     *
+     * برای پرداخت آنلاین همین‌جا از زرین‌پال authority گرفته می‌شود. اگر درگاه
+     * در دسترس نباشد (`redirectUrl` تهی)، متن دقیق دلیل برگردانده می‌شود تا
+     * کاربر به‌جای «خطای نامشخص» بداند مشکل کجاست؛ سفارش در هر حال ثبت شده
+     * است و از صفحهٔ نتیجه می‌تواند دوباره تلاش کند.
+     */
     private function paymentIntent(Order $order): array
     {
         if ($order->payment_method === 'cod') {
             return ['type' => 'cod', 'message' => 'پرداخت هنگام تحویل کالا انجام می‌شود.'];
         }
 
-        // درگاه واقعی هنوز به لاراول وصل نشده؛ در محیط توسعه سفارش ثبت می‌شود
-        // و پیام روشن برمی‌گردد تا رفتار «پرداخت ناموفق» جعل نشود.
+        if ($order->payment_method === 'online') {
+            $started = $this->payments->start($order);
+
+            return $started['ok']
+                ? [
+                    'type' => 'online',
+                    'gateway' => 'zarinpal',
+                    'redirectUrl' => $started['redirect_url'],
+                    'sandbox' => $started['sandbox'],
+                    'message' => null,
+                ]
+                : [
+                    'type' => 'online',
+                    'gateway' => 'zarinpal',
+                    'redirectUrl' => null,
+                    'message' => $started['message'],
+                ];
+        }
+
         return [
-            'type' => $order->payment_method,
+            'type' => 'installment',
             'redirectUrl' => null,
-            'message' => 'درگاه پرداخت در این محیط فعال نیست؛ سفارش ثبت شد و پرداخت آنلاین پس از تنظیم کلید درگاه انجام می‌شود.',
+            'message' => 'پرداخت اقساطی در این نسخه فعال نیست؛ سفارش ثبت شد و کارشناسان نودهی برای هماهنگی تماس می‌گیرند.',
         ];
     }
 
@@ -203,7 +260,7 @@ class CheckoutController extends Controller
     private function nextOrderNumber(): string
     {
         do {
-            $number = 'ND-' . now()->format('ymd') . '-' . strtoupper(bin2hex(random_bytes(3)));
+            $number = 'ND-'.now()->format('ymd').'-'.strtoupper(bin2hex(random_bytes(3)));
         } while (Order::where('order_number', $number)->exists());
 
         return $number;
