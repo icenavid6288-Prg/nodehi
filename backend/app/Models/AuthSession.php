@@ -21,4 +21,17 @@ class AuthSession extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * نشست معتبر برای یک توکن خام؛ فقط هش توکن در دیتابیس است.
+     * این متد تنها نقطهٔ تفسیر توکن است تا احراز هویت اجباری و اختیاری
+     * هر دو یک قاعده داشته باشند.
+     */
+    public static function resolveToken(string $token): ?self
+    {
+        return static::with('user')
+            ->where('token_hash', hash('sha256', $token))
+            ->where('expires_at', '>', now())
+            ->first();
+    }
 }

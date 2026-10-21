@@ -12,8 +12,8 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 
 /**
- * داده اولیه فروشگاه — از همان فایل‌های JSON نسخه Next.js خوانده می‌شود تا
- * مهاجرت، داده را دوباره اختراع نکند.
+ * داده اولیه فروشگاه — از فایل‌های JSON پوشهٔ seeders/data خوانده می‌شود تا
+ * کاتالوگ فقط در یک جا نگه‌داری شود.
  */
 class StoreSeeder extends Seeder
 {

@@ -120,17 +120,19 @@ class ProductController extends Controller
         }
 
         $user = $request->user();
+        $values = [
+            'author' => $data['author'] ?? $user?->fullName() ?? 'کاربر نودهی',
+            'rating' => $data['rating'],
+            'title' => $data['title'],
+            'body' => $data['body'],
+            'status' => 'pending',
+        ];
 
-        $review = Review::updateOrCreate(
-            ['product_slug' => $slug, 'user_id' => $user?->id],
-            [
-                'author' => $data['author'] ?? $user?->fullName() ?? 'کاربر نودهی',
-                'rating' => $data['rating'],
-                'title' => $data['title'],
-                'body' => $data['body'],
-                'status' => 'pending',
-            ]
-        );
+        // کاربر واردشده فقط نظر خودش را به‌روز می‌کند؛ نظر مهمان نباید
+        // با نظر مهمان دیگری (که user_id تهی دارد) جایگزین شود.
+        $review = $user
+            ? Review::updateOrCreate(['product_slug' => $slug, 'user_id' => $user->id], $values)
+            : Review::create($values + ['product_slug' => $slug, 'user_id' => null]);
 
         return response()->json([
             'ok' => true,

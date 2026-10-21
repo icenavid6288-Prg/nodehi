@@ -1,9 +1,12 @@
 import { useState, type FormEvent } from 'react'
 import { post } from '../lib/api'
+import { contactMeta, usePageMeta } from '../lib/seo'
 
 export default function Contact() {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'ok' | 'error'; text: string } | null>(null)
+
+  usePageMeta(contactMeta())
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()

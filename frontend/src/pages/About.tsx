@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom'
+import { aboutMeta, usePageMeta } from '../lib/seo'
 
 export default function About() {
+  usePageMeta(aboutMeta())
+
   return (
     <div className="container-page py-10">
       <div className="mx-auto max-w-3xl">

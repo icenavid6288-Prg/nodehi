@@ -44,6 +44,9 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
 export const get = <T>(path: string) => api<T>(path)
 export const post = <T>(path: string, body: unknown) =>
   api<T>(path, { method: 'POST', body: JSON.stringify(body) })
+export const patch = <T>(path: string, body: unknown) =>
+  api<T>(path, { method: 'PATCH', body: JSON.stringify(body) })
+export const del = <T>(path: string) => api<T>(path, { method: 'DELETE' })
 
 export type ProductSummary = {
   id: string
@@ -159,6 +162,99 @@ export type LoyaltyResponse = {
   tiers: { name: string; requirement: string; discount: string; points: string; perks: string[] }[]
   installments: { months: number; label: string; interest: string; note: string; featured: boolean }[]
   steps: { step: number; title: string; description: string }[]
+}
+
+export type Paginated<T> = {
+  total: number
+  page: number
+  perPage: number
+  pageCount: number
+  items: T[]
+}
+
+export type AdminProduct = {
+  id: number
+  slug: string
+  name: string
+  category: string
+  categoryName: string
+  brand: string
+  brandName: string
+  price: number
+  compareAtPrice: number | null
+  stock: number
+  rating: number
+  reviewCount: number
+  shortDescription: string
+  description: string
+  highlights: string[]
+  specs: { label: string; value: string; group?: string | null }[]
+  attributes: Record<string, unknown>
+  images: string[]
+  tags: string[]
+  relatedSlugs: string[]
+  videoUrl: string | null
+  isActive: boolean
+  publishedAt: string | null
+  updatedAt: string | null
+}
+
+export type AdminOrderSummary = {
+  id: number
+  orderNumber: string
+  status: string
+  paymentMethod: string
+  shippingMethod: string
+  subtotal: number
+  discount: number
+  shipping: number
+  total: number
+  couponCode: string | null
+  customerName: string
+  customerPhone: string
+  itemCount: number | null
+  trackingCode: string | null
+  createdAt: string
+  paidAt: string | null
+  shippedAt: string | null
+  deliveredAt: string | null
+  cancelledAt: string | null
+}
+
+export type AdminOrderDetail = AdminOrderSummary & {
+  customerEmail: string | null
+  shippingAddress: { province: string; city: string; line: string; postalCode: string | null }
+  note: string | null
+  user: { id: number; phone: string; fullName: string } | null
+  payment: { refId: string | null; cardPan: string | null }
+  items: { slug: string; name: string; unitPrice: number; quantity: number; lineTotal: number }[]
+}
+
+export type AdminCoupon = {
+  id: number
+  code: string
+  label: string
+  percent: number
+  minSubtotal: number | null
+  maxUses: number | null
+  usedCount: number
+  startsAt: string | null
+  expiresAt: string | null
+  isActive: boolean
+  createdAt: string
+}
+
+export type AdminReview = {
+  id: number
+  productSlug: string
+  productName: string
+  author: string
+  userPhone: string | null
+  rating: number
+  title: string
+  body: string
+  status: 'pending' | 'approved' | 'rejected'
+  createdAt: string
 }
 
 export type OrderResponse = {

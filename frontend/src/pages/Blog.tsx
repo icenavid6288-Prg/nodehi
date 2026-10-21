@@ -4,6 +4,7 @@ import ArticleCard from '../components/ArticleCard'
 import Breadcrumbs from '../components/Breadcrumbs'
 import { get, type ArticleListResponse } from '../lib/api'
 import { formatDate, toFa } from '../lib/format'
+import { blogMeta, usePageMeta } from '../lib/seo'
 
 export default function Blog() {
   const [params] = useSearchParams()
@@ -36,6 +37,14 @@ export default function Blog() {
   const activeLabel = data?.categories.find((item) => item.slug === category)?.label
   // مجموع شمار مقالات مستقل از فیلتر فعلی است تا متن معرفی ثابت بماند.
   const totalArticles = (data?.categories ?? []).reduce((sum, item) => sum + item.count, 0)
+
+  // فقط فهرست کامل بلاگ ایندکس می‌شود؛ فیلتر دسته‌بندی با پارامتر noindex.
+  usePageMeta({
+    ...blogMeta(),
+    title: activeLabel ? `مقالات ${activeLabel} | نودهی` : blogMeta().title,
+    path: '/blog',
+    robots: category ? 'noindex' : 'index',
+  })
 
   return (
     <div className="container-page py-8">

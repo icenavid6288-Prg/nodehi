@@ -3,6 +3,7 @@ import { Link, Navigate } from 'react-router-dom'
 import { get, type OrderResponse } from '../lib/api'
 import { useAuth } from '../context/AuthContext'
 import { price, toFa } from '../lib/format'
+import { useNoindex } from '../lib/seo'
 
 const statusLabels: Record<string, string> = {
   pending: 'در انتظار تأیید',
@@ -14,6 +15,7 @@ const statusLabels: Record<string, string> = {
 }
 
 export default function Account() {
+  useNoindex('حساب کاربری', '/account')
   const { user, ready, signOut } = useAuth()
   const [orders, setOrders] = useState<OrderResponse[]>([])
   const [loading, setLoading] = useState(true)
