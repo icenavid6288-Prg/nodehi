@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import Breadcrumbs from '../components/Breadcrumbs'
+import { FaqAccordion } from '../components/FaqAccordion'
 import { get, type FaqResponse } from '../lib/api'
 import { toFa } from '../lib/format'
+import { faqMeta, usePageMeta } from '../lib/seo'
 
 const PHONE = '۰۲۱-۹۱۰۰۰۰۰۰'
 const PHONE_RAW = '+982191000000'
@@ -38,6 +40,10 @@ export default function Faq() {
     }))
     .filter((group) => group.items.length > 0)
 
+  // متادیتا (شامل JSON-LD از نوع FAQPage) از هستهٔ مشترک سئو می‌آید تا با
+  // نسخهٔ پررندرشدهٔ ایستا دقیقاً یکی باشد.
+  usePageMeta(faqMeta(data?.items ?? [], data?.categories ?? []))
+
   return (
     <div className="container-page py-8">
       <Breadcrumbs items={[{ label: 'سوالات متداول' }]} />
@@ -61,30 +67,8 @@ export default function Faq() {
             {groups.map((group) => (
               <section key={group.slug} id={group.slug} className="scroll-mt-28">
                 <h2 className="mb-3 text-base font-bold">{group.label}</h2>
-                <ul className="flex flex-col gap-3">
-                  {group.items.map((item) => (
-                    <li key={item.id} className="overflow-hidden rounded-2xl border border-surface-border bg-white">
-                      <details className="group/item">
-                        <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 text-sm font-bold transition-colors hover:bg-surface-muted">
-                          {item.question}
-                          <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            aria-hidden="true"
-                            className="h-4 w-4 shrink-0 text-ink-subtle transition-transform group-open/item:rotate-180"
-                          >
-                            <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                        </summary>
-                        <p className="border-t border-surface-border px-5 py-4 text-sm leading-7 text-ink-muted">
-                          {item.answer}
-                        </p>
-                      </details>
-                    </li>
-                  ))}
-                </ul>
+                {/* مارک‌آپ آکاردئون بین SPA و پررندر ایستا مشترک است. */}
+                <FaqAccordion items={group.items} idPrefix={group.slug} />
               </section>
             ))}
           </div>

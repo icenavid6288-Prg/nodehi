@@ -23,10 +23,7 @@ class AuthenticateToken
             return response()->json(['ok' => false, 'error' => 'احراز هویت لازم است.'], 401);
         }
 
-        $session = AuthSession::with('user')
-            ->where('token_hash', hash('sha256', $token))
-            ->where('expires_at', '>', now())
-            ->first();
+        $session = AuthSession::resolveToken($token);
 
         if (! $session || ! $session->user || ! $session->user->is_active) {
             return response()->json(['ok' => false, 'error' => 'نشست منقضی شده است.'], 401);

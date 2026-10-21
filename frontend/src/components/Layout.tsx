@@ -94,6 +94,14 @@ export default function Layout() {
           </form>
 
           <div className="mr-auto flex items-center gap-1 md:mr-0">
+            {user && (user.role === 'admin' || user.role === 'operator') && (
+              <Link
+                to="/admin"
+                className="hidden rounded-xl border border-secondary/40 px-3 py-2 text-xs font-bold text-secondary-dark hover:bg-secondary/10 sm:flex"
+              >
+                پنل مدیریت
+              </Link>
+            )}
             <Link
               to={user ? '/account' : '/login'}
               className="hidden items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-surface-muted sm:flex"
@@ -135,6 +143,11 @@ export default function Layout() {
                   {link.label}
                 </NavLink>
               ))}
+              {user && (user.role === 'admin' || user.role === 'operator') && (
+                <NavLink to="/admin" className="rounded-lg px-3 py-2 font-bold text-secondary-dark hover:bg-surface-muted">
+                  پنل مدیریت
+                </NavLink>
+              )}
               <Link to={user ? '/account' : '/login'} className="rounded-lg px-3 py-2 hover:bg-surface-muted">
                 {user ? 'حساب کاربری' : 'ورود / ثبت‌نام'}
               </Link>
@@ -148,7 +161,7 @@ export default function Layout() {
           {categories.map((category) => (
             <Link
               key={category.slug}
-              to={`/shop?category=${category.slug}`}
+              to={`/category/${category.slug}`}
               className="whitespace-nowrap rounded-lg px-3 py-2 text-sm text-ink-muted transition hover:bg-surface-muted hover:text-primary"
             >
               {category.name}

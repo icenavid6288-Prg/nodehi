@@ -13,8 +13,8 @@ use App\Models\LoyaltyTier;
 use Illuminate\Database\Seeder;
 
 /**
- * محتوای صفحات عمومی — همان متون نسخه Next.js که در
- * database/seeders/data/content.json استخراج شده‌اند.
+ * محتوای صفحات عمومی — از فایل database/seeders/data/content.json خوانده
+ * می‌شود تا متن‌ها بدون انتشار مجدد فرانت‌اند قابل تغییر باشند.
  */
 class ContentSeeder extends Seeder
 {

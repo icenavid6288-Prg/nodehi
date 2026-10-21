@@ -1,10 +1,11 @@
-import { BrowserRouter, Navigate, Route, Routes, Link, useParams } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes, Link } from 'react-router-dom'
 import Layout from './components/Layout'
 import Home from './pages/Home'
 import Shop from './pages/Shop'
 import Product from './pages/Product'
 import Cart from './pages/Cart'
 import Checkout from './pages/Checkout'
+import CheckoutResult from './pages/CheckoutResult'
 import Login from './pages/Login'
 import Track from './pages/Track'
 import About from './pages/About'
@@ -17,17 +18,20 @@ import Faq from './pages/Faq'
 import Guides from './pages/Guides'
 import Loyalty from './pages/Loyalty'
 import Legal from './pages/Legal'
+import AdminLayout from './pages/admin/AdminLayout'
+import AdminProducts from './pages/admin/AdminProducts'
+import AdminOrders from './pages/admin/AdminOrders'
+import AdminCoupons from './pages/admin/AdminCoupons'
+import AdminReviews from './pages/admin/AdminReviews'
 import { CartProvider } from './context/CartContext'
 import { AuthProvider } from './context/AuthContext'
 import { CatalogProvider } from './context/CatalogContext'
+import { useNoindex } from './lib/seo'
 
-/** مسیرهای سئویی /category/:slug و /brand/:slug به فیلتر فروشگاه نگاشت می‌شوند. */
-function CatalogRedirect({ param }: { param: 'category' | 'brand' }) {
-  const { slug = '' } = useParams()
-  return <Navigate to={`/shop?${param}=${encodeURIComponent(slug)}`} replace />
-}
-
+/** صفحهٔ ۴۰۴ ایندکس نمی‌شود؛ مسیرهای دسته/برند مستقیماً Shop را رندر می‌کنند. */
 function NotFound() {
+  useNoindex('صفحه پیدا نشد', '/404')
+
   return (
     <div className="container-page py-20 text-center">
       <h1 className="text-2xl font-extrabold">صفحه پیدا نشد</h1>
@@ -49,11 +53,11 @@ export default function App() {
               <Route element={<Layout />}>
                 <Route index element={<Home />} />
                 <Route path="shop" element={<Shop />} />
-                <Route path="category/:slug" element={<CatalogRedirect param="category" />} />
+                <Route path="category/:categorySlug" element={<Shop />} />
                 <Route path="brands" element={<Brands />} />
                 <Route path="ready-to-ship" element={<Navigate to="/shop?inStock=1" replace />} />
-                <Route path="checkout/result" element={<Navigate to="/track" replace />} />
-                <Route path="brand/:slug" element={<CatalogRedirect param="brand" />} />
+                <Route path="checkout/result" element={<CheckoutResult />} />
+                <Route path="brand/:brandSlug" element={<Shop />} />
                 <Route path="product/:slug" element={<Product />} />
                 <Route path="cart" element={<Cart />} />
                 <Route path="checkout" element={<Checkout />} />
@@ -70,6 +74,14 @@ export default function App() {
                 <Route path="terms" element={<Legal slug="terms" />} />
                 <Route path="privacy" element={<Legal slug="privacy" />} />
                 <Route path="*" element={<NotFound />} />
+              </Route>
+
+              <Route path="admin" element={<AdminLayout />}>
+                <Route index element={<Navigate to="products" replace />} />
+                <Route path="products" element={<AdminProducts />} />
+                <Route path="orders" element={<AdminOrders />} />
+                <Route path="coupons" element={<AdminCoupons />} />
+                <Route path="reviews" element={<AdminReviews />} />
               </Route>
             </Routes>
           </CartProvider>

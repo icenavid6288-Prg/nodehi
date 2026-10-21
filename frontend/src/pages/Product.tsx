@@ -6,6 +6,7 @@ import { useCart } from '../context/CartContext'
 import ProductCard from '../components/ProductCard'
 import { CheckIcon, StarIcon, TruckIcon } from '../components/icons'
 import { percent, price, toFa } from '../lib/format'
+import { productMeta, usePageMeta } from '../lib/seo'
 
 type DetailResponse = { product: ProductDetail; related: ProductSummary[] }
 type ReviewRow = { id: number; author: string; rating: number; title: string; body: string; created_at: string }
@@ -19,6 +20,33 @@ export default function Product() {
   const [quantity, setQuantity] = useState(1)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  const seoProduct = data?.product
+  // متادیتای کامل (Product + Breadcrumb + WebPage در JSON-LD) از هستهٔ مشترک
+  // سئو می‌آید تا صفحهٔ ایستای همین محصول عنوان و دادهٔ یکسانی داشته باشد.
+  usePageMeta(
+    seoProduct
+      ? productMeta({
+          slug: seoProduct.slug,
+          name: seoProduct.name,
+          shortDescription: seoProduct.shortDescription,
+          description: seoProduct.description,
+          price: seoProduct.price,
+          compareAtPrice: seoProduct.compareAtPrice,
+          stock: seoProduct.stock,
+          rating: seoProduct.rating,
+          reviewCount: seoProduct.reviewCount,
+          images: seoProduct.images,
+          brand: brandName(seoProduct.brand),
+          category: { name: categoryName(seoProduct.category), slug: seoProduct.category },
+        })
+      : {
+          title: 'صفحهٔ محصول | نودهی',
+          description: 'مشخصات، قیمت و موجودی این کالا در فروشگاه نودهی.',
+          path: `/product/${slug}`,
+          robots: error ? 'noindex' : 'index',
+        },
+  )
 
   useEffect(() => {
     setLoading(true)
@@ -61,7 +89,7 @@ export default function Product() {
     <div className="container-page py-8">
       <nav className="mb-5 text-xs text-ink-subtle" aria-label="مسیر صفحه">
         <Link to="/" className="hover:text-primary">خانه</Link> /{' '}
-        <Link to={`/shop?category=${product.category}`} className="hover:text-primary">
+        <Link to={`/category/${product.category}`} className="hover:text-primary">
           {categoryName(product.category)}
         </Link>{' '}
         / <span className="text-ink-muted">{product.name}</span>
@@ -148,7 +176,7 @@ export default function Product() {
         <aside className="lg:sticky lg:top-24 lg:self-start">
           <div className="rounded-2xl border border-surface-border bg-white p-5 shadow-card">
             <div className="mb-1 flex items-center gap-2 text-xs text-ink-subtle">
-              <Link to={`/shop?brand=${product.brand}`} className="hover:text-primary">
+              <Link to={`/brand/${product.brand}`} className="hover:text-primary">
                 {brandName(product.brand)}
               </Link>
               <span>·</span>
