@@ -97,11 +97,22 @@ npm --prefix frontend run dev
 
 ## ۴. استقرار روی هاست PHP
 
-### ۴.۱ بک‌اند
+برای هاست اشتراکی (LiteSpeed/cPanel، داکیومنتروت ثابت، بدون SSH) راهنمای کامل و
+آمادهٔ کپی در [`HOST-DEPLOY.md`](HOST-DEPLOY.md) است: بستهٔ آماده + نصب‌کنندهٔ
+مرورگری + ساختار `public_html` و `nodehi` کنار هم. خلاصه:
 
-1. فایل‌ها را خارج از `public_html` قرار دهید (مثلاً `~/nodehi/backend`).
-2. Document Root دامنه یا زیردامنه را روی `backend/public` تنظیم کنید.
-3. `backend/.env` تولید را بسازید و `APP_DEBUG=false` بگذارید.
+```bash
+node tools/build-host-release.mjs --site-url=https://example.com
+# آپلود zip → extract در هوم‌دایرکتوری → باز کردن https://example.com/install.php
+```
+
+### ۴.۱ سرور با دسترسی به Document Root
+
+اگر دامنه را به یک پوشهٔ دلخواه می‌توانید اشاره دهید:
+
+1. کد لاراول را خارج از `public_html` بگذارید (مثلاً `~/nodehi`).
+2. Document Root را روی `~/nodehi/public` تنظیم کنید.
+3. `.env` تولید را بسازید و `APP_DEBUG=false` بگذارید.
 4. مجوز نوشتن برای `storage/` و `bootstrap/cache/` بدهید:
 
 ```bash
@@ -118,9 +129,9 @@ php artisan config:cache
 php artisan route:cache
 ```
 
-اگر Document Root را نمی‌توانید تغییر دهید، پروژه را در `public_html` نگذارید؛
-فقط محتوای `backend/public` را در دسترس وب قرار دهید و مسیرهای داخلی را با
-`index.php` هدایت کنید.
+اگر Document Root را نمی‌توانید تغییر دهید، مسیر بالا را کنار بگذارید و از
+`HOST-DEPLOY.md` استفاده کنید (فایل‌های `deploy/public_html/laravel.php` و
+`.htaccess` همان کار را بدون تغییر پنل انجام می‌دهند).
 
 ### ۴.۲ فرانت‌اند
 
@@ -153,6 +164,10 @@ location / {
 
 بدون `$uri/index.html`، آدرس بدون اسلش پایانی به صفحهٔ اصلی fallback می‌کند و
 متادیتای محصول از دست می‌رود.
+
+برای Apache/LiteSpeed با داکیومنتروت ثابت، همین قواعد در
+`deploy/public_html/.htaccess` آماده است؛ توضیح آن در
+[`HOST-DEPLOY.md`](HOST-DEPLOY.md).
 
 ### ۴.۳ CORS
 

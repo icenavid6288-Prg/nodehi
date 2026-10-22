@@ -1,0 +1,52 @@
+# نودهی — قواعد مسیردهی داکیومنتروت (LiteSpeed / Apache)
+#
+# این پوشه هم فایل‌های ساخته‌شدهٔ React را دارد و هم نقطهٔ ورود API لاراول
+# (laravel.php). کد برنامه در پوشهٔ کنارِ این پوشه (پیش‌فرض: nodehi/) است و
+# مستقیماً از وب قابل دانلود نیست.
+
+DirectoryIndex index.html laravel.php
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # افزونهٔ Authorization برای توکن Bearer (بعضی هاست‌ها آن را حذف می‌کنند)
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # API و بررسی سلامت لاراول
+    RewriteRule ^api(/.*)?$ laravel.php [L,QSA]
+    RewriteRule ^up/?$ laravel.php [L,QSA]
+
+    # فایل یا پوشهٔ موجود (دارایی‌های Vite، صفحات پررندر‌شده، uploads) مستقیم سرو می‌شود
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # نصب‌کننده بعد از نصب حذف می‌شود؛ بعد از حذف نباید پوستهٔ SPA هم جوابش باشد
+    RewriteRule ^install\.php$ - [R=404,L]
+
+    # بقیهٔ مسیرها به پوستهٔ SPA (مسیرهای کلاینتی مثل /cart، /account، /admin)
+    RewriteRule ^ index.html [L]
+</IfModule>
+
+# اگر mod_rewrite در دسترس نبود، حداقل صفحهٔ اصلی و API کار کند.
+<IfModule !mod_rewrite.c>
+    FallbackResource /index.html
+</IfModule>
+
+# جلوگیری از فهرست‌شدن پوشه‌ها (uploads نباید قابل مرور باشد)
+<IfModule mod_autoindex.c>
+    IndexIgnore *
+</IfModule>
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 6 months"
+    ExpiresByType image/png "access plus 6 months"
+    ExpiresByType image/webp "access plus 6 months"
+    ExpiresByType image/svg+xml "access plus 6 months"
+    ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>

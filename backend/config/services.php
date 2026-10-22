@@ -29,8 +29,9 @@ return [
     ],
 
     'otp' => [
-        // فقط برای توسعه؛ در تولید باید false باشد
-        'dev_mode' => filter_var(env('AUTH_OTP_DEV_MODE', true), FILTER_VALIDATE_BOOL),
+        // فقط برای راه‌اندازی/توسعه. با روشن‌بودن آن کد یک‌بارمصرف در پاسخ API
+        // برمی‌گردد؛ در تولیدِ نهایی باید 0 باشد.
+        'dev_mode' => filter_var(env('AUTH_OTP_DEV_MODE', false), FILTER_VALIDATE_BOOL),
     ],
 
     'zarinpal' => [

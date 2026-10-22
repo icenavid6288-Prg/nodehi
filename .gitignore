@@ -33,5 +33,7 @@ coverage/
 # خروجی TypeScript
 *.tsbuildinfo
 
-# لاگ سرورهای توسعه
+# لاگ سرورهای توسعه و خروجی بسته‌سازی استقرار
 logs/
+.build/
+artifacts/
