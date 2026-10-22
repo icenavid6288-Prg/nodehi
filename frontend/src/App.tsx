@@ -18,12 +18,17 @@ import Faq from './pages/Faq'
 import Guides from './pages/Guides'
 import Loyalty from './pages/Loyalty'
 import Legal from './pages/Legal'
-import AdminLayout from './pages/admin/AdminLayout'
+import AdminLayout, { AdminHome } from './pages/admin/AdminLayout'
 import AdminProducts from './pages/admin/AdminProducts'
 import AdminOrders from './pages/admin/AdminOrders'
 import AdminCoupons from './pages/admin/AdminCoupons'
 import AdminReviews from './pages/admin/AdminReviews'
 import AdminHeroSlides from './pages/admin/AdminHeroSlides'
+import AdminUsers from './pages/admin/AdminUsers'
+import AdminSettings from './pages/admin/AdminSettings'
+import AdminIntegrations from './pages/admin/AdminIntegrations'
+import AdminPayments from './pages/admin/AdminPayments'
+import AdminSms from './pages/admin/AdminSms'
 import { CartProvider } from './context/CartContext'
 import { AuthProvider } from './context/AuthContext'
 import { CatalogProvider } from './context/CatalogContext'
@@ -78,12 +83,17 @@ export default function App() {
               </Route>
 
               <Route path="admin" element={<AdminLayout />}>
-                <Route index element={<Navigate to="products" replace />} />
+                <Route index element={<AdminHome />} />
                 <Route path="products" element={<AdminProducts />} />
                 <Route path="orders" element={<AdminOrders />} />
                 <Route path="coupons" element={<AdminCoupons />} />
                 <Route path="reviews" element={<AdminReviews />} />
                 <Route path="hero-slides" element={<AdminHeroSlides />} />
+                <Route path="users" element={<AdminUsers />} />
+                <Route path="settings" element={<AdminSettings />} />
+                <Route path="integrations" element={<AdminIntegrations />} />
+                <Route path="payments" element={<AdminPayments />} />
+                <Route path="sms" element={<AdminSms />} />
               </Route>
             </Routes>
           </CartProvider>

@@ -2,14 +2,37 @@ import { Link, Navigate, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { CartIcon, ShieldIcon } from '../../components/icons'
 import { useNoindex } from '../../lib/seo'
+import type { AdminPermissionKey } from '../../lib/api'
 
-const links = [
-  { to: '/admin/hero-slides', label: 'اسلایدهای هیرو' },
-  { to: '/admin/products', label: 'محصولات' },
-  { to: '/admin/orders', label: 'سفارش‌ها' },
-  { to: '/admin/coupons', label: 'کدهای تخفیف' },
-  { to: '/admin/reviews', label: 'نظرات' },
+const links: { to: string; label: string; perm: AdminPermissionKey }[] = [
+  { to: '/admin/products', label: 'محصولات', perm: 'products' },
+  { to: '/admin/orders', label: 'سفارش‌ها', perm: 'orders' },
+  { to: '/admin/coupons', label: 'کدهای تخفیف', perm: 'coupons' },
+  { to: '/admin/reviews', label: 'نظرات', perm: 'reviews' },
+  { to: '/admin/hero-slides', label: 'اسلایدهای هیرو', perm: 'hero_slides' },
+  { to: '/admin/users', label: 'کاربران', perm: 'users' },
+  { to: '/admin/settings', label: 'تنظیمات سایت', perm: 'settings' },
+  { to: '/admin/integrations', label: 'یکپارچه‌سازی و سئو', perm: 'integrations' },
+  { to: '/admin/payments', label: 'درگاه‌های پرداخت', perm: 'gateways' },
+  { to: '/admin/sms', label: 'سرویس پیامک', perm: 'sms' },
 ]
+
+/** اپراتور فقط بخش‌هایی را می‌بیند که مجوز دارد؛ مدیر اصلی همه را. */
+function visibleLinks(user: { role: string; permissions: AdminPermissionKey[] }) {
+  if (user.role === 'admin') return links
+  return links.filter((link) => user.permissions.includes(link.perm))
+}
+
+/** ورود به پنل: به اولین بخشی که کاربر مجوز دارد می‌رود. */
+export function AdminHome() {
+  const { user } = useAuth()
+
+  if (!user) return null
+
+  const first = visibleLinks(user)[0]
+
+  return <Navigate to={first ? first.to : '/admin/settings'} replace />
+}
 
 export default function AdminLayout() {
   const { user, ready, signOut } = useAuth()
@@ -69,7 +92,7 @@ export default function AdminLayout() {
         </div>
 
         <nav className="container-page no-scrollbar flex gap-1 overflow-x-auto pb-1" aria-label="بخش‌های پنل مدیریت">
-          {links.map((link) => (
+          {visibleLinks(user).map((link) => (
             <NavLink
               key={link.to}
               to={link.to}

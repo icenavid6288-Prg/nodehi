@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\AdminPermission;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -47,9 +48,52 @@ class User extends Model
         return $this->hasMany(Review::class);
     }
 
+    public function adminPermissions(): HasMany
+    {
+        return $this->hasMany(UserPermission::class);
+    }
+
     public function isAdmin(): bool
     {
         return in_array($this->role, ['admin', 'operator'], true);
+    }
+
+    /** مدیر اصلی؛ فقط او می‌تواند نقش و مجوز دیگران را تغییر دهد. */
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * مجوزهای مؤثر این کاربر در پنل.
+     *
+     * مدیر اصلی همه‌چیز دارد. اپراتوری که هیچ ردیف مجوزی ندارد، دسترسی
+     * پیش‌فرض قدیمی (کاتالوگ و سفارش) را می‌گیرد تا بعد از این تغییر قفل نشود.
+     *
+     * @return string[]
+     */
+    public function effectivePermissions(): array
+    {
+        if ($this->isSuperAdmin()) {
+            return AdminPermission::ALL;
+        }
+
+        if (! $this->isAdmin()) {
+            return [];
+        }
+
+        $granted = $this->relationLoaded('adminPermissions')
+            ? $this->adminPermissions->pluck('permission')->all()
+            : $this->adminPermissions()->pluck('permission')->all();
+
+        $granted = array_values(array_intersect($granted, AdminPermission::ALL));
+
+        return $granted === [] ? AdminPermission::LEGACY_OPERATOR_DEFAULTS : $granted;
+    }
+
+    public function canAdmin(string $permission): bool
+    {
+        return in_array($permission, $this->effectivePermissions(), true);
     }
 
     public function fullName(): string

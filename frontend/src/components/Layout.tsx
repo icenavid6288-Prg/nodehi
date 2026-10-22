@@ -5,6 +5,7 @@ import { useCatalog } from '../context/CatalogContext'
 import { useAuth } from '../context/AuthContext'
 import { toFa } from '../lib/format'
 import { CartIcon, CloseIcon, MenuIcon, SearchIcon, UserIcon } from './icons'
+import AnalyticsTags from './AnalyticsTags'
 
 const navLinks = [
   { to: '/shop', label: 'فروشگاه' },
@@ -47,6 +48,7 @@ export default function Layout() {
 
   return (
     <div className="flex min-h-screen flex-col">
+      <AnalyticsTags />
       <div className="bg-primary text-white">
         <div className="container-page flex h-9 items-center justify-between text-xs">
           <span className="opacity-80">ارسال سریع به سراسر ایران · ضمانت اصالت کالا</span>

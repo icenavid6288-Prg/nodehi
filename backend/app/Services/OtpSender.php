@@ -14,10 +14,12 @@ use Illuminate\Support\Facades\Log;
  */
 class OtpSender
 {
+    public function __construct(private readonly SmsSender $sms) {}
+
     public function send(string $phone, string $code): bool
     {
-        $apiKey = (string) config('services.kavenegar.api_key', '');
-        $template = (string) config('services.kavenegar.otp_template', '');
+        $apiKey = $this->sms->apiKey();
+        $template = $this->sms->otpTemplate();
 
         if ($apiKey === '' || $template === '') {
             return false;
