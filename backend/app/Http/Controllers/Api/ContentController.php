@@ -7,6 +7,7 @@ use App\Models\Article;
 use App\Models\ArticleCategory;
 use App\Models\Faq;
 use App\Models\FaqCategory;
+use App\Models\HeroSlide;
 use App\Models\LegalPage;
 use App\Models\LoyaltyInstallment;
 use App\Models\LoyaltyStep;
@@ -213,6 +214,34 @@ class ContentController extends Controller
             'price' => $p->price,
             'image' => $p->images[0] ?? null,
         ])->all();
+    }
+
+    /**
+     * اسلایدهای هیروی صفحهٔ اصلی.
+     *
+     * فقط اسلایدهای فعال و به ترتیب نمایش برمی‌گردند؛ اگر هیچ اسلایدی نباشد
+     * فرانت‌اند محتوای پیش‌فرض خودش را نشان می‌دهد.
+     */
+    public function heroSlides(): JsonResponse
+    {
+        $items = HeroSlide::query()->active()->ordered()->get()
+            ->map(fn (HeroSlide $slide) => [
+                'id' => $slide->id,
+                'badge' => $slide->badge,
+                'title' => $slide->title,
+                'titleAccent' => $slide->title_accent,
+                'text' => $slide->text,
+                'primaryLabel' => $slide->primary_label,
+                'primaryUrl' => $slide->primary_url,
+                'secondaryLabel' => $slide->secondary_label,
+                'secondaryUrl' => $slide->secondary_url,
+                'features' => $slide->features ?: [],
+                'image' => $slide->image,
+                'theme' => $slide->theme,
+            ])
+            ->all();
+
+        return response()->json(['ok' => true, 'items' => $items]);
     }
 
     private function serializeArticle(Article $article, ?string $categoryLabel = null): array

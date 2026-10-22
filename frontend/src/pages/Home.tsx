@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import { get, type ProductSummary } from '../lib/api'
 import { useCatalog } from '../context/CatalogContext'
 import ProductCard from '../components/ProductCard'
-import { CheckIcon, ShieldIcon, StarIcon, TruckIcon } from '../components/icons'
+import HeroSlideshow from '../components/HeroSlideshow'
+import { CategoryIcon } from '../components/icons'
 import { toFa } from '../lib/format'
 import { homeMeta, usePageMeta } from '../lib/seo'
 
@@ -69,66 +70,34 @@ export default function Home() {
 
   return (
     <div className="pb-4">
-      <section className="relative overflow-hidden bg-gradient-to-l from-secondary-dark via-secondary to-secondary-light">
-        <div className="container-page grid items-center gap-8 py-12 md:grid-cols-2 md:py-16">
-          <div className="text-white">
-            <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs backdrop-blur">
-              <StarIcon className="h-3.5 w-3.5" />
-              {toFa('۲۳')} کالای منتخب با گارانتی رسمی
-            </span>
-            <h1 className="text-3xl font-extrabold leading-tight sm:text-4xl">
-              لوازم خانگی مطمئن،
-              <br />
-              با ارسال سریع و نصب رایگان
-            </h1>
-            <p className="mt-4 max-w-md text-sm leading-7 text-white/85">
-              یخچال، لباسشویی، ظرفشویی، تلویزیون و کولر گازی از برندهای معتبر؛ با ضمانت اصالت کالا و امکان
-              پرداخت در محل.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link
-                to="/shop"
-                className="rounded-xl bg-white px-6 py-3 text-sm font-extrabold text-primary shadow-lg transition hover:bg-surface-muted"
-              >
-                مشاهده فروشگاه
-              </Link>
-              <Link
-                to="/shop?onSale=1"
-                className="rounded-xl border border-white/40 px-6 py-3 text-sm font-bold text-white transition hover:bg-white/10"
-              >
-                تخفیف‌های ویژه
-              </Link>
-            </div>
+      <HeroSlideshow />
+
+      {/* دسته‌بندی‌ها در جریان عادی صفحه و بعد از هیرو می‌آیند تا با اسلایدشو
+          هم‌پوشانی نکنند؛ پیش‌تر با حاشیهٔ منفی زیر بخش هیرو پنهان می‌شدند. */}
+      <section className="container-page mt-10">
+        <div className="mb-4 flex items-end justify-between gap-2">
+          <div>
+            <h2 className="text-xl font-extrabold sm:text-2xl">دسته‌بندی‌ها</h2>
+            <p className="mt-1 text-sm text-ink-muted">از یخچال و لباسشویی تا لوازم کوچک؛ سریع‌تر به کالای مورد نظرتان برسید.</p>
           </div>
-
-          <ul className="grid grid-cols-2 gap-3 text-sm text-white sm:grid-cols-3 md:grid-cols-1">
-            {[
-              { icon: <TruckIcon />, text: 'ارسال همان‌روز در تهران و کرج' },
-              { icon: <ShieldIcon />, text: 'گارانتی معتبر و ضمانت اصالت' },
-              { icon: <CheckIcon />, text: 'پرداخت در محل و خرید اقساطی' },
-            ].map((item) => (
-              <li
-                key={item.text}
-                className="flex items-center gap-3 rounded-2xl border border-white/20 bg-white/10 px-4 py-3 backdrop-blur"
-              >
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white/20">{item.icon}</span>
-                <span className="text-xs leading-6 sm:text-sm">{item.text}</span>
-              </li>
-            ))}
-          </ul>
+          <Link to="/shop" className="shrink-0 text-sm font-bold text-secondary hover:text-secondary-dark">
+            همه محصولات ←
+          </Link>
         </div>
-      </section>
-
-      <section className="container-page -mt-6">
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {categories.slice(0, 8).map((category) => (
             <Link
               key={category.slug}
               to={`/category/${category.slug}`}
-              className="flex items-center justify-between gap-2 rounded-2xl border border-surface-border bg-white px-4 py-3 shadow-card transition hover:-translate-y-0.5 hover:border-secondary/40"
+              className="group flex items-center gap-3 rounded-2xl border border-surface-border bg-white px-3.5 py-3 shadow-card transition hover:-translate-y-0.5 hover:border-secondary/40 hover:shadow-float"
             >
-              <span className="text-sm font-bold">{category.name}</span>
-              <span className="text-[11px] text-ink-subtle">{toFa(category.count)} کالا</span>
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-secondary/10 text-secondary-dark transition group-hover:bg-secondary group-hover:text-secondary-foreground">
+                <CategoryIcon name={category.icon} />
+              </span>
+              <span className="min-w-0">
+                <span className="block truncate text-sm font-bold">{category.name}</span>
+                <span className="mt-0.5 block text-[11px] text-ink-subtle">{toFa(category.count)} کالا</span>
+              </span>
             </Link>
           ))}
         </div>

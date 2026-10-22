@@ -4,6 +4,7 @@ import { CartIcon, ShieldIcon } from '../../components/icons'
 import { useNoindex } from '../../lib/seo'
 
 const links = [
+  { to: '/admin/hero-slides', label: 'اسلایدهای هیرو' },
   { to: '/admin/products', label: 'محصولات' },
   { to: '/admin/orders', label: 'سفارش‌ها' },
   { to: '/admin/coupons', label: 'کدهای تخفیف' },

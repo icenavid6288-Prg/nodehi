@@ -18,6 +18,13 @@ export default defineConfig({
         target: 'http://127.0.0.1:8000',
         changeOrigin: true,
       },
+      // تصاویر آپلودیِ پنل (مثل عکس اسلایدهای هیرو) در public/uploads لاراول
+      // ذخیره می‌شوند؛ در production خود لاراول آن‌ها را سرو می‌کند و در
+      // توسعه این پروکسی همان مسیر را به API می‌رساند.
+      '/uploads': {
+        target: 'http://127.0.0.1:8000',
+        changeOrigin: true,
+      },
     },
   },
 })

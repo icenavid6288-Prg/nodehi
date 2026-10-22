@@ -10,5 +10,6 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(StoreSeeder::class);
         $this->call(ContentSeeder::class);
+        $this->call(HeroSlideSeeder::class);
     }
 }
