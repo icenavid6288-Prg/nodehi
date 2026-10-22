@@ -11,6 +11,17 @@ class Category extends Model
         'featured', 'sort_order', 'is_active',
     ];
 
+    /**
+     * MySQL روی ستون TEXT پیش‌فرض نمی‌پذیرد، بنابراین پیش‌فرض رشتهٔ خالی
+     * این‌جا گذاشته شده تا رفتار همهٔ درایورها یکی باشد.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'description' => '',
+        'seo_intro' => '',
+    ];
+
     protected function casts(): array
     {
         return [

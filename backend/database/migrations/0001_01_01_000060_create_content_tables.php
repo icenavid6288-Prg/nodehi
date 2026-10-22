@@ -34,7 +34,7 @@ return new class extends Migration
             $table->date('published_at');
             $table->date('content_updated_at');
             $table->unsignedSmallInteger('reading_minutes')->default(4);
-            $table->json('keywords')->default('[]');
+            $table->json('keywords'); // پیش‌فرض در App\Models\Article
             $table->integer('sort_order')->default(0);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
@@ -86,7 +86,7 @@ return new class extends Migration
             $table->string('requirement_label');
             $table->string('discount_label');
             $table->string('points_label');
-            $table->json('perks')->default('[]');
+            $table->json('perks'); // پیش‌فرض در App\Models\LoyaltyTier
             $table->integer('sort_order')->default(0);
             $table->boolean('is_active')->default(true);
             $table->timestamps();

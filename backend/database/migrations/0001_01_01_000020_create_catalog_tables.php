@@ -20,8 +20,10 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('name');
             $table->string('name_en');
-            $table->text('description')->default('');
-            $table->text('seo_intro')->default('');
+            // MySQL روی ستون‌های TEXT مقدار پیش‌فرض نمی‌پذیرد؛ پیش‌فرض
+            // رشتهٔ خالی در مدل (App\Models\Category) گذاشته شده است.
+            $table->text('description');
+            $table->text('seo_intro');
             $table->string('icon')->default('refrigerator');
             $table->boolean('featured')->default(true);
             $table->integer('sort_order')->default(0);
@@ -37,7 +39,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('name_en')->default('');
             $table->string('origin')->default('');
-            $table->text('description')->default('');
+            $table->text('description'); // پیش‌فرض در App\Models\Brand
             $table->boolean('featured')->default(false);
             $table->integer('sort_order')->default(0);
             $table->boolean('is_active')->default(true);
@@ -58,13 +60,15 @@ return new class extends Migration
             $table->float('rating')->default(0);
             $table->unsignedInteger('review_count')->default(0);
             $table->text('short_description');
-            $table->longText('description')->default('');
-            $table->json('highlights')->default('[]');
-            $table->json('specs')->default('[]');
-            $table->json('attributes')->default('{}');
-            $table->json('images')->default('[]');
-            $table->json('tags')->default('[]');
-            $table->json('related_slugs')->default('[]');
+            // ستون‌های TEXT/JSON در MySQL پیش‌فرض نمی‌پذیرند؛ مقادیر
+            // پیش‌فرض در App\Models\Product تعریف شده‌اند.
+            $table->longText('description');
+            $table->json('highlights');
+            $table->json('specs');
+            $table->json('attributes');
+            $table->json('images');
+            $table->json('tags');
+            $table->json('related_slugs');
             $table->string('video_url')->nullable();
             $table->timestamp('published_at')->useCurrent();
             $table->boolean('is_active')->default(true);

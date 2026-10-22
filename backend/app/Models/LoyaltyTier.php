@@ -10,6 +10,11 @@ class LoyaltyTier extends Model
         'name', 'requirement_label', 'discount_label', 'points_label', 'perks', 'sort_order', 'is_active',
     ];
 
+    /** پیش‌فرض ستون JSON (MySQL روی آن مقدار پیش‌فرض نمی‌پذیرد) */
+    protected $attributes = [
+        'perks' => '[]',
+    ];
+
     protected function casts(): array
     {
         return [
