@@ -4,8 +4,11 @@ import { useCart } from '../context/CartContext'
 import { useCatalog } from '../context/CatalogContext'
 import { useAuth } from '../context/AuthContext'
 import { toFa } from '../lib/format'
-import { CartIcon, CloseIcon, MenuIcon, SearchIcon, UserIcon } from './icons'
+import { CartIcon, CompareIcon, MenuIcon, SearchIcon, UserIcon } from './icons'
 import AnalyticsTags from './AnalyticsTags'
+import MobileMenu from './MobileMenu'
+import CompareBar from './CompareBar'
+import { useCompare } from '../context/CompareContext'
 
 const navLinks = [
   { to: '/shop', label: 'فروشگاه' },
@@ -32,6 +35,7 @@ export default function Layout() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [query, setQuery] = useState('')
   const { count } = useCart()
+  const { count: compareCount } = useCompare()
   const { user } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
@@ -60,12 +64,13 @@ export default function Layout() {
         <div className="container-page flex h-16 items-center gap-3">
           <button
             type="button"
-            className="rounded-lg p-2 text-primary hover:bg-surface-muted lg:hidden"
-            onClick={() => setMenuOpen((open) => !open)}
-            aria-label={menuOpen ? 'بستن منو' : 'باز کردن منو'}
+            className="grid h-10 w-10 place-items-center rounded-xl border border-surface-border text-primary transition hover:border-secondary/50 hover:bg-surface-muted lg:hidden"
+            onClick={() => setMenuOpen(true)}
+            aria-label="باز کردن منو"
             aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
           >
-            {menuOpen ? <CloseIcon /> : <MenuIcon />}
+            <MenuIcon />
           </button>
 
           <Link to="/" className="flex shrink-0 items-center gap-2.5" aria-label="نودهی — صفحه اصلی">
@@ -109,7 +114,20 @@ export default function Layout() {
               className="hidden items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-surface-muted sm:flex"
             >
               <UserIcon />
-              <span>{user ? user.fullName.split(' ')[0] : 'ورود / ثبت‌نام'}</span>
+              <span className="hidden md:inline">{user ? user.fullName.split(' ')[0] : 'ورود / ثبت‌نام'}</span>
+            </Link>
+            <Link
+              to="/compare"
+              className="relative hidden items-center gap-2 rounded-xl px-3 py-2 text-sm hover:bg-surface-muted sm:flex"
+              aria-label={`مقایسهٔ محصولات، ${toFa(compareCount)} کالا`}
+            >
+              <CompareIcon />
+              <span className="hidden md:inline">مقایسه</span>
+              {compareCount > 0 && (
+                <span className="absolute -top-0.5 right-1 grid h-5 min-w-5 place-items-center rounded-full bg-secondary px-1 text-[10px] font-bold text-secondary-foreground">
+                  {toFa(compareCount)}
+                </span>
+              )}
             </Link>
             <Link
               to="/cart"
@@ -127,36 +145,18 @@ export default function Layout() {
           </div>
         </div>
 
-        {menuOpen && (
-          <div className="border-t border-surface-border bg-white p-4 lg:hidden">
-            <form onSubmit={submitSearch} className="relative mb-3" role="search">
-              <input
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="جستجوی محصول..."
-                aria-label="جستجوی محصولات"
-                className="h-11 w-full rounded-xl border border-surface-border bg-surface-muted pr-10 pl-3 text-sm"
-              />
-              <SearchIcon className="pointer-events-none absolute right-3 top-3 h-5 w-5 text-ink-subtle" />
-            </form>
-            <nav className="grid gap-1 text-sm">
-              {navLinks.map((link) => (
-                <NavLink key={link.to} to={link.to} className="rounded-lg px-3 py-2 hover:bg-surface-muted">
-                  {link.label}
-                </NavLink>
-              ))}
-              {user && (user.role === 'admin' || user.role === 'operator') && (
-                <NavLink to="/admin" className="rounded-lg px-3 py-2 font-bold text-secondary-dark hover:bg-surface-muted">
-                  پنل مدیریت
-                </NavLink>
-              )}
-              <Link to={user ? '/account' : '/login'} className="rounded-lg px-3 py-2 hover:bg-surface-muted">
-                {user ? 'حساب کاربری' : 'ورود / ثبت‌نام'}
-              </Link>
-            </nav>
-          </div>
-        )}
       </header>
+
+      <div id="mobile-menu">
+        <MobileMenu
+          open={menuOpen}
+          onClose={() => setMenuOpen(false)}
+          categories={categories}
+          user={user}
+          cartCount={count}
+          compareCount={compareCount}
+        />
+      </div>
 
       <nav className="hidden border-b border-surface-border bg-white lg:block" aria-label="دسته‌بندی کالاها">
         <div className="container-page no-scrollbar flex gap-1 overflow-x-auto py-1">
@@ -175,6 +175,8 @@ export default function Layout() {
       <main className="flex-1">
         <Outlet />
       </main>
+
+      <CompareBar />
 
       <footer className="mt-14 border-t border-surface-border bg-white">
         <div className="container-page grid gap-8 py-10 md:grid-cols-4">

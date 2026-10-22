@@ -158,8 +158,68 @@ export default function Shop() {
         </div>
       </div>
 
+      {/* نوار فیلتر موبایل: دسته‌ها به‌جای ستون بلند، چیپ افقی و برند به‌شکل انتخابگر */}
+      <div className="mb-5 space-y-2.5 lg:hidden">
+        <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
+          <button
+            type="button"
+            onClick={() => update('category', '')}
+            className={`shrink-0 rounded-full border px-3.5 py-2 text-xs font-bold transition ${
+              !category
+                ? 'border-primary bg-primary text-white'
+                : 'border-surface-border bg-white text-ink-muted'
+            }`}
+          >
+            همه دسته‌ها
+          </button>
+          {categories.map((item) => (
+            <button
+              key={item.slug}
+              type="button"
+              onClick={() => update('category', item.slug)}
+              className={`shrink-0 rounded-full border px-3.5 py-2 text-xs font-bold transition ${
+                category === item.slug
+                  ? 'border-primary bg-primary text-white'
+                  : 'border-surface-border bg-white text-ink-muted'
+              }`}
+            >
+              {item.name}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex gap-2">
+          <select
+            value={brand}
+            onChange={(event) => update('brand', event.target.value)}
+            aria-label="انتخاب برند"
+            className="h-10 min-w-0 flex-1 rounded-xl border border-surface-border bg-white px-3 text-xs"
+          >
+            <option value="">همه برندها</option>
+            {brands.map((item) => (
+              <option key={item.slug} value={item.slug}>
+                {item.name}
+              </option>
+            ))}
+          </select>
+
+          {(category || brand || q || inStock || onSale) && (
+            <button
+              type="button"
+              onClick={() => {
+                setParams(new URLSearchParams())
+                navigate('/shop')
+              }}
+              className="shrink-0 rounded-xl border border-danger/30 px-3 text-xs font-bold text-danger"
+            >
+              حذف فیلترها
+            </button>
+          )}
+        </div>
+      </div>
+
       <div className="grid gap-6 lg:grid-cols-[240px_1fr]">
-        <aside className="order-2 space-y-4 lg:order-1">
+        <aside className="order-1 hidden space-y-4 lg:block">
           <div className="rounded-2xl border border-surface-border bg-white p-4">
             <h2 className="mb-3 text-sm font-bold">دسته‌بندی</h2>
             <ul className="grid gap-1 text-sm">
@@ -220,9 +280,9 @@ export default function Shop() {
           )}
 
           {loading && (
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
               {Array.from({ length: 6 }).map((_, index) => (
-                <div key={index} className="h-72 animate-pulse rounded-2xl bg-white shadow-card" />
+                <div key={index} className="h-72 animate-pulse rounded-3xl bg-white shadow-card" />
               ))}
             </div>
           )}
@@ -242,7 +302,7 @@ export default function Shop() {
 
           {!loading && data && data.items.length > 0 && (
             <>
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
                 {data.items.map((product) => (
                   <ProductCard key={product.slug} product={product} />
                 ))}
