@@ -12,6 +12,11 @@ class Article extends Model
         'sort_order', 'is_active',
     ];
 
+    /** پیش‌فرض ستون JSON (MySQL روی آن مقدار پیش‌فرض نمی‌پذیرد) */
+    protected $attributes = [
+        'keywords' => '[]',
+    ];
+
     protected function casts(): array
     {
         return [

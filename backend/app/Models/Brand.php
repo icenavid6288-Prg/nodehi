@@ -11,6 +11,11 @@ class Brand extends Model
         'featured', 'sort_order', 'is_active',
     ];
 
+    /** پیش‌فرض ستون TEXT (MySQL روی آن مقدار پیش‌فرض نمی‌پذیرد) */
+    protected $attributes = [
+        'description' => '',
+    ];
+
     protected function casts(): array
     {
         return [

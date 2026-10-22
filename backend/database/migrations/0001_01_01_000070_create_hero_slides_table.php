@@ -28,7 +28,7 @@ return new class extends Migration
             $table->string('primary_url', 200);
             $table->string('secondary_label', 40)->nullable();
             $table->string('secondary_url', 200)->nullable();
-            $table->json('features')->default('[]');       // حداکثر سه مزیت کوتاه
+            $table->json('features');                   // حداکثر سه مزیت کوتاه؛ پیش‌فرض در مدل
             $table->string('image', 255)->nullable();      // آدرس تصویر یا /uploads/...
             $table->string('theme', 20)->default('primary');
             $table->integer('sort_order')->default(0);

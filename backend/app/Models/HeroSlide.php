@@ -21,6 +21,11 @@ class HeroSlide extends Model
         'features', 'image', 'theme', 'sort_order', 'is_active',
     ];
 
+    /** پیش‌فرض ستون JSON (MySQL روی آن مقدار پیش‌فرض نمی‌پذیرد) */
+    protected $attributes = [
+        'features' => '[]',
+    ];
+
     protected function casts(): array
     {
         return [

@@ -14,6 +14,22 @@ class Product extends Model
         'video_url', 'published_at', 'is_active',
     ];
 
+    /**
+     * ستون‌های TEXT/JSON در MySQL مقدار پیش‌فرض نمی‌پذیرند؛ این پیش‌فرض‌ها
+     * همان مقادیر قبلیِ سطح دیتابیس را برای همهٔ درایورها بازمی‌سازند.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'description' => '',
+        'highlights' => '[]',
+        'specs' => '[]',
+        'attributes' => '{}',
+        'images' => '[]',
+        'tags' => '[]',
+        'related_slugs' => '[]',
+    ];
+
     protected function casts(): array
     {
         return [
