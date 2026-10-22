@@ -40,11 +40,12 @@ if (!existsSync(shellPath)) {
 const { register } = await import('tsx/esm/api')
 const unregister = register()
 
-const [seo, { FaqAccordion }, { LoyaltyTables }, react, { renderToStaticMarkup }] =
+const [seo, { FaqAccordion }, { LoyaltyTables }, { CategoryIcon }, react, { renderToStaticMarkup }] =
   await Promise.all([
     import('../src/lib/seo-source.ts'),
     import('../src/components/FaqAccordion.tsx'),
     import('../src/components/LoyaltyTables.tsx'),
+    import('../src/components/icons.tsx'),
     import('react'),
     import('react-dom/server'),
   ])
@@ -178,13 +179,21 @@ function listingBody({ title, intro, products, crumbs }) {
 }
 
 function homeBody(categories, sections) {
+  // آیکون دسته‌ها از همان مؤلفهٔ React کلاینت گرفته می‌شود تا نسخهٔ ایستا و
+  // نسخهٔ SPA یک ظاهر داشته باشند و آیکون‌ها دو جا نگه‌داری نشوند.
+  const catIcon = (slug) =>
+    renderToStaticMarkup(createElement(CategoryIcon, { name: slug, className: 'h-6 w-6' }))
+
   const catLinks = categories
     .slice(0, 8)
     .map(
       (c) =>
-        `<a href="/category/${escapeHtml(c.slug)}/" class="flex items-center justify-between gap-2 rounded-2xl border border-surface-border bg-white px-4 py-3 shadow-card transition hover:-translate-y-0.5 hover:border-secondary/40">
-          <span class="text-sm font-bold">${escapeHtml(c.name)}</span>
-          <span class="text-[11px] text-ink-subtle">${fa(c.count)} کالا</span>
+        `<a href="/category/${escapeHtml(c.slug)}/" class="group flex items-center gap-3 rounded-2xl border border-surface-border bg-white px-3.5 py-3 shadow-card transition hover:-translate-y-0.5 hover:border-secondary/40">
+          <span class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-secondary/10 text-secondary-dark">${catIcon(c.slug)}</span>
+          <span class="min-w-0">
+            <span class="block truncate text-sm font-bold">${escapeHtml(c.name)}</span>
+            <span class="mt-0.5 block text-[11px] text-ink-subtle">${fa(c.count)} کالا</span>
+          </span>
         </a>`,
     )
     .join('\n')
@@ -205,8 +214,11 @@ function homeBody(categories, sections) {
     )
     .join('\n')
 
-  return `<section class="relative overflow-hidden bg-gradient-to-l from-secondary-dark via-secondary to-secondary-light">
-    <div class="container-page grid items-center gap-8 py-12 md:grid-cols-2 md:py-16">
+  return `<section class="relative overflow-hidden bg-gradient-to-l from-primary-dark via-primary to-primary-light">
+    <img src="/hero/promise.jpg" alt="" aria-hidden="true" class="absolute inset-0 h-full w-full object-cover">
+    <div aria-hidden="true" class="absolute inset-0 bg-gradient-to-l from-primary-dark/95 via-primary-dark/80 to-primary-dark/60 md:to-primary-dark/35"></div>
+    <div aria-hidden="true" class="absolute inset-0 bg-gradient-to-t from-primary-dark/75 via-transparent to-primary/20"></div>
+    <div class="relative container-page grid items-center gap-8 pb-16 pt-12 md:grid-cols-2 md:pb-20 md:pt-16">
       <div class="text-white">
         <h1 class="text-3xl font-extrabold leading-tight sm:text-4xl">لوازم خانگی مطمئن،<br>با ارسال سریع و نصب رایگان</h1>
         <p class="mt-4 max-w-md text-sm leading-7 text-white/85">یخچال، لباسشویی، ظرفشویی، تلویزیون و کولر گازی از برندهای معتبر؛ با ضمانت اصالت کالا و امکان پرداخت در محل.</p>
@@ -222,8 +234,15 @@ function homeBody(categories, sections) {
       </ul>
     </div>
   </section>
-  <section class="container-page -mt-6">
-    <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">${catLinks}</div>
+  <section class="container-page mt-10">
+    <div class="mb-4 flex items-end justify-between gap-2">
+      <div>
+        <h2 class="text-xl font-extrabold sm:text-2xl">دسته‌بندی‌ها</h2>
+        <p class="mt-1 text-sm text-ink-muted">از یخچال و لباسشویی تا لوازم کوچک؛ سریع‌تر به کالای مورد نظرتان برسید.</p>
+      </div>
+      <a href="/shop/" class="shrink-0 text-sm font-bold text-secondary hover:text-secondary-dark">همه محصولات ←</a>
+    </div>
+    <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">${catLinks}</div>
   </section>
   ${sectionHtml}`
 }

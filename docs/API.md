@@ -155,7 +155,12 @@ GET /api/faqs
 GET /api/legal
 GET /api/legal/{slug}
 GET /api/loyalty
+GET /api/hero-slides
 ```
+
+`GET /api/hero-slides` فقط اسلایدهای فعال را به ترتیب `sort_order` برمی‌گرداند.
+متن، لینک و تصویر اسلایدها از پنل مدیریت (`/admin/hero-slides`) عوض می‌شود؛
+اگر هیچ اسلایدی فعال نباشد، فرانت‌اند محتوای پیش‌فرض خودش را نشان می‌دهد.
 
 > محتوا از دیتابیس خوانده می‌شود و در نصب تازه با `php artisan migrate --seed`
 > از `backend/database/seeders/data/content.json` پر می‌شود.
@@ -448,3 +453,22 @@ DELETE /api/admin/reviews/{id}
 
 `status` یکی از `pending`، `approved` یا `rejected` است. تأیید یا رد نظر،
 میانگین امتیاز و تعداد نظرات محصول را بازمحاسبه می‌کند.
+
+### اسلایدهای هیرو
+
+```
+GET    /api/admin/hero-slides
+POST   /api/admin/hero-slides      { badge?, title, titleAccent?, text, primaryLabel, primaryUrl,
+                                     secondaryLabel?, secondaryUrl?, features?, image?, theme?, isActive? }
+PATCH  /api/admin/hero-slides/{id}
+DELETE /api/admin/hero-slides/{id}
+POST   /api/admin/hero-slides/reorder   { ids: [۳, ۱, ۲] }
+POST   /api/admin/hero-slides/image     multipart: image
+```
+
+`theme` یکی از `primary`، `secondary` یا `accent` است. `features` حداکثر سه
+مزیت کوتاه است. آپلود تصویر فقط `png`, `jpg`, `jpeg`, `webp` تا ۳ مگابایت را
+می‌پذیرد، فایل را در `backend/public/uploads/hero` ذخیره می‌کند و `{ ok, url }`
+برمی‌گرداند؛ همان `url` را در فیلد `image` اسلاید بگذارید. با `reorder`
+ترتیب نمایش را یک‌جا عوض کنید و حذف اسلاید، تصویر آپلودی همان اسلاید را هم
+پاک می‌کند.

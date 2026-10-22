@@ -121,7 +121,7 @@ Authorization: Bearer <token>
 | کاتالوگ | `Category`, `Brand`, `Product` |
 | فروش | `Coupon`, `Order`, `OrderItem` |
 | تعامل | `Review`, `ContactMessage`, `StockAlert` |
-| محتوا | `Article`, `ArticleCategory`, `Faq`, `FaqCategory`, `LegalPage`, `LoyaltyTier`, `LoyaltyInstallment`, `LoyaltyStep` |
+| محتوا | `Article`, `ArticleCategory`, `Faq`, `FaqCategory`, `LegalPage`, `LoyaltyTier`, `LoyaltyInstallment`, `LoyaltyStep`, `HeroSlide` |
 | عملیات | `Setting`, `SmsMessage`, `PaymentGateway`, `AutomationEvent`, `AuditLog` |
 
 آرایه‌ها (نکته‌ها، مشخصات، تصاویر، تگ‌ها) در ستون‌های JSON متنی ذخیره می‌شوند و
@@ -149,6 +149,13 @@ Authorization: Bearer <token>
 `backend/database/seeders/data/content.json` پر می‌شود. این فایل شامل ۶ مقاله،
 ۸ پرسش متداول، صفحات حقوقی و دادهٔ باشگاه مشتریان است. اگر seed اجرا نشود،
 APIها آرایه‌های خالی برمی‌گردانند و صفحه مربوطه پیام «موردی ثبت نشده» نشان می‌دهد.
+
+اسلایدهای هیروی صفحهٔ اصلی هم در همین دسته‌اند: متن، لینک، تصویر و ترتیب
+نمایش در جدول `hero_slides` نگه داشته می‌شود و از `/admin/hero-slides` بدون
+تغییر کد قابل ویرایش است. تصاویر در `backend/public/uploads/hero` ذخیره
+می‌شوند (بدون symlink) تا روی هاست اشتراکی هم سرو شوند؛ در توسعه، پروکسی
+`/uploads` در `frontend/vite.config.ts` همان مسیر را به API می‌رساند. اگر هیچ
+اسلاید فعالی نباشد، `HeroSlideshow` محتوای پیش‌فرض خودش را نشان می‌دهد.
 
 ---
 

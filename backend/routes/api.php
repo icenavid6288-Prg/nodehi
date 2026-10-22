@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AdminCouponController;
+use App\Http\Controllers\Api\AdminHeroSlideController;
 use App\Http\Controllers\Api\AdminOrderController;
 use App\Http\Controllers\Api\AdminProductController;
 use App\Http\Controllers\Api\AdminReviewController;
@@ -52,6 +53,7 @@ Route::get('/faqs', [ContentController::class, 'faqs']);
 Route::get('/legal', [ContentController::class, 'legalIndex']);
 Route::get('/legal/{slug}', [ContentController::class, 'legalPage']);
 Route::get('/loyalty', [ContentController::class, 'loyalty']);
+Route::get('/hero-slides', [ContentController::class, 'heroSlides']);
 
 // تعامل با مشتری
 Route::post('/contact', [EngagementController::class, 'contact'])->middleware('throttle:5,1');
@@ -98,4 +100,12 @@ Route::middleware(['auth.token', 'admin'])->prefix('admin')->group(function () {
     Route::get('/reviews', [AdminReviewController::class, 'index']);
     Route::match(['put', 'patch'], '/reviews/{review}', [AdminReviewController::class, 'update']);
     Route::delete('/reviews/{review}', [AdminReviewController::class, 'destroy']);
+
+    // اسلایدهای هیرو — مسیرهای ثابت قبل از مسیر پارامتری ثبت می‌شوند
+    Route::get('/hero-slides', [AdminHeroSlideController::class, 'index']);
+    Route::post('/hero-slides', [AdminHeroSlideController::class, 'store']);
+    Route::post('/hero-slides/reorder', [AdminHeroSlideController::class, 'reorder']);
+    Route::post('/hero-slides/image', [AdminHeroSlideController::class, 'upload']);
+    Route::match(['put', 'patch'], '/hero-slides/{heroSlide}', [AdminHeroSlideController::class, 'update']);
+    Route::delete('/hero-slides/{heroSlide}', [AdminHeroSlideController::class, 'destroy']);
 });

@@ -38,6 +38,21 @@ return [
             'report' => false,
         ],
 
+        /*
+         * فایل‌های آپلودی عمومی (تصویر اسلایدهای هیرو).
+         *
+         * عمداً داخل public/uploads است و نه روی دیسک public با symlink؛
+         * بعضی هاست‌های اشتراکی اجازهٔ ساخت symlink نمی‌دهند و تصویر باید
+         * بدون دست‌کاری سرور سرو شود.
+         */
+        'uploads' => [
+            'driver' => 'local',
+            'root' => public_path('uploads'),
+            'url' => '/uploads',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

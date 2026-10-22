@@ -23,6 +23,7 @@ import AdminProducts from './pages/admin/AdminProducts'
 import AdminOrders from './pages/admin/AdminOrders'
 import AdminCoupons from './pages/admin/AdminCoupons'
 import AdminReviews from './pages/admin/AdminReviews'
+import AdminHeroSlides from './pages/admin/AdminHeroSlides'
 import { CartProvider } from './context/CartContext'
 import { AuthProvider } from './context/AuthContext'
 import { CatalogProvider } from './context/CatalogContext'
@@ -82,6 +83,7 @@ export default function App() {
                 <Route path="orders" element={<AdminOrders />} />
                 <Route path="coupons" element={<AdminCoupons />} />
                 <Route path="reviews" element={<AdminReviews />} />
+                <Route path="hero-slides" element={<AdminHeroSlides />} />
               </Route>
             </Routes>
           </CartProvider>

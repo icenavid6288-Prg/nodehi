@@ -21,7 +21,8 @@ function token(): string | null {
 export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
   const headers = new Headers(init.headers)
   headers.set('Accept', 'application/json')
-  if (init.body) headers.set('Content-Type', 'application/json')
+  // برای FormData مرورگر خودش Content-Type و boundary را می‌سازد.
+  if (typeof init.body === 'string') headers.set('Content-Type', 'application/json')
 
   const auth = token()
   if (auth) headers.set('Authorization', `Bearer ${auth}`)
@@ -47,6 +48,9 @@ export const post = <T>(path: string, body: unknown) =>
 export const patch = <T>(path: string, body: unknown) =>
   api<T>(path, { method: 'PATCH', body: JSON.stringify(body) })
 export const del = <T>(path: string) => api<T>(path, { method: 'DELETE' })
+/** آپلود فایل (multipart) — برای تصویر اسلایدها */
+export const postForm = <T>(path: string, form: FormData) =>
+  api<T>(path, { method: 'POST', body: form })
 
 export type ProductSummary = {
   id: string
@@ -270,4 +274,27 @@ export type OrderResponse = {
   customerName: string
   createdAt: string
   items: { slug: string; name: string; unitPrice: number; quantity: number; lineTotal: number }[]
+}
+
+/** اسلاید هیرو — پاسخ عمومی /hero-slides */
+export type HeroSlide = {
+  id: number
+  badge: string | null
+  title: string
+  titleAccent: string | null
+  text: string
+  primaryLabel: string
+  primaryUrl: string
+  secondaryLabel: string | null
+  secondaryUrl: string | null
+  features: string[]
+  image: string | null
+  theme: 'primary' | 'secondary' | 'accent'
+}
+
+/** همان اسلاید در پنل مدیریت، به‌همراه ترتیب و وضعیت انتشار */
+export type AdminHeroSlide = HeroSlide & {
+  sortOrder: number
+  isActive: boolean
+  updatedAt: string | null
 }
