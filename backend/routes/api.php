@@ -2,9 +2,14 @@
 
 use App\Http\Controllers\Api\AdminCouponController;
 use App\Http\Controllers\Api\AdminHeroSlideController;
+use App\Http\Controllers\Api\AdminIntegrationController;
 use App\Http\Controllers\Api\AdminOrderController;
+use App\Http\Controllers\Api\AdminPaymentGatewayController;
 use App\Http\Controllers\Api\AdminProductController;
 use App\Http\Controllers\Api\AdminReviewController;
+use App\Http\Controllers\Api\AdminSettingController;
+use App\Http\Controllers\Api\AdminSmsController;
+use App\Http\Controllers\Api\AdminUserController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CatalogController;
 use App\Http\Controllers\Api\CheckoutController;
@@ -80,32 +85,69 @@ Route::middleware('auth.token')->group(function () {
     Route::get('/account/orders', [OrderController::class, 'myOrders']);
 });
 
-// پنل مدیریت — فقط نقش admin و operator
+// پنل مدیریت — فقط نقش admin و operator؛ هر بخش مجوز جدا دارد
 Route::middleware(['auth.token', 'admin'])->prefix('admin')->group(function () {
-    Route::get('/products', [AdminProductController::class, 'index']);
-    Route::post('/products', [AdminProductController::class, 'store']);
-    Route::get('/products/{product}', [AdminProductController::class, 'show']);
-    Route::match(['put', 'patch'], '/products/{product}', [AdminProductController::class, 'update']);
-    Route::delete('/products/{product}', [AdminProductController::class, 'destroy']);
+    Route::middleware('perm:products')->group(function () {
+        Route::get('/products', [AdminProductController::class, 'index']);
+        Route::post('/products', [AdminProductController::class, 'store']);
+        Route::get('/products/{product}', [AdminProductController::class, 'show']);
+        Route::match(['put', 'patch'], '/products/{product}', [AdminProductController::class, 'update']);
+        Route::delete('/products/{product}', [AdminProductController::class, 'destroy']);
+    });
 
-    Route::get('/orders', [AdminOrderController::class, 'index']);
-    Route::get('/orders/{order}', [AdminOrderController::class, 'show']);
-    Route::match(['put', 'patch'], '/orders/{order}', [AdminOrderController::class, 'update']);
+    Route::middleware('perm:orders')->group(function () {
+        Route::get('/orders', [AdminOrderController::class, 'index']);
+        Route::get('/orders/{order}', [AdminOrderController::class, 'show']);
+        Route::match(['put', 'patch'], '/orders/{order}', [AdminOrderController::class, 'update']);
+    });
 
-    Route::get('/coupons', [AdminCouponController::class, 'index']);
-    Route::post('/coupons', [AdminCouponController::class, 'store']);
-    Route::match(['put', 'patch'], '/coupons/{coupon}', [AdminCouponController::class, 'update']);
-    Route::delete('/coupons/{coupon}', [AdminCouponController::class, 'destroy']);
+    Route::middleware('perm:coupons')->group(function () {
+        Route::get('/coupons', [AdminCouponController::class, 'index']);
+        Route::post('/coupons', [AdminCouponController::class, 'store']);
+        Route::match(['put', 'patch'], '/coupons/{coupon}', [AdminCouponController::class, 'update']);
+        Route::delete('/coupons/{coupon}', [AdminCouponController::class, 'destroy']);
+    });
 
-    Route::get('/reviews', [AdminReviewController::class, 'index']);
-    Route::match(['put', 'patch'], '/reviews/{review}', [AdminReviewController::class, 'update']);
-    Route::delete('/reviews/{review}', [AdminReviewController::class, 'destroy']);
+    Route::middleware('perm:reviews')->group(function () {
+        Route::get('/reviews', [AdminReviewController::class, 'index']);
+        Route::match(['put', 'patch'], '/reviews/{review}', [AdminReviewController::class, 'update']);
+        Route::delete('/reviews/{review}', [AdminReviewController::class, 'destroy']);
+    });
 
     // اسلایدهای هیرو — مسیرهای ثابت قبل از مسیر پارامتری ثبت می‌شوند
-    Route::get('/hero-slides', [AdminHeroSlideController::class, 'index']);
-    Route::post('/hero-slides', [AdminHeroSlideController::class, 'store']);
-    Route::post('/hero-slides/reorder', [AdminHeroSlideController::class, 'reorder']);
-    Route::post('/hero-slides/image', [AdminHeroSlideController::class, 'upload']);
-    Route::match(['put', 'patch'], '/hero-slides/{heroSlide}', [AdminHeroSlideController::class, 'update']);
-    Route::delete('/hero-slides/{heroSlide}', [AdminHeroSlideController::class, 'destroy']);
+    Route::middleware('perm:hero_slides')->group(function () {
+        Route::get('/hero-slides', [AdminHeroSlideController::class, 'index']);
+        Route::post('/hero-slides', [AdminHeroSlideController::class, 'store']);
+        Route::post('/hero-slides/reorder', [AdminHeroSlideController::class, 'reorder']);
+        Route::post('/hero-slides/image', [AdminHeroSlideController::class, 'upload']);
+        Route::match(['put', 'patch'], '/hero-slides/{heroSlide}', [AdminHeroSlideController::class, 'update']);
+        Route::delete('/hero-slides/{heroSlide}', [AdminHeroSlideController::class, 'destroy']);
+    });
+
+    Route::middleware('perm:users')->group(function () {
+        Route::get('/users', [AdminUserController::class, 'index']);
+        Route::get('/users/{user}', [AdminUserController::class, 'show']);
+        Route::patch('/users/{user}', [AdminUserController::class, 'update']);
+    });
+
+    Route::middleware('perm:settings')->group(function () {
+        Route::get('/settings', [AdminSettingController::class, 'index']);
+        Route::patch('/settings', [AdminSettingController::class, 'update']);
+    });
+
+    Route::middleware('perm:integrations')->group(function () {
+        Route::get('/integrations', [AdminIntegrationController::class, 'index']);
+        Route::patch('/integrations', [AdminIntegrationController::class, 'update']);
+    });
+
+    Route::middleware('perm:gateways')->group(function () {
+        Route::get('/payment-gateways', [AdminPaymentGatewayController::class, 'index']);
+        Route::patch('/payment-gateways/{gateway}', [AdminPaymentGatewayController::class, 'update']);
+    });
+
+    Route::middleware('perm:sms')->group(function () {
+        Route::get('/sms', [AdminSmsController::class, 'show']);
+        Route::patch('/sms', [AdminSmsController::class, 'update']);
+        Route::post('/sms/test', [AdminSmsController::class, 'test']);
+    });
 });

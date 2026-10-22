@@ -101,6 +101,18 @@ export type Brand = {
   featured: boolean
 }
 
+export type AdminPermissionKey =
+  | 'products'
+  | 'orders'
+  | 'coupons'
+  | 'reviews'
+  | 'hero_slides'
+  | 'users'
+  | 'settings'
+  | 'integrations'
+  | 'gateways'
+  | 'sms'
+
 export type AuthUser = {
   id: number
   phone: string
@@ -110,6 +122,75 @@ export type AuthUser = {
   role: string
   loyaltyPoints: number
   loyaltyTier: string
+  permissions: AdminPermissionKey[]
+}
+
+export type AdminSettingField = {
+  key: string
+  label: string
+  type: 'text' | 'textarea' | 'number'
+  hint: string | null
+  value: string
+}
+
+export type AdminSettingGroup = {
+  key: string
+  label: string
+  items: AdminSettingField[]
+}
+
+export type AdminUserRow = {
+  id: number
+  phone: string
+  firstName: string | null
+  lastName: string | null
+  fullName: string
+  role: string
+  isActive: boolean
+  loyaltyPoints: number
+  loyaltyTier: string
+  ordersCount: number
+  ordersTotal: number
+  permissions: AdminPermissionKey[]
+  lastLoginAt: string | null
+  createdAt: string | null
+}
+
+export type AdminUserDetail = AdminUserRow & {
+  email: string | null
+  orders: {
+    id: number
+    orderNumber: string
+    status: string
+    total: number
+    createdAt: string | null
+  }[]
+  addresses: {
+    id: number
+    title: string
+    province: string
+    city: string
+    line: string
+    postalCode: string | null
+    isDefault: boolean
+  }[]
+}
+
+export type AdminPermissionOption = { key: AdminPermissionKey; label: string }
+
+export type AdminGateway = {
+  id: number
+  key: string
+  label: string
+  description: string | null
+  isActive: boolean
+  isSandbox: boolean
+  merchantId: string | null
+  hasMerchantId: boolean
+  apiKey: string | null
+  hasApiKey: boolean
+  sortOrder: number
+  updatedAt: string | null
 }
 
 export type ArticleSummary = {

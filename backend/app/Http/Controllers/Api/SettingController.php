@@ -14,7 +14,7 @@ class SettingController extends Controller
     {
         $settings = Setting::query()
             ->where('is_secret', false)
-            ->whereIn('group', ['general', 'pages'])
+            ->whereIn('group', ['general', 'pages', 'integration'])
             ->get()
             ->mapWithKeys(fn (Setting $s) => [$s->key => $s->value]);
 

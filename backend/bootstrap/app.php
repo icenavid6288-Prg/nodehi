@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\AuthenticateToken;
 use App\Http\Middleware\EnsureAdmin;
+use App\Http\Middleware\EnsurePermission;
 use App\Http\Middleware\OptionalAuth;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -19,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth.token' => AuthenticateToken::class,
             'auth.optional' => OptionalAuth::class,
             'admin' => EnsureAdmin::class,
+            'perm' => EnsurePermission::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

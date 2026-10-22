@@ -208,6 +208,8 @@ class AuthController extends Controller
             'role' => $user->role,
             'loyaltyPoints' => $user->loyalty_points,
             'loyaltyTier' => $user->loyalty_tier,
+            // فقط برای اپراتور/مدیر؛ فرانت‌اند منوی پنل را با همین فیلتر می‌کند.
+            'permissions' => $user->isAdmin() ? $user->effectivePermissions() : [],
         ];
     }
 

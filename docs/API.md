@@ -392,6 +392,13 @@ GET /api/payments/zarinpal/callback?Authority=A000...&Status=OK|NOK
 `admin` و `operator` دسترسی دارند. فهرست‌ها همیشه صفحه‌بندی می‌شوند و قالب
 پاسخ `{ ok, total, page, perPage, pageCount, items }` است.
 
+در کنار آن، هر گروه مسیر میدل‌ور `perm:<بخش>` دارد (بخش‌ها: `products`, `orders`,
+`coupons`, `reviews`, `hero_slides`, `users`, `settings`, `integrations`,
+`gateways`, `sms`). نقش `admin` همیشه همهٔ بخش‌ها را دارد؛ برای `operator`
+مجوزها در جدول `user_permissions` ثبت می‌شوند و بدون هیچ ردیفی، دسترسی
+پیش‌فرض قدیمی (محصولات، سفارش، کد تخفیف، نظرات، اسلایدها) اعمال می‌شود. پاسخ
+`/api/auth/session` فهرست مجوزهای مؤثر را در `user.permissions` می‌دهد.
+
 ### محصولات
 
 ```
@@ -472,3 +479,66 @@ POST   /api/admin/hero-slides/image     multipart: image
 برمی‌گرداند؛ همان `url` را در فیلد `image` اسلاید بگذارید. با `reorder`
 ترتیب نمایش را یک‌جا عوض کنید و حذف اسلاید، تصویر آپلودی همان اسلاید را هم
 پاک می‌کند.
+
+### کاربران
+
+```
+GET   /api/admin/users            ?q=&role=&status=&page=&perPage=
+GET   /api/admin/users/{id}
+PATCH /api/admin/users/{id}       { role?, isActive?, loyaltyPoints?, loyaltyTier?, permissions? }
+```
+
+`role` یکی از `customer`، `operator` یا `admin` است و `permissions` آرایه‌ای از
+کلیدهای بخش‌های پنل. دیدن فهرست با مجوز `users` ممکن است، اما تغییر نقش،
+وضعیت و مجوزها فقط با نقش `admin` پذیرفته می‌شود؛ همین‌طور نمی‌توان نقش خود
+یا آخرین مدیر فعال را حذف کرد. پاسخ جزئیات شامل آخرین ۲۰ سفارش و آدرس‌های
+کاربر است.
+
+### تنظیمات سایت
+
+```
+GET   /api/admin/settings
+PATCH /api/admin/settings         { settings: { "site.name": "...", "shipping.cost": 600000 } }
+```
+
+فقط کلیدهای شناخته‌شده پذیرفته می‌شوند (`site.name`, `site.tagline`,
+`contact.phone`, `contact.email`, `contact.address`, `contact.instagram`,
+`contact.telegram`, `shipping.cost`, `shipping.freeThreshold`)؛ کلید ناشناخته
+**۴۲۲** می‌دهد. مقادیر غیرحساس از `/api/settings/public` هم خوانده می‌شوند.
+
+### یکپارچه‌سازی و سئو
+
+```
+GET   /api/admin/integrations
+PATCH /api/admin/integrations     { items: { "seo.ga4": "G-XXXXXXX", "seo.gtm": "GTM-XXXXXX",
+                                            "seo.gsc": "...", "seo.customHead": "<script>…</script>" } }
+```
+
+شناسه‌های GA4/GTM با الگوی `G-`/`GTM-` بررسی می‌شوند. پاسخ `GET` علاوه بر
+مقادیر، بلوک `status` شامل وضعیت اتصال پیامک، درگاه زرین‌پال و اطلاعات سایت
+را هم برمی‌گرداند. این کلیدها در گروه `integration` تنظیمات ذخیره می‌شوند و
+فرانت‌اند آن‌ها را در `head` تزریق می‌کند.
+
+### درگاه‌های پرداخت
+
+```
+GET   /api/admin/payment-gateways
+PATCH /api/admin/payment-gateways/{id}   { label?, description?, isActive?, isSandbox?,
+                                           merchantId?, apiKey?, sortOrder? }
+```
+
+`merchantId` و `apiKey` رمزنگاری‌شده (`enc:v1:…`) ذخیره می‌شوند و در پاسخ فقط
+چهار کاراکتر آخرشان برمی‌گردد (`••••4321`). فرستادن همان ماسک یعنی «تغییر
+نده»؛ برای پاک‌کردن، رشتهٔ خالی بفرستید.
+
+### سرویس پیامک
+
+```
+GET   /api/admin/sms
+PATCH /api/admin/sms              { apiKey?, sender?, otpTemplate? }
+POST  /api/admin/sms/test         { phone, message? }
+```
+
+کلید کاوه‌نگار رمزنگاری‌شده ذخیره می‌شود و بر `.env` اولویت دارد؛
+`settings.source` نشان می‌دهد مقدار از پنل آمده یا از فایل محیطی. ارسال
+آزمایشی با کد **۴۲۲** و پیام روشن شکست می‌خورد.
