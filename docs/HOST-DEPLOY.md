@@ -161,6 +161,31 @@ php artisan db:seed --force   # فقط بار اول
 3. اگر مهاجرت تازه‌ای هست، یک بار نصب‌کننده را اجرا کنید (قفل و `.env` را پاک کنید،
    `install.php` را آپلود کنید) یا با SSH `php artisan migrate --force`.
 
+### اجرای دستی مهاجرت بدون SSH (MySQL)
+
+اگر نصب انجام شده و نمی‌خواهید داده و `.env` را دوباره بسازید، جدول مهاجرت تازه را
+مستقیم در phpMyAdmin بسازید (با نام دیتابیس خودتان):
+
+```sql
+CREATE TABLE `user_permissions` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint unsigned NOT NULL,
+  `permission` varchar(40) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_permissions_user_id_permission_unique` (`user_id`,`permission`),
+  CONSTRAINT `user_permissions_user_id_foreign` FOREIGN KEY (`user_id`)
+    REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `migrations` (`migration`, `batch`)
+SELECT '0001_01_01_000080_create_user_permissions_table', COALESCE(MAX(`batch`), 0) + 1
+FROM (SELECT `batch` FROM `migrations`) AS `m`;
+```
+
+بعد `install.php` را از `public_html` حذف کنید؛ در نسخهٔ نصب‌شده به آن نیازی نیست.
+
 ## ۷. عیب‌یابی
 
 | نشانه | علت | راه‌حل |
