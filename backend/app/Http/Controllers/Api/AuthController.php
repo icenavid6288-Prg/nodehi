@@ -175,9 +175,16 @@ class AuthController extends Controller
         return response()->json(['ok' => true, 'message' => 'از حساب خارج شدید.']);
     }
 
+    /**
+     * فقط پرچم مستقل AUTH_OTP_DEV_MODE، نه APP_DEBUG.
+     *
+     * جداکردنش از debug این امکان را می‌دهد که سایت با APP_DEBUG=false بالا
+     * بیاید ولی تا پیش از ثبت کلید پیامک، مدیر بتواند وارد شود (کد در پاسخ
+     * API و صفحهٔ ورود دیده می‌شود). با ثبت کلید پیامک، پرچم را صفر کنید.
+     */
     private function devMode(): bool
     {
-        return (bool) config('app.debug') && (bool) config('services.otp.dev_mode', true);
+        return (bool) config('services.otp.dev_mode', false);
     }
 
     /** هش کد با نمک شمارهٔ همراه — هش دو کاربر با کد یکسان یکسان نیست. */

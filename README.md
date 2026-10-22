@@ -160,6 +160,7 @@ tools/composer.phar      Composer همراه پروژه
 | سند | محتوا |
 | --- | --- |
 | [`docs/SETUP.md`](docs/SETUP.md) | راه‌اندازی، استقرار و متغیرهای محیطی |
+| [`docs/HOST-DEPLOY.md`](docs/HOST-DEPLOY.md) | استقرار روی هاست اشتراکی بدون SSH (بستهٔ آماده + نصب‌کننده) |
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | معماری، جریان درخواست و مدل داده |
 | [`docs/API.md`](docs/API.md) | مرجع مسیرهای API |
 | [`docs/SECURITY.md`](docs/SECURITY.md) | کنترل‌های امنیتی و کارهای باقی‌مانده |
