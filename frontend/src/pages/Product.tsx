@@ -3,8 +3,9 @@ import { Link, useParams } from 'react-router-dom'
 import { get, post, type ProductDetail, type ProductSummary } from '../lib/api'
 import { useCatalog } from '../context/CatalogContext'
 import { useCart } from '../context/CartContext'
+import { useCompare } from '../context/CompareContext'
 import ProductCard from '../components/ProductCard'
-import { CheckIcon, StarIcon, TruckIcon } from '../components/icons'
+import { CategoryIcon, CheckIcon, CompareIcon, StarIcon, TruckIcon } from '../components/icons'
 import { percent, price, toFa } from '../lib/format'
 import { productMeta, usePageMeta } from '../lib/seo'
 
@@ -15,6 +16,7 @@ export default function Product() {
   const { slug = '' } = useParams()
   const { brandName, categoryName } = useCatalog()
   const { add } = useCart()
+  const { has, toggle, isFull } = useCompare()
   const [data, setData] = useState<DetailResponse | null>(null)
   const [reviews, setReviews] = useState<ReviewRow[]>([])
   const [quantity, setQuantity] = useState(1)
@@ -97,13 +99,15 @@ export default function Product() {
 
       <div className="grid gap-8 lg:grid-cols-[1fr_420px]">
         <div>
-          <div className="overflow-hidden rounded-2xl border border-surface-border bg-white shadow-card">
-            <div className="relative aspect-square bg-gradient-to-br from-primary/5 to-secondary/10">
+          <div className="overflow-hidden rounded-3xl border border-surface-border bg-white shadow-card">
+            {/* تصویر با object-contain در قاب مربع می‌ماند تا محصول بریده یا کشیده نشود. */}
+            <div className="relative aspect-square bg-gradient-to-br from-surface-muted via-white to-secondary/5 p-5 sm:p-8">
               {image ? (
-                <img src={image} alt={product.name} className="h-full w-full object-cover" />
+                <img src={image} alt={product.name} className="h-full w-full object-contain" />
               ) : (
-                <div className="grid h-full w-full place-items-center">
-                  <span className="text-6xl font-black text-primary/20">{brandName(product.brand).slice(0, 2)}</span>
+                <div className="relative grid h-full w-full place-items-center overflow-hidden">
+                  <span aria-hidden="true" className="absolute h-40 w-40 rounded-full bg-secondary/10 blur-3xl" />
+                  <CategoryIcon name={product.category} className="relative h-24 w-24 text-primary/20" />
                 </div>
               )}
               {product.discountPercent > 0 && (
@@ -111,8 +115,26 @@ export default function Product() {
                   {percent(product.discountPercent)} تخفیف
                 </span>
               )}
+              {!product.inStock && (
+                <span className="absolute left-4 top-4 rounded-xl bg-primary-dark/85 px-3 py-1.5 text-xs font-bold text-white">
+                  ناموجود
+                </span>
+              )}
             </div>
           </div>
+
+          {product.images.length > 1 && (
+            <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto">
+              {product.images.map((source) => (
+                <span
+                  key={source}
+                  className="grid h-16 w-16 shrink-0 place-items-center rounded-xl border border-surface-border bg-white p-1.5"
+                >
+                  <img src={source} alt="" className="h-full w-full object-contain" loading="lazy" />
+                </span>
+              ))}
+            </div>
+          )}
 
           {product.highlights.length > 0 && (
             <div className="mt-6 rounded-2xl border border-surface-border bg-white p-5">
@@ -245,7 +267,32 @@ export default function Product() {
               >
                 افزودن به سبد خرید
               </button>
+
+              <button
+                type="button"
+                onClick={() => toggle(product.slug)}
+                disabled={!has(product.slug) && isFull}
+                aria-pressed={has(product.slug)}
+                className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl border transition ${
+                  has(product.slug)
+                    ? 'border-secondary bg-secondary text-secondary-foreground'
+                    : 'border-surface-border text-ink-muted hover:border-secondary hover:text-secondary-dark'
+                } disabled:cursor-not-allowed disabled:opacity-40`}
+                title={!has(product.slug) && isFull ? 'حداکثر ۴ کالا هم‌زمان مقایسه می‌شوند' : 'افزودن به مقایسه'}
+                aria-label={has(product.slug) ? 'حذف از مقایسه' : 'افزودن به مقایسه'}
+              >
+                <CompareIcon className="h-5 w-5" />
+              </button>
             </div>
+
+            {has(product.slug) && (
+              <p className="mt-2 text-[11px] font-bold text-secondary-dark">
+                این کالا در فهرست مقایسه است.{' '}
+                <Link to="/compare" className="underline">
+                  دیدن مقایسه
+                </Link>
+              </p>
+            )}
 
             <ul className="mt-5 grid gap-2 border-t border-surface-border pt-4 text-xs text-ink-muted">
               <li className="flex items-center gap-2">
@@ -265,7 +312,7 @@ export default function Product() {
       {related.length > 0 && (
         <section className="mt-12">
           <h2 className="mb-4 text-lg font-extrabold">محصولات مرتبط</h2>
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
             {related.map((item) => (
               <ProductCard key={item.slug} product={item} />
             ))}

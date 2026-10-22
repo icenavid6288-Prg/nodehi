@@ -18,6 +18,7 @@ import Faq from './pages/Faq'
 import Guides from './pages/Guides'
 import Loyalty from './pages/Loyalty'
 import Legal from './pages/Legal'
+import Compare from './pages/Compare'
 import AdminLayout, { AdminHome } from './pages/admin/AdminLayout'
 import AdminProducts from './pages/admin/AdminProducts'
 import AdminOrders from './pages/admin/AdminOrders'
@@ -32,6 +33,7 @@ import AdminSms from './pages/admin/AdminSms'
 import { CartProvider } from './context/CartContext'
 import { AuthProvider } from './context/AuthContext'
 import { CatalogProvider } from './context/CatalogContext'
+import { CompareProvider } from './context/CompareContext'
 import { useNoindex } from './lib/seo'
 
 /** صفحهٔ ۴۰۴ ایندکس نمی‌شود؛ مسیرهای دسته/برند مستقیماً Shop را رندر می‌کنند. */
@@ -55,6 +57,7 @@ export default function App() {
       <CatalogProvider>
         <AuthProvider>
           <CartProvider>
+            <CompareProvider>
             <Routes>
               <Route element={<Layout />}>
                 <Route index element={<Home />} />
@@ -66,6 +69,7 @@ export default function App() {
                 <Route path="brand/:brandSlug" element={<Shop />} />
                 <Route path="product/:slug" element={<Product />} />
                 <Route path="cart" element={<Cart />} />
+                <Route path="compare" element={<Compare />} />
                 <Route path="checkout" element={<Checkout />} />
                 <Route path="login" element={<Login />} />
                 <Route path="track" element={<Track />} />
@@ -96,6 +100,7 @@ export default function App() {
                 <Route path="sms" element={<AdminSms />} />
               </Route>
             </Routes>
+            </CompareProvider>
           </CartProvider>
         </AuthProvider>
       </CatalogProvider>

@@ -34,9 +34,9 @@ export default function Cart() {
               key={line.slug}
               className="flex flex-wrap items-center gap-4 rounded-2xl border border-surface-border bg-white p-4"
             >
-              <div className="grid h-20 w-20 shrink-0 place-items-center overflow-hidden rounded-xl bg-surface-muted">
+              <div className="grid h-20 w-20 shrink-0 place-items-center overflow-hidden rounded-xl border border-surface-border bg-white p-1.5">
                 {line.image ? (
-                  <img src={line.image} alt={line.name} className="h-full w-full object-cover" />
+                  <img src={line.image} alt={line.name} className="h-full w-full object-contain" />
                 ) : (
                   <span className="text-xl font-black text-primary/30">{line.name.slice(0, 2)}</span>
                 )}
